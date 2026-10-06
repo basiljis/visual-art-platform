@@ -228,7 +228,7 @@ function Index() {
       </section>
 
       <section id="about" className="grid border-t border-border px-5 py-24 md:grid-cols-2 md:px-8 md:py-36">
-        <h2 className="font-display text-5xl md:text-7xl">{t.about}</h2><div className="mt-10 md:mt-0"><p className="max-w-xl text-xl leading-relaxed md:text-3xl">{t.note}</p><p className="mt-10 text-xs uppercase leading-7 tracking-[.12em] text-muted-foreground">St. Petersburg Academy of Fine Arts<br/>2024 — «За три моря», МСХ, Москва<br/>2023 — Royal Society of British Artists, London<br/>2022 — DEG Exlibris, Germany — 1st prize</p></div>
+        <h2 className="font-display text-5xl md:text-7xl">{t.about}</h2><div className="mt-10 md:mt-0"><p className="max-w-xl text-xl leading-relaxed md:text-3xl">{t.note}</p><p className="mt-10 text-xs uppercase leading-7 tracking-[.12em] text-muted-foreground">St. Petersburg Academy of Fine Arts<br/>2024 — «За три моря», МСХ, Москва<br/>2023 — Royal Society of British Artists, London<br/>2022 — DEG Exlibris, Germany — 1st prize</p><button onClick={() => setAboutOpen(true)} className="mt-10 flex w-fit items-center gap-2 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.more}<ArrowUpRight className="size-4"/></button></div>
       </section>
 
       <footer id="contact" className="relative overflow-hidden bg-foreground px-5 pb-0 pt-20 text-background md:px-8 md:pt-28">
