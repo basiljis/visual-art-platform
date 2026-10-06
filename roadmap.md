@@ -3,3 +3,4 @@
 - [ ] Move existing works & blog posts into the database
 - [ ] Mobile fixes: footer signature overlaps contacts; general mobile pass
 - [ ] Footer DIKUNOVA fits screen width on mobile (no right clipping)
+- [ ] Mobile hero: intro text beside the signature, stylish
