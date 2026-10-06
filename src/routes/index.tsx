@@ -109,7 +109,7 @@ function Index() {
 
       <header className="fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center border-b border-border/60 bg-background/80 px-4 backdrop-blur-md md:px-8">
         <div className="flex items-center gap-4"><button aria-label="Menu" onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">Menu</span></button></div>
-        <a href="#top" className="text-center font-sans text-sm font-medium tracking-[.22em] sm:text-lg">{t.artist} <span className="font-light text-red-accent">/</span> <span className="text-xs lowercase tracking-[.24em] opacity-60">artist</span></a>
+        <a href="#top" className="text-center font-display text-sm tracking-[.18em] sm:text-lg">{t.artist} <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.24em] opacity-60">artist</span></a>
         <div className="flex justify-end gap-1">
           <button onClick={() => setLang(lang === "ru" ? "en" : "ru")} className="h-9 w-10 text-xs font-semibold uppercase" aria-label="Language">{lang}</button>
           <button onClick={() => setDark(!dark)} className="grid size-9 place-items-center" aria-label="Theme">{dark ? <Sun className="size-4"/> : <Moon className="size-4"/>}</button>
