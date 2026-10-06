@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { BlogShell } from "@/components/BlogShell";
-import { blogImage, blogPosts } from "@/lib/blog";
+import { blogImage, blogPosts, blogVideo } from "@/lib/blog";
+import { SubscribeForm } from "@/components/SubscribeForm";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: ({ params }) => {
@@ -44,8 +45,13 @@ function PostPage() {
         <div className="mt-10 space-y-6 text-base leading-relaxed md:text-lg">
           {post.blocks.map((b, k) => "img" in b
             ? <img key={k} src={blogImage(b.img)} alt={post.title} loading="lazy" className="w-full bg-muted" />
+            : "video" in b
+            ? <video key={k} src={blogVideo(b.video)} controls playsInline preload="metadata" className="w-full bg-ink" />
+            : b.href
+            ? <p key={k}><a href={b.href} target="_blank" rel="noreferrer" className="border-b border-current pb-0.5 transition-colors hover:text-red-accent">{b.p} ↗</a></p>
             : <p key={k}>{b.p}</p>)}
         </div>
+        <SubscribeForm />
         {next && (
           <Link to="/blog/$slug" params={{ slug: next.slug }} className="mt-20 block border-t border-border pt-8">
             <span className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">Следующая запись</span>

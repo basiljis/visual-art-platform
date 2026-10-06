@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BlogShell } from "@/components/BlogShell";
 import { blogPosts } from "@/lib/blog";
+import { SubscribeForm } from "@/components/SubscribeForm";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
@@ -36,6 +37,7 @@ function BlogIndex() {
           </Link>
         ))}
       </div>
+      <div className="mx-auto max-w-3xl"><SubscribeForm /></div>
     </BlogShell>
   );
 }
