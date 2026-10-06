@@ -2,26 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
-import china1 from "@/assets/works/china-1.jpg";
-import china2 from "@/assets/works/china-2.jpg";
-import portraits1 from "@/assets/works/portraits-1.jpg";
-import portraits2 from "@/assets/works/portraits-2.jpg";
-import children1 from "@/assets/works/children-1.jpg";
-import children2 from "@/assets/works/children-2.jpg";
-import nu1 from "@/assets/works/nu-1.jpg";
-import nu2 from "@/assets/works/nu-2.jpg";
-import print1 from "@/assets/works/print-1.jpg";
-import print2 from "@/assets/works/print-2.jpg";
-import other1 from "@/assets/works/other-1.jpg";
-import other2 from "@/assets/works/other-2.jpg";
-import portraits3 from "@/assets/works/portraits-3.jpg";
-import china3 from "@/assets/works/china-3.jpg";
-import print3 from "@/assets/works/print-3.jpg";
-import children3 from "@/assets/works/children-3.jpg";
-import nu3 from "@/assets/works/nu-3.jpg";
-import other3 from "@/assets/works/other-3.jpg";
-import myth1 from "@/assets/works/myth-1.jpg";
-import myth2 from "@/assets/works/myth-2.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -38,28 +18,39 @@ export const Route = createFileRoute("/")({
 type Lang = "ru" | "en";
 type Category = "all" | "myth" | "china" | "portraits" | "children" | "nu" | "print" | "other";
 
-const works = [
-  { image: myth1, category: "myth", year: "2025", ru: "Вампир", en: "Vampire", size: "60 × 80 см" },
-  { image: myth2, category: "myth", year: "2025", ru: "Миф", en: "Myth", size: "60 × 80 см" },
-  { image: portraits1, category: "portraits", year: "2021", ru: "Роман", en: "Roman", size: "60 × 80 см" },
-  { image: china1, category: "china", year: "2024", ru: "Дневник Китая I", en: "China Diary I", size: "70 × 50 см" },
-  { image: print1, category: "print", year: "2021", ru: "Маленькая история", en: "A Little Story", size: "23 × 30 см" },
-  { image: children1, category: "children", year: "2022", ru: "Лето", en: "Summer", size: "65 × 80 см" },
-  { image: nu1, category: "nu", year: "2021", ru: "Огонь", en: "Fire", size: "50 × 70 см" },
-  { image: other1, category: "other", year: "2023", ru: "Расстояние", en: "Distance", size: "40 × 55 см" },
-  { image: portraits2, category: "portraits", year: "2021", ru: "Лиза", en: "Lisa", size: "60 × 80 см" },
-  { image: portraits3, category: "portraits", year: "2021", ru: "Вера", en: "Vera", size: "60 × 80 см" },
-  { image: china2, category: "china", year: "2024", ru: "Дневник Китая II", en: "China Diary II", size: "70 × 50 см" },
-  { image: china3, category: "china", year: "2024", ru: "Дневник Китая III", en: "China Diary III", size: "70 × 50 см" },
-  { image: print2, category: "print", year: "2022", ru: "Письмо", en: "The Letter", size: "30 × 40 см" },
-  { image: print3, category: "print", year: "2021", ru: "Путь", en: "The Path", size: "23 × 30 см" },
-  { image: children2, category: "children", year: "2020", ru: "Юность", en: "Youth", size: "80 × 65 см" },
-  { image: children3, category: "children", year: "2022", ru: "Дочь", en: "Daughter", size: "65 × 80 см" },
-  { image: nu2, category: "nu", year: "2021", ru: "Фигура", en: "Figure", size: "50 × 70 см" },
-  { image: nu3, category: "nu", year: "2021", ru: "Танец", en: "Dance", size: "50 × 70 см" },
-  { image: other2, category: "other", year: "2023", ru: "Диссонанс", en: "Dissonance", size: "40 × 55 см" },
-  { image: other3, category: "other", year: "2023", ru: "Тишина", en: "Silence", size: "40 × 55 см" },
-] as const;
+const workFiles = import.meta.glob("@/assets/works/site/*.jpg", { eager: true, import: "default" }) as Record<string, string>;
+const knownWorks: Record<string, { year: string; ru: string; en: string; size: string }> = {
+  "myth-01": { year: "2025", ru: "Вампир", en: "Vampire", size: "60 × 80 см" },
+  "myth-02": { year: "2025", ru: "Миф", en: "Myth", size: "60 × 80 см" },
+  "portraits-01": { year: "2021", ru: "Роман", en: "Roman", size: "60 × 80 см" },
+  "china-01": { year: "2024", ru: "Дневник Китая I", en: "China Diary I", size: "70 × 50 см" },
+  "print-01": { year: "2021", ru: "Маленькая история", en: "A Little Story", size: "23 × 30 см" },
+  "children-01": { year: "2022", ru: "Лето", en: "Summer", size: "65 × 80 см" },
+  "nu-01": { year: "2021", ru: "Огонь", en: "Fire", size: "50 × 70 см" },
+  "other-01": { year: "2023", ru: "Расстояние", en: "Distance", size: "40 × 55 см" },
+  "portraits-02": { year: "2021", ru: "Лиза", en: "Lisa", size: "60 × 80 см" },
+  "portraits-03": { year: "2021", ru: "Вера", en: "Vera", size: "60 × 80 см" },
+  "china-02": { year: "2024", ru: "Дневник Китая II", en: "China Diary II", size: "70 × 50 см" },
+  "china-03": { year: "2024", ru: "Дневник Китая III", en: "China Diary III", size: "70 × 50 см" },
+  "print-02": { year: "2022", ru: "Письмо", en: "The Letter", size: "30 × 40 см" },
+  "print-03": { year: "2021", ru: "Путь", en: "The Path", size: "23 × 30 см" },
+  "children-02": { year: "2020", ru: "Юность", en: "Youth", size: "80 × 65 см" },
+  "children-03": { year: "2022", ru: "Дочь", en: "Daughter", size: "65 × 80 см" },
+  "nu-02": { year: "2021", ru: "Фигура", en: "Figure", size: "50 × 70 см" },
+  "nu-03": { year: "2021", ru: "Танец", en: "Dance", size: "50 × 70 см" },
+  "other-02": { year: "2023", ru: "Диссонанс", en: "Dissonance", size: "40 × 55 см" },
+  "other-03": { year: "2023", ru: "Тишина", en: "Silence", size: "40 × 55 см" },
+};
+const categoryNames: Record<string, { ru: string; en: string }> = { myth: { ru: "Миф артиста", en: "Artist’s myth" }, china: { ru: "Китай", en: "China" }, portraits: { ru: "Портрет", en: "Portrait" }, children: { ru: "Дети", en: "Children" }, nu: { ru: "Ню", en: "Nude" }, print: { ru: "Печатная графика", en: "Print" }, other: { ru: "Разное", en: "Miscellany" } };
+const categoryOrder = ["myth", "china", "portraits", "children", "nu", "print", "other"];
+const works = Object.entries(workFiles)
+  .map(([path, image]) => {
+    const m = path.match(/(\w+)-(\d+)\.jpg$/)!; const cat = m[1]!; const num = m[2]!;
+    const key = `${cat}-${num}`;
+    const known = knownWorks[key];
+    return { image, category: cat as Exclude<Category, "all">, order: categoryOrder.indexOf(cat) * 1000 + Number(num), year: known?.year ?? "", ru: known?.ru ?? `${categoryNames[cat]!.ru} ${Number(num)}`, en: known?.en ?? `${categoryNames[cat]!.en} ${Number(num)}`, size: known?.size ?? "" };
+  })
+  .sort((a, b) => a.order - b.order);
 
 const copy = {
   ru: { artist: "НАТАЛЬЯ ДИКУНОВА", subtitle: "Художник · Москва / Воронеж", works: "Работы", about: "Об авторе", contact: "Контакты", all: "Все работы", filters: "Направления", buy: "Узнать о покупке", breadcrumb: "Главная / Работы", intro: "Живопись, рисунок и печатная графика о памяти, мифе и человеческом присутствии.", note: "Работы находятся в частных коллекциях России, Европы, США, Индии и Китая, а также в музеях России и Китая.", achievements: "Royal Society of British Artists · 1-е место DEG Exlibris · Guanlan Printmaking Base 2025", categories: ["Все", "Миф артиста", "Китай", "Портреты", "Дети", "Ню", "Печатная графика", "Разное"] },
@@ -77,7 +68,7 @@ function Index() {
   const [ready, setReady] = useState(false);
   const [viewer, setViewer] = useState<number | null>(null);
   const [heroIndex, setHeroIndex] = useState<number>(heroWorks[0]);
-  const heroWork: Work = works[heroIndex] ?? works[0];
+  const heroWork: Work = works[heroIndex] ?? works[0]!;
   useEffect(() => {
     const id = window.setInterval(() => setHeroIndex((cur) => heroWorks[(heroWorks.indexOf(cur as (typeof heroWorks)[number]) + 1) % heroWorks.length] ?? heroWorks[0]), 6000);
     return () => window.clearInterval(id);
@@ -135,7 +126,7 @@ function Index() {
           </div>
           <div className="flex min-h-[58vh] items-center justify-center px-5 py-10 md:px-12">
             <button onClick={() => setViewer(heroIndex)} className="relative aspect-[4/5] w-[min(78vw,26rem)] overflow-hidden bg-muted shadow-2xl" aria-label={heroWork[lang]}>
-              {heroWorks.map((idx) => <img key={idx} src={works[idx].image} alt={works[idx][lang]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${idx === heroIndex ? "opacity-100" : "opacity-0"}`} />)}
+              {heroWorks.map((idx) => <img key={idx} src={works[idx]!.image} alt={works[idx]![lang]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${idx === heroIndex ? "opacity-100" : "opacity-0"}`} />)}
             </button>
             <span className="absolute bottom-6 right-6 hidden text-[10px] uppercase tracking-[.16em] text-muted-foreground md:block">{heroWork[lang]} · {heroWork.year}</span>
           </div>
@@ -171,8 +162,8 @@ function Index() {
 }
 
 const viewerCopy = {
-  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: (typeof works)[number]) => `${w.ru}, ${w.year}. ${w.size}. Оригинальная работа Натальи Дикуновой.` },
-  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: (typeof works)[number]) => `${w.en}, ${w.year}. ${w.size.replace("см", "cm")}. Original work by Natalia Dikunova.` },
+  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: (typeof works)[number]) => `${[w.ru, w.year, w.size].filter(Boolean).join(", ")}. Оригинальная работа Натальи Дикуновой.` },
+  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: (typeof works)[number]) => `${[w.en, w.year, w.size.replace("см", "cm")].filter(Boolean).join(", ")}. Original work by Natalia Dikunova.` },
 };
 const backgrounds = [
   { key: "dark", cls: "bg-foreground text-background" },
@@ -182,7 +173,7 @@ const backgrounds = [
 
 function Viewer({ index, lang, onChange, onClose }: { index: number; lang: Lang; onChange: (i: number) => void; onClose: () => void }) {
   const [bg, setBg] = useState(0);
-  const w: Work = works[index] ?? works[0];
+  const w: Work = works[index] ?? works[0]!;
   const c = viewerCopy[lang];
   const go = (d: number) => onChange((index + d + works.length) % works.length);
   useEffect(() => {
