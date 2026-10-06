@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BlogShell } from "@/components/BlogShell";
-import { blogPosts } from "@/lib/blog";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { postsQuery } from "@/lib/content.functions";
+import { mediaUrl } from "@/lib/media";
 import { SubscribeForm } from "@/components/SubscribeForm";
 
 export const Route = createFileRoute("/blog/")({
@@ -14,10 +16,13 @@ export const Route = createFileRoute("/blog/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),
+  errorComponent: () => <BlogShell back={{ to: "/", label: "Главная" }}><p>Не удалось загрузить блог.</p></BlogShell>,
   component: BlogIndex,
 });
 
 function BlogIndex() {
+  const { data: blogPosts } = useSuspenseQuery(postsQuery);
   return (
     <BlogShell back={{ to: "/", label: "Главная" }}>
       <p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">Главная / Блог</p>
@@ -29,7 +34,7 @@ function BlogIndex() {
         {blogPosts.map((p) => (
           <Link key={p.slug} to="/blog/$slug" params={{ slug: p.slug }} className="group block">
             <div className="aspect-[4/3] overflow-hidden bg-muted">
-              {p.cover ? <img src={p.cover} alt={p.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" /> : <div className="grid h-full place-items-center font-display text-3xl text-muted-foreground">ДН</div>}
+              {p.cover ? <img src={mediaUrl(p.cover)} alt={p.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" /> : <div className="grid h-full place-items-center font-display text-3xl text-muted-foreground">ДН</div>}
             </div>
             <p className="mt-4 text-[10px] uppercase tracking-[.2em] text-muted-foreground">{p.date}</p>
             <h2 className="mt-2 text-base font-medium md:text-lg">{p.title}</h2>
