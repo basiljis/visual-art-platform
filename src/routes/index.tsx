@@ -104,7 +104,7 @@ function Index() {
       </div>
 
       <header className="fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center border-b border-border/60 bg-background/80 px-4 backdrop-blur-md md:px-8">
-        <div className="flex items-center gap-4"><button aria-label="Menu" onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">Menu</span></button><img src={signatureAsset.url} alt="" className="hidden h-12 w-12 object-contain invert transition-[filter] duration-500 dark:invert-0 sm:block" /></div>
+        <div className="flex items-center gap-4"><button aria-label="Menu" onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">Menu</span></button></div>
         <a href="#top" className="text-center font-sans text-sm font-medium tracking-[.22em] sm:text-lg">{t.artist}</a>
         <div className="flex justify-end gap-1">
           <button onClick={() => setLang(lang === "ru" ? "en" : "ru")} className="h-9 w-10 text-xs font-semibold uppercase" aria-label="Language">{lang}</button>
@@ -125,6 +125,7 @@ function Index() {
       <section id="top" className="relative min-h-[92vh] pt-20">
         <div className="relative grid min-h-[calc(92vh-5rem)] grid-cols-1 md:grid-cols-[42%_58%]">
           <div className="relative flex flex-col justify-end px-5 pb-12 pt-16 md:px-8 md:pb-16">
+            <img src={signatureAsset.url} alt="" className="mb-4 h-14 w-14 object-contain invert transition-[filter] duration-500 dark:invert-0 md:h-16 md:w-16" />
             <p className="mb-5 max-w-md animate-reveal text-lg leading-relaxed md:text-2xl">{t.intro}</p>
             <a href="#works" className="flex w-fit items-center gap-3 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.all}<ArrowDown className="size-4"/></a>
           </div>
