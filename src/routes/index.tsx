@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDown, ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-mark.png.asset.json";
 import china1 from "@/assets/china-1.jpg.asset.json";
@@ -49,6 +49,8 @@ const copy = {
   ru: { artist: "НАТАЛЬЯ ДИКУНОВА", subtitle: "Художник · Москва / Воронеж", works: "Работы", about: "Об авторе", contact: "Контакты", all: "Все работы", filters: "Направления", buy: "Узнать о покупке", breadcrumb: "Главная / Работы", intro: "Живопись, рисунок и печатная графика о памяти, мифе и человеческом присутствии.", note: "Работы находятся в частных коллекциях России, Европы, США, Индии и Китая, а также в музеях России и Китая.", achievements: "Royal Society of British Artists · 1-е место DEG Exlibris · Guanlan Printmaking Base 2025", categories: ["Все", "Миф артиста", "Китай", "Портреты", "Дети", "Ню", "Печатная графика", "Разное"] },
   en: { artist: "NATALIA DIKUNOVA", subtitle: "Artist · Moscow / Voronezh", works: "Works", about: "About", contact: "Contact", all: "All works", filters: "Practices", buy: "Purchase enquiry", breadcrumb: "Home / Works", intro: "Painting, drawing and printmaking exploring memory, myth and human presence.", note: "Works are held in private collections across Russia, Europe, the USA, India and China, as well as museums in Russia and China.", achievements: "Royal Society of British Artists · DEG Exlibris 1st prize · Guanlan Printmaking Base 2025", categories: ["All", "Artist’s myth", "China", "Portraits", "Children", "Nude", "Printmaking", "Other"] },
 };
+const heroWorks = [6, 1, 3, 9] as const;
+type Work = (typeof works)[number];
 const categoryKeys: Category[] = ["all", "myth", "china", "portraits", "children", "nu", "print", "other"];
 
 function Index() {
@@ -57,6 +59,13 @@ function Index() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [category, setCategory] = useState<Category>("all");
   const [ready, setReady] = useState(false);
+  const [viewer, setViewer] = useState<number | null>(null);
+  const [heroIndex, setHeroIndex] = useState<number>(heroWorks[0]);
+  const heroWork: Work = works[heroIndex] ?? works[0];
+  useEffect(() => {
+    const id = window.setInterval(() => setHeroIndex((cur) => heroWorks[(heroWorks.indexOf(cur as (typeof heroWorks)[number]) + 1) % heroWorks.length] ?? heroWorks[0]), 6000);
+    return () => window.clearInterval(id);
+  }, []);
 
   useEffect(() => {
     const savedLang = window.localStorage.getItem("dikunova-lang");
@@ -77,14 +86,13 @@ function Index() {
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
       <div className="pointer-events-none fixed inset-0 z-[100] flex animate-preloader flex-col items-center justify-center overflow-hidden bg-foreground text-background" aria-hidden="true">
-        <img src={signatureAsset.url} alt="" className="absolute h-[115%] w-full object-cover opacity-[.07]" />
-        <img src={signatureAsset.url} alt="" className="relative h-40 w-40 object-contain" />
-        <p className="relative mt-5 text-[11px] font-medium uppercase tracking-[.28em]">{t.artist}</p>
+        <img src={signatureAsset.url} alt="" className="h-36 w-36 object-contain dark:invert" />
+        <p className={`mt-5 font-display text-sm tracking-[.24em] transition-opacity ${ready ? "opacity-100" : "opacity-0"}`}>{t.artist} <span className="font-sans text-[11px] lowercase italic tracking-[.12em] opacity-70">artist</span></p>
       </div>
 
       <header className="fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center border-b border-border/60 bg-background/80 px-4 backdrop-blur-md md:px-8">
-        <button aria-label="Menu" onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">Menu</span></button>
-        <a href="#top" className="text-center text-xs font-semibold uppercase tracking-[.2em] sm:text-sm">{t.artist}</a>
+        <div className="flex items-center gap-4"><button aria-label="Menu" onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">Menu</span></button><img src={signatureAsset.url} alt="" className="hidden h-12 w-12 object-contain invert transition-[filter] duration-500 dark:invert-0 sm:block" /></div>
+        <a href="#top" className="text-center font-display text-sm tracking-[.18em] sm:text-lg">{t.artist}</a>
         <div className="flex justify-end gap-1">
           <button onClick={() => setLang(lang === "ru" ? "en" : "ru")} className="h-9 w-10 text-xs font-semibold uppercase" aria-label="Language">{lang}</button>
           <button onClick={() => setDark(!dark)} className="grid size-9 place-items-center" aria-label="Theme">{dark ? <Sun className="size-4"/> : <Moon className="size-4"/>}</button>
@@ -102,15 +110,16 @@ function Index() {
       </div>
 
       <section id="top" className="relative min-h-[92vh] pt-20">
-        <div className="grid min-h-[calc(92vh-5rem)] grid-cols-1 md:grid-cols-[42%_58%]">
+        <div className="relative grid min-h-[calc(92vh-5rem)] grid-cols-1 md:grid-cols-[42%_58%]">
           <div className="relative flex flex-col justify-end px-5 pb-12 pt-16 md:px-8 md:pb-16">
-            <img src={signatureAsset.url} alt="Подпись Натальи Дикуновой" className="absolute left-5 top-10 h-40 w-32 object-contain opacity-80 invert dark:invert-0 md:left-8 md:h-52 md:w-44" />
             <p className="mb-5 max-w-md animate-reveal text-lg leading-relaxed md:text-2xl">{t.intro}</p>
             <a href="#works" className="flex w-fit items-center gap-3 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.all}<ArrowDown className="size-4"/></a>
           </div>
-          <div className="relative min-h-[58vh] overflow-hidden bg-muted">
-            <img src={portraits2.url} alt="Работа Натальи Дикуновой" className="h-full w-full animate-slow-zoom object-cover object-center grayscale-[.12]" />
-            <span className="absolute bottom-5 right-5 text-[10px] uppercase tracking-[.16em] text-primary-foreground">Portraits · 2021</span>
+          <div className="flex min-h-[58vh] items-center justify-center px-5 py-10 md:px-12">
+            <button onClick={() => setViewer(heroIndex)} className="relative aspect-[4/5] w-[min(78vw,26rem)] overflow-hidden bg-muted shadow-2xl" aria-label={heroWork[lang]}>
+              {heroWorks.map((idx) => <img key={idx} src={works[idx].image} alt={works[idx][lang]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${idx === heroIndex ? "opacity-100" : "opacity-0"}`} />)}
+            </button>
+            <span className="absolute bottom-6 right-6 hidden text-[10px] uppercase tracking-[.16em] text-muted-foreground md:block">{heroWork[lang]} · {heroWork.year}</span>
           </div>
         </div>
       </section>
@@ -123,7 +132,7 @@ function Index() {
         </div>
         <div className="grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((work,i)=><article key={`${work.image}-${i}`} className={i%3===1?"lg:pt-24":""}>
-            <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><img src={work.image} alt={work[lang]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"/><a href={`mailto:morrasdream@gmail.com?subject=${encodeURIComponent(`${t.buy}: ${work[lang]}`)}`} className="absolute bottom-3 right-3 grid size-11 translate-y-16 place-items-center bg-background text-foreground transition-transform duration-300 group-hover:translate-y-0" aria-label={t.buy}><ArrowUpRight className="size-5"/></a></div>
+            <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"/></button><a href={`mailto:morrasdream@gmail.com?subject=${encodeURIComponent(`${t.buy}: ${work[lang]}`)}`} className="absolute bottom-3 right-3 grid size-11 translate-y-16 place-items-center bg-background text-foreground transition-transform duration-300 group-hover:translate-y-0" aria-label={t.buy}><ArrowUpRight className="size-5"/></a></div>
             <div className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div><h2 className="text-base font-medium">{work[lang]}</h2><p className="mt-1 text-xs text-muted-foreground">{work.size}</p></div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
         </div>
@@ -138,6 +147,51 @@ function Index() {
         <p className="mt-20 max-w-4xl text-[10px] uppercase leading-5 tracking-[.18em] opacity-60">{t.achievements}</p>
         <div className="h-[clamp(5rem,13vw,12rem)] overflow-hidden"><p className="translate-y-[18%] whitespace-nowrap font-display text-[clamp(5rem,17vw,16rem)] leading-none">DIKUNOVA</p></div>
       </footer>
+      {viewer !== null && <Viewer index={viewer} lang={lang} onChange={setViewer} onClose={() => setViewer(null)} />}
     </main>
+  );
+}
+
+const viewerCopy = {
+  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: (typeof works)[number]) => `${w.ru}, ${w.year}. ${w.size}. Оригинальная работа Натальи Дикуновой.` },
+  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: (typeof works)[number]) => `${w.en}, ${w.year}. ${w.size.replace("см", "cm")}. Original work by Natalia Dikunova.` },
+};
+const backgrounds = [
+  { key: "dark", cls: "bg-foreground text-background" },
+  { key: "light", cls: "bg-background text-foreground" },
+  { key: "muted", cls: "bg-muted text-foreground" },
+] as const;
+
+function Viewer({ index, lang, onChange, onClose }: { index: number; lang: Lang; onChange: (i: number) => void; onClose: () => void }) {
+  const [bg, setBg] = useState(0);
+  const w: Work = works[index] ?? works[0];
+  const c = viewerCopy[lang];
+  const go = (d: number) => onChange((index + d + works.length) % works.length);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") go(-1);
+      if (e.key === "ArrowRight") go(1);
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  });
+  return (
+    <div role="dialog" aria-modal="true" aria-label={w[lang]} className={`fixed inset-0 z-[90] flex flex-col transition-colors duration-500 ${backgrounds[bg]?.cls ?? ""}`}>
+      <div className="flex h-16 items-center justify-between px-5 md:px-8">
+        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[.18em]"><span className="mr-2 opacity-60">{c.bg}</span>{backgrounds.map((b, i) => <button key={b.key} onClick={() => setBg(i)} aria-label={`${c.bg} ${b.key}`} className={`size-5 rounded-full border border-current ${b.cls} ${bg === i ? "ring-2 ring-current ring-offset-2 ring-offset-transparent" : ""}`} />)}</div>
+        <button onClick={onClose} aria-label={c.close}><X className="size-7" /></button>
+      </div>
+      <div className="relative flex min-h-0 flex-1 items-center justify-center px-14 md:px-24">
+        <button onClick={() => go(-1)} aria-label={c.prev} className="absolute left-3 grid size-11 place-items-center md:left-8"><ArrowLeft className="size-6" /></button>
+        <img key={w.image} src={w.image} alt={w[lang]} className="max-h-full max-w-full animate-reveal object-contain shadow-2xl" />
+        <button onClick={() => go(1)} aria-label={c.next} className="absolute right-3 grid size-11 place-items-center md:right-8"><ArrowRight className="size-6" /></button>
+      </div>
+      <div className="grid gap-4 px-5 py-5 md:grid-cols-[1fr_auto] md:items-end md:px-8">
+        <div><h2 className="font-display text-2xl md:text-3xl">{w[lang]}</h2><p className="mt-1 max-w-xl text-sm opacity-70">{c.desc(w)}</p></div>
+        <a href={`mailto:morrasdream@gmail.com?subject=${encodeURIComponent(`${c.buy}: ${w[lang]}`)}`} className="flex w-fit items-center gap-2 border-b border-current pb-1 text-xs uppercase tracking-[.18em]">{c.buy}<ArrowUpRight className="size-4" /></a>
+      </div>
+    </div>
   );
 }
