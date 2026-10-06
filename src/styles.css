@@ -62,6 +62,8 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-red-accent: var(--red-accent);
+  --color-ink: oklch(0.14 0 0);
+  --color-paper: oklch(0.98 0 0);
 }
 
 :root {

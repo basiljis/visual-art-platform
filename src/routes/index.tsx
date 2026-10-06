@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
 import portraitAsset from "@/assets/artist-portrait.png.asset.json";
@@ -171,8 +171,7 @@ function Index() {
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
       <div className="pointer-events-none fixed inset-0 z-[100] flex animate-preloader flex-col items-center justify-center overflow-hidden bg-foreground text-background" aria-hidden="true">
         <img src={signatureAsset.url} alt="" className="h-36 w-36 object-contain dark:invert" />
-        <p className="mt-6 font-sans text-base font-medium uppercase tracking-[.28em]">{t.artist}</p>
-        <p className="mt-2 font-sans text-[11px] lowercase italic tracking-[.14em] opacity-70">artist</p>
+        <p className="mt-6 font-display text-lg tracking-[.18em]">{t.artist} <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.24em] opacity-60">artist</span></p>
       </div>
 
       <header className="fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center border-b border-border/60 bg-background/80 px-4 backdrop-blur-md md:px-8">
@@ -197,7 +196,7 @@ function Index() {
       <section id="top" className="relative min-h-[92vh] pt-20">
         <div className="relative grid min-h-[calc(92vh-5rem)] grid-cols-1 md:grid-cols-[42%_58%]">
           <div className="relative flex flex-col justify-end px-5 pb-12 pt-16 md:px-8 md:pb-16">
-            <img src={signatureAsset.url} alt="" className="mb-4 h-42 w-42 object-contain invert transition-[filter] duration-500 dark:invert-0 md:h-48 md:w-48" />
+            <img src={signatureAsset.url} alt="" className="mb-4 h-60 w-60 object-contain invert transition-[filter] duration-500 dark:invert-0 md:h-72 md:w-72" />
             <p className="mb-5 max-w-md animate-reveal text-lg leading-relaxed md:text-2xl">{t.intro}</p>
             <a href="#works" className="flex w-fit items-center gap-3 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.all}<ArrowDown className="size-4"/></a>
           </div>
@@ -231,12 +230,12 @@ function Index() {
         <h2 className="font-display text-5xl md:text-7xl">{t.about}</h2><div className="mt-10 md:mt-0"><p className="max-w-xl text-xl leading-relaxed md:text-3xl">{t.note}</p><p className="mt-10 text-xs uppercase leading-7 tracking-[.12em] text-muted-foreground">St. Petersburg Academy of Fine Arts<br/>2024 — «За три моря», МСХ, Москва<br/>2023 — Royal Society of British Artists, London<br/>2022 — DEG Exlibris, Germany — 1st prize</p><button onClick={() => setAboutOpen(true)} className="mt-10 flex w-fit items-center gap-2 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.more}<ArrowUpRight className="size-4"/></button></div>
       </section>
 
-      <footer id="contact" className="relative overflow-hidden bg-foreground px-5 pb-0 pt-20 text-background md:px-8 md:pt-28">
-        <div className="grid gap-14 md:grid-cols-2"><h2 className="font-display text-5xl md:text-7xl">{t.contact}</h2><div className="space-y-3 text-lg"><a className="block border-b border-background/30 pb-3" href="mailto:morrasdream@gmail.com">morrasdream@gmail.com</a><a className="block border-b border-background/30 pb-3" href="tel:+79268215342">+7 926 821-53-42</a></div></div>
+      <footer id="contact" className="relative overflow-hidden bg-ink px-5 pb-0 pt-20 text-paper md:px-8 md:pt-28">
+        <div className="grid gap-14 md:grid-cols-2"><div className="flex items-center gap-6"><h2 className="font-display text-5xl md:text-7xl">{t.contact}</h2><img src={signatureAsset.url} alt="Наталья Дикунова" className="h-20 w-20 object-contain md:h-28 md:w-28" /></div><div className="space-y-3 text-lg"><a className="block border-b border-paper/30 pb-3" href="mailto:morrasdream@gmail.com">morrasdream@gmail.com</a><a className="block border-b border-paper/30 pb-3" href="tel:+79268215342">+7 926 821-53-42</a><div className="flex flex-wrap gap-6 pt-3 text-xs uppercase tracking-[.18em]"><a href="https://www.instagram.com/natasha_dikunova_zipalova" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Instagram<ArrowUpRight className="size-3"/></a><a href="https://www.facebook.com/share/15dxi5pfo6/" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Facebook<ArrowUpRight className="size-3"/></a><a href="https://t.me/Natasha_Dikunova_Zipalova" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Telegram<ArrowUpRight className="size-3"/></a></div></div></div>
         <p className="mt-20 max-w-4xl text-[10px] uppercase leading-5 tracking-[.18em] opacity-60">{t.achievements}</p>
-        <img src={signatureAsset.url} alt="Наталья Дикунова" className="mt-8 h-16 w-16 object-contain invert" />
         <div className="h-[clamp(5rem,13vw,12rem)] overflow-hidden"><p className="translate-y-[18%] whitespace-nowrap font-display text-[clamp(5rem,17vw,16rem)] leading-none">DIKUNOVA</p></div>
       </footer>
+      <div className="fixed bottom-5 right-5 z-40 flex flex-col gap-2"><button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label={lang==="ru"?"В начало":"To top"} className="grid size-11 place-items-center border border-border bg-background/80 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowUp className="size-4"/></button><button onClick={() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" })} aria-label={lang==="ru"?"В конец":"To bottom"} className="grid size-11 place-items-center border border-border bg-background/80 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowDown className="size-4"/></button></div>
       {viewer !== null && <Viewer index={viewer} lang={lang} onChange={setViewer} onClose={() => setViewer(null)} />}
       {aboutOpen && <AboutModal lang={lang} onClose={() => setAboutOpen(false)} />}
     </main>
@@ -248,9 +247,9 @@ const viewerCopy = {
   en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: (typeof works)[number]) => `${[w.en, w.year, w.size.replace("см", "cm")].filter(Boolean).join(", ")}. Original work by Natalia Dikunova.` },
 };
 const backgrounds = [
-  { key: "dark", cls: "bg-foreground text-background" },
-  { key: "light", cls: "bg-background text-foreground" },
-  { key: "muted", cls: "bg-muted text-foreground" },
+  { key: "dark", cls: "bg-ink text-paper" },
+  { key: "light", cls: "bg-paper text-ink" },
+  { key: "muted", cls: "bg-[oklch(0.9_0_0)] text-ink" },
 ] as const;
 
 function Viewer({ index, lang, onChange, onClose }: { index: number; lang: Lang; onChange: (i: number) => void; onClose: () => void }) {
