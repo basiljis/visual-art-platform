@@ -4,4 +4,4 @@
 - [x] Mural post: 2 videos
 - [x] Mural post: clickable press links
 - [x] Footer name click → smooth scroll to top
-- [ ] Mobile tap access to Миф артиста projects submenu
+- [x] Mobile tap access to Миф артиста projects submenu

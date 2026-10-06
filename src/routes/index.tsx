@@ -321,7 +321,7 @@ function Index() {
           <p className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.filters}</p>
           <div className="flex flex-wrap gap-x-6 gap-y-3">{categoryKeys.map((key,i)=>{const btn=<button key={key} onClick={()=>{setCategory(key); setProject("all");}} className={`text-sm transition-opacity ${category===key?"opacity-100 underline underline-offset-8":"opacity-45 hover:opacity-100"}`}>{t.categories[i]}</button>; return key!=="myth"?btn:(
             <div key={key} className="group/sub relative">{btn}
-              <div className="invisible absolute left-0 top-full z-30 pt-3 opacity-0 transition-opacity duration-200 group-hover/sub:visible group-hover/sub:opacity-100 group-focus-within/sub:visible group-focus-within/sub:opacity-100">
+              <div className="invisible absolute left-0 top-full z-30 pt-3 [@media(hover:none)]:hidden opacity-0 transition-opacity duration-200 group-hover/sub:visible group-hover/sub:opacity-100 group-focus-within/sub:visible group-focus-within/sub:opacity-100">
                 <div className="flex w-max flex-col gap-1 border border-border bg-background p-3 shadow-sm">{mythProjects.map((p)=><button key={p.key} onClick={()=>openProject(p.key)} className="text-left text-xs uppercase tracking-[.12em] opacity-70 transition-colors hover:text-red-accent hover:opacity-100"><span className="text-red-accent">/ </span>{p[lang]}</button>)}</div>
               </div>
             </div>);})}</div>
