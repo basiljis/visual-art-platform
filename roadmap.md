@@ -8,3 +8,4 @@
 - [ ] Purchase enquiry form → email morrasdream@gmail.com
 - [ ] Keyboard-focus tooltips + accessible labels on icon buttons
 - [ ] Translate tooltips and Миф артиста submenu labels
+- [ ] Style tooltips in site style
