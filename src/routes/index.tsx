@@ -286,3 +286,42 @@ function Viewer({ index, lang, onChange, onClose }: { index: number; lang: Lang;
     </div>
   );
 }
+
+function AboutModal({ lang, onClose }: { lang: Lang; onClose: () => void }) {
+  const t = copy[lang];
+  const bio = aboutBio[lang];
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  });
+  return (
+    <div role="dialog" aria-modal="true" aria-label={t.about} className="fixed inset-0 z-[90] flex flex-col bg-background/95 backdrop-blur-sm animate-reveal" onClick={onClose}>
+      <div className="flex h-16 shrink-0 items-center justify-between border-b border-border px-5 md:px-8">
+        <span className="text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.about}</span>
+        <button onClick={onClose} aria-label={t.close}><X className="size-7" /></button>
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="mx-auto max-w-4xl px-5 py-12 md:px-8 md:py-20">
+          <div className="grid gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] md:gap-16">
+            <div>
+              <h2 className="font-display text-4xl md:text-6xl">{t.artist}</h2>
+              <p className="mt-3 font-sans text-sm lowercase italic tracking-[.24em] text-muted-foreground">{bio.role}</p>
+              <p className="mt-1 text-xs uppercase tracking-[.18em] text-muted-foreground">{bio.academy}</p>
+            </div>
+            <img src={portraitAsset.url} alt={t.artist} className="aspect-[4/5] w-full max-w-[16rem] object-cover shadow-2xl md:justify-self-end" />
+          </div>
+          <div className="mt-14 space-y-10 md:mt-20">
+            {bio.sections.map((section) => (
+              <section key={section.title}>
+                <h3 className="mb-4 border-b border-border pb-2 text-xs uppercase tracking-[.2em] text-muted-foreground">{section.title}</h3>
+                <ul className="space-y-2">{section.items.map((item) => <li key={item} className="text-sm leading-relaxed">{item}</li>)}</ul>
+              </section>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
