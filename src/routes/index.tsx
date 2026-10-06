@@ -142,14 +142,14 @@ const projectMeta: Record<string, { ru: string; en: string; year: string; size: 
 const projectWorks = Object.entries(projectFiles).map(([path, image]) => {
   const m = path.match(/(vampire|parts)-(\d+)\.jpg$/)!; const project = m[1] as ProjectKey; const num = Number(m[2]);
   const meta = projectMeta[`${project}-${m[2]}`] ?? { ru: `КОЛОКОЛЬНИКОВ ${num}`, en: `KOLOKOLNIKOV ${num}`, year: "", size: "" };
-  return { image, category: "myth" as Exclude<Category, "all">, project: project as ProjectKey | undefined, order: (project === "vampire" ? 0 : 100) + num, ...meta };
+  return { image, category: "myth" as Exclude<Category, "all">, project: project as ProjectKey | undefined, order: (project === "vampire" ? 0 : 100) + num, cover: num === 1, ...meta };
 });
 const works = Object.entries(workFiles)
   .map(([path, image]) => {
     const m = path.match(/(\w+)-(\d+)\.jpg$/)!; const cat = m[1]!; const num = m[2]!;
     const key = `${cat}-${num}`;
     const known = knownWorks[key];
-    return { image, category: cat as Exclude<Category, "all">, order: categoryOrder.indexOf(cat) * 1000 + Number(num), year: known?.year ?? "", ru: known?.ru ?? `${categoryNames[cat]!.ru} ${Number(num)}`, en: known?.en ?? `${categoryNames[cat]!.en} ${Number(num)}`, size: known?.size ?? "", project: undefined as ProjectKey | undefined };
+    return { image, category: cat as Exclude<Category, "all">, order: categoryOrder.indexOf(cat) * 1000 + Number(num), year: known?.year ?? "", ru: known?.ru ?? `${categoryNames[cat]!.ru} ${Number(num)}`, en: known?.en ?? `${categoryNames[cat]!.en} ${Number(num)}`, size: known?.size ?? "", project: undefined as ProjectKey | undefined, cover: false };
   })
   .filter((w) => w.category !== "myth")
   .concat(projectWorks)
@@ -268,7 +268,9 @@ function Index() {
   useEffect(() => { if (ready) window.localStorage.setItem("dikunova-lang", lang); }, [lang, ready]);
 
   const t = copy[lang];
-  const filtered = category === "all" ? works : works.filter((work) => work.category === category && (category !== "myth" || project === "all" || work.project === project));
+  const filtered = category === "all" ? works : works.filter((work) => work.category === category && (category !== "myth" || (project === "all" ? work.cover : work.project === project)));
+  const visible = category === "all" ? works.filter((w) => w.category !== "myth" || w.cover) : filtered;
+  const openProject = (key: ProjectKey) => { setCategory("myth"); setProject(key); document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); };
 
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
@@ -314,10 +316,15 @@ function Index() {
       </section>
 
       <section id="works" className="border-t border-border px-5 py-20 md:px-8 md:py-28">
-        <div className="mb-14 flex items-end justify-between gap-6"><div><p className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.breadcrumb}</p><h1 className="font-display text-5xl md:text-8xl">{t.works}</h1></div><span className="text-sm tabular-nums">{String(filtered.length).padStart(2,"0")}</span></div>
+        <div className="mb-14 flex items-end justify-between gap-6"><div><p className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.breadcrumb}</p><h1 className="font-display text-5xl md:text-8xl">{t.works}</h1></div><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
         <div className="mb-16 border-y border-border py-5">
           <p className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.filters}</p>
-          <div className="flex flex-wrap gap-x-6 gap-y-3">{categoryKeys.map((key,i)=><button key={key} onClick={()=>{setCategory(key); setProject("all");}} className={`text-sm transition-opacity ${category===key?"opacity-100 underline underline-offset-8":"opacity-45 hover:opacity-100"}`}>{t.categories[i]}</button>)}</div>
+          <div className="flex flex-wrap gap-x-6 gap-y-3">{categoryKeys.map((key,i)=>{const btn=<button key={key} onClick={()=>{setCategory(key); setProject("all");}} className={`text-sm transition-opacity ${category===key?"opacity-100 underline underline-offset-8":"opacity-45 hover:opacity-100"}`}>{t.categories[i]}</button>; return key!=="myth"?btn:(
+            <div key={key} className="group/sub relative">{btn}
+              <div className="invisible absolute left-0 top-full z-30 pt-3 opacity-0 transition-opacity duration-200 group-hover/sub:visible group-hover/sub:opacity-100 group-focus-within/sub:visible group-focus-within/sub:opacity-100">
+                <div className="flex w-max flex-col gap-1 border border-border bg-background p-3 shadow-sm">{mythProjects.map((p)=><button key={p.key} onClick={()=>openProject(p.key)} className="text-left text-xs uppercase tracking-[.12em] opacity-70 transition-colors hover:text-red-accent hover:opacity-100"><span className="text-red-accent">/ </span>{p[lang]}</button>)}</div>
+              </div>
+            </div>);})}</div>
           {category === "myth" && (
             <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-border pt-4">
               <span className="text-[10px] uppercase tracking-[.18em] text-red-accent">/</span>
@@ -328,9 +335,9 @@ function Index() {
           )}
         </div>
         <div className="grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((work,i)=><article key={`${work.image}-${i}`} className={i%3===1?"lg:pt-24":""}>
+          {visible.map((work,i)=><article key={`${work.image}-${i}`} className={i%3===1?"lg:pt-24":""}>
             <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"/></button><a href={`mailto:morrasdream@gmail.com?subject=${encodeURIComponent(`${t.buy}: ${work[lang]}`)}`} className="absolute bottom-3 right-3 grid size-11 translate-y-16 place-items-center bg-background text-foreground transition-transform duration-300 group-hover:translate-y-0" aria-label={t.buy}><ArrowUpRight className="size-5"/></a></div>
-            <div className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div><h2 className="text-base font-medium">{work[lang]}</h2><p className="mt-1 text-xs text-muted-foreground">{work.size}</p></div><span className="text-xs text-muted-foreground">{work.year}</span></div>
+            <div className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div><h2 className="text-base font-medium">{work[lang]}</h2><p className="mt-1 text-xs text-muted-foreground">{work.size}</p>{work.cover && project === "all" && work.project && <button onClick={()=>openProject(work.project!)} className="mt-3 flex items-center gap-1 text-[11px] uppercase tracking-[.16em] transition-colors hover:text-red-accent">{t.more} · {mythProjects.find((p)=>p.key===work.project)![lang]}<ArrowUpRight className="size-3"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
         </div>
         {category !== "all" && (
