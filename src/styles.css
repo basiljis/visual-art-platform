@@ -164,3 +164,5 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0ms !important; scroll-behavior: auto !important; }
 }
+
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
