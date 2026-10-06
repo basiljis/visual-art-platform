@@ -51,7 +51,7 @@ export function RichEditor({ value, onChange }: { value: string; onChange: (html
     ["Нумерованный список", <ListOrdered className="size-4" />, () => editor.chain().focus().toggleOrderedList().run(), editor.isActive("orderedList")],
     ["Цитата", <Quote className="size-4" />, () => editor.chain().focus().toggleBlockquote().run(), editor.isActive("blockquote")],
     ["Разделитель", <Minus className="size-4" />, () => editor.chain().focus().setHorizontalRule().run(), false],
-    ["Ссылка", <Link2 className="size-4" />, () => { const url = window.prompt("Адрес ссылки", editor.getAttributes("link").href ?? "https://"); if (url === null) return; if (!url) editor.chain().focus().unsetLink().run(); else editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run(); }, editor.isActive("link")],
+    ["Ссылка", <Link2 className="size-4" />, () => { const url = window.prompt("Адрес ссылки", editor.getAttributes("link")["href"] ?? "https://"); if (url === null) return; if (!url) editor.chain().focus().unsetLink().run(); else editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run(); }, editor.isActive("link")],
     ["Фото", <ImagePlus className="size-4" />, () => imgInput.current?.click(), false],
     ["Видео", <Film className="size-4" />, () => vidInput.current?.click(), false],
     ["Отменить", <Undo2 className="size-4" />, () => editor.chain().focus().undo().run(), false],
