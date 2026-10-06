@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
+import portraitAsset from "@/assets/artist-portrait.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
