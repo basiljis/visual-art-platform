@@ -280,7 +280,7 @@ function Index() {
       </div>
 
       <header className="fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center border-b border-border/60 bg-background/80 px-4 backdrop-blur-md md:px-8">
-        <div className="flex items-center gap-4"><button aria-label="Menu" onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">Menu</span></button></div>
+        <div className="flex items-center gap-4"><button aria-label="Menu" title="Menu" onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">Menu</span></button></div>
         <a href="#top" className="whitespace-nowrap text-center font-display text-[11px] tracking-[.12em] sm:text-lg sm:tracking-[.18em]">{t.artist} <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-[10px] lowercase tracking-[.2em] opacity-60 sm:text-xs">artist</span></a>
         <div className="flex justify-end gap-1">
           <button onClick={() => setLang(lang === "ru" ? "en" : "ru")} className="h-9 w-10 text-xs font-semibold uppercase" aria-label="Language">{lang}</button>
@@ -336,7 +336,7 @@ function Index() {
         </div>
         <div className="grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((work,i)=><article key={`${work.image}-${i}`} className={i%3===1?"lg:pt-24":""}>
-            <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"/></button><a href={`mailto:morrasdream@gmail.com?subject=${encodeURIComponent(`${t.buy}: ${work[lang]}`)}`} className="absolute bottom-3 right-3 grid size-11 translate-y-16 place-items-center bg-background text-foreground transition-transform duration-300 group-hover:translate-y-0" aria-label={t.buy}><ArrowUpRight className="size-5"/></a></div>
+            <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"/></button><a href={`mailto:morrasdream@gmail.com?subject=${encodeURIComponent(`${t.buy}: ${work[lang]}`)}`} className="absolute bottom-3 right-3 grid size-11 translate-y-16 place-items-center bg-background text-foreground transition-transform duration-300 group-hover:translate-y-0" aria-label={t.buy} title={t.buy}><ArrowUpRight className="size-5"/></a></div>
             <div className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div><h2 className="text-base font-medium">{work[lang]}</h2><p className="mt-1 text-xs text-muted-foreground">{work.size}</p>{work.cover && project === "all" && work.project && <button onClick={()=>openProject(work.project!)} className="mt-3 flex items-center gap-1 text-[11px] uppercase tracking-[.16em] transition-colors hover:text-red-accent">{t.more} · {mythProjects.find((p)=>p.key===work.project)![lang]}<ArrowUpRight className="size-3"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
         </div>
@@ -405,7 +405,7 @@ function Viewer({ index, lang, onChange, onClose }: { index: number; lang: Lang;
     <div role="dialog" aria-modal="true" aria-label={w[lang]} className={`fixed inset-0 z-[90] flex flex-col transition-colors duration-500 ${backgrounds[bg]?.cls ?? ""}`}>
       <div className="flex h-16 items-center justify-between px-5 md:px-8">
         <div className="flex items-center gap-2 text-[10px] uppercase tracking-[.18em]"><span className="mr-2 opacity-60">{c.bg}</span>{backgrounds.map((b, i) => <button key={b.key} onClick={() => setBg(i)} aria-label={`${c.bg} ${b.key}`} className={`size-5 rounded-full border border-current ${b.cls} ${bg === i ? "ring-2 ring-current ring-offset-2 ring-offset-transparent" : ""}`} />)}</div>
-        <button onClick={onClose} aria-label={c.close}><X className="size-7" /></button>
+        <button onClick={onClose} aria-label={c.close} title={c.close}><X className="size-7" /></button>
       </div>
       <div className="relative flex min-h-0 flex-1 items-center justify-center px-2 md:px-24">
         <button onClick={() => go(-1)} aria-label={c.prev} className="absolute left-1 z-10 grid size-11 bg-current/0 place-items-center md:left-8"><ArrowLeft className="size-6" /></button>
@@ -433,7 +433,7 @@ function AboutModal({ lang, onClose }: { lang: Lang; onClose: () => void }) {
     <div role="dialog" aria-modal="true" aria-label={t.about} className="fixed inset-0 z-[90] flex flex-col bg-background/95 backdrop-blur-sm animate-reveal" onClick={onClose}>
       <div className="flex h-16 shrink-0 items-center justify-between border-b border-border px-5 md:px-8">
         <span className="text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.about}</span>
-        <button onClick={onClose} aria-label={t.close}><X className="size-7" /></button>
+        <button onClick={onClose} aria-label={t.close} title={t.close}><X className="size-7" /></button>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="mx-auto max-w-4xl px-5 py-12 md:px-8 md:py-20">
