@@ -217,6 +217,13 @@ function Index() {
             </div>
           )}
         </div>
+        {q && visible.length === 0 && (
+          <div className="mx-auto max-w-md border-y border-border py-14 text-center">
+            <p className="font-display text-3xl">{lang==="ru"?"Ничего не найдено":"Nothing found"}</p>
+            <p className="mt-3 text-sm text-muted-foreground">{lang==="ru"?`Нет работ с названием «${query.trim()}». Попробуйте другое слово.`:`No works titled “${query.trim()}”. Try another word.`}</p>
+            <button type="button" onClick={()=>setQuery("")} className="mt-6 inline-flex items-center gap-2 border-b border-current pb-1 text-xs uppercase tracking-[.18em] transition-colors hover:text-red-accent"><X className="size-3.5"/>{lang==="ru"?"Очистить поиск":"Clear search"}</button>
+          </div>
+        )}
         <div className="grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((work,i)=><article key={`${work.image}-${i}`} className={i%3===1?"lg:pt-24":""}>
             <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"/></button><button type="button" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 translate-y-16 place-items-center bg-background text-foreground transition-transform duration-300 group-hover:translate-y-0" aria-label={t.buy} data-tip={t.buy}><ArrowUpRight className="size-5"/></button></div>

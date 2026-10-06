@@ -4,3 +4,4 @@
 - [ ] Mobile fixes: footer signature overlaps contacts; general mobile pass
 - [ ] Footer DIKUNOVA fits screen width on mobile (no right clipping)
 - [ ] Mobile hero: intro text beside the signature, stylish
+- [x] Search: empty-state message + clear button
