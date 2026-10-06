@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUp, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
@@ -271,6 +271,7 @@ function Index() {
         <nav className="flex h-[calc(100%-5rem)] flex-col justify-between px-5 py-8 md:px-10">
           <div className="flex flex-col">
             {[t.works,t.about,t.contact].map((item, i) => <a key={item} href={i===0?"#works":i===1?"#about":"#contact"} onClick={() => setMenuOpen(false)} className="group flex items-center justify-between border-b border-paper/25 py-3 font-display text-[clamp(2.5rem,8vw,7.5rem)] leading-none"><span>{item}</span><ArrowUpRight className="size-8 opacity-0 transition-opacity group-hover:opacity-100 md:size-14"/></a>)}
+            <Link to="/blog" onClick={() => setMenuOpen(false)} className="group flex items-center justify-between border-b border-paper/25 py-3 font-display text-[clamp(2.5rem,8vw,7.5rem)] leading-none"><span>{lang==="ru"?"Блог":"Blog"}</span><ArrowUpRight className="size-8 opacity-0 transition-opacity group-hover:opacity-100 md:size-14"/></Link>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3 text-[10px] uppercase tracking-[.18em]"><span>© 2026</span><span className="flex gap-4"><a href="https://www.instagram.com/natasha_dikunova_zipalova" target="_blank" rel="noreferrer" className="hover:text-red-accent">Instagram</a><a href="https://www.facebook.com/share/15dxi5pfo6/" target="_blank" rel="noreferrer" className="hover:text-red-accent">Facebook</a><a href="https://t.me/Natasha_Dikunova_Zipalova" target="_blank" rel="noreferrer" className="hover:text-red-accent">Telegram</a></span></div>
         </nav>
