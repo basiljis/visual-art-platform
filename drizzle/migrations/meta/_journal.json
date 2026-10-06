@@ -8,6 +8,13 @@
       "when": 1791302474990,
       "tag": "0000_create_blog_subscribers",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791303651500,
+      "tag": "0001_create_purchase_enquiries",
+      "breakpoints": true
     }
   ]
 }

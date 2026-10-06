@@ -166,3 +166,35 @@
 }
 
 html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+
+/* Site tooltips: shown on hover and keyboard focus */
+@layer base { [data-tip] { position: relative; } }
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 10px);
+  transform: translate(-50%, -4px);
+  z-index: 120;
+  pointer-events: none;
+  white-space: nowrap;
+  padding: 6px 10px 6px 12px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  border-left: 2px solid var(--red-accent);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  opacity: 0;
+  transition: opacity .2s ease, transform .2s ease;
+}
+[data-tip]:hover::after,
+[data-tip]:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+[data-tip-pos="left"]::after { left: auto; right: calc(100% + 10px); top: 50%; transform: translate(4px, -50%); }
+[data-tip-pos="left"]:hover::after,
+[data-tip-pos="left"]:focus-visible::after { transform: translate(0, -50%); }
+@media (hover: none) { [data-tip]:hover::after { opacity: 0; } }
+[data-tip]:focus-visible { outline: 1px solid var(--red-accent); outline-offset: 3px; }

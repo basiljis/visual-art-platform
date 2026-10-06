@@ -13,3 +13,4 @@
 
 - Blog posts live in src/lib/blog-posts.json with images in src/assets/blog/, rendered by /blog and /blog/$slug routes — static content, no backend needed.
 - Blog subscriptions are inserted by a server function with the admin client; blog_subscribers has RLS on and no public policies.
+- Purchase enquiries are saved by a server function (admin client) into purchase_enquiries (RLS on, no public policies); emailing them needs a mail connection.
