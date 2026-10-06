@@ -5,7 +5,7 @@
 - [x] Mural post: clickable press links
 - [x] Footer name click → smooth scroll to top
 - [x] Mobile tap access to Миф артиста projects submenu
-- [ ] Purchase enquiry form → email morrasdream@gmail.com
-- [ ] Keyboard-focus tooltips + accessible labels on icon buttons
-- [ ] Translate tooltips and Миф артиста submenu labels
-- [ ] Style tooltips in site style
+- [x] Purchase enquiry form → email morrasdream@gmail.com
+- [x] Keyboard-focus tooltips + accessible labels on icon buttons
+- [x] Translate tooltips and Миф артиста submenu labels
+- [x] Style tooltips in site style
