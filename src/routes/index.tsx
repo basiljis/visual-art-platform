@@ -162,8 +162,8 @@ function Index() {
 }
 
 const viewerCopy = {
-  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: (typeof works)[number]) => `${w.ru}, ${w.year}. ${w.size}. Оригинальная работа Натальи Дикуновой.` },
-  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: (typeof works)[number]) => `${w.en}, ${w.year}. ${w.size.replace("см", "cm")}. Original work by Natalia Dikunova.` },
+  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: (typeof works)[number]) => `${[w.ru, w.year, w.size].filter(Boolean).join(", ")}. Оригинальная работа Натальи Дикуновой.` },
+  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: (typeof works)[number]) => `${[w.en, w.year, w.size.replace("см", "cm")].filter(Boolean).join(", ")}. Original work by Natalia Dikunova.` },
 };
 const backgrounds = [
   { key: "dark", cls: "bg-foreground text-background" },
