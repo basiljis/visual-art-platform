@@ -322,20 +322,20 @@ function Index() {
       <section id="works" className="border-t border-border px-5 py-20 md:px-8 md:py-28">
         <div className="mb-14 flex items-end justify-between gap-6"><div><p className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.breadcrumb}</p><h1 className="font-display text-5xl md:text-8xl">{t.works}</h1></div><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
         <div className="mb-16 border-y border-border py-5">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-            <p className="text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.filters}</p>
-            <label className="group/search flex w-full items-center gap-2 border-b border-border pb-1 transition-colors focus-within:border-red-accent sm:w-64">
-              <span className="text-xs text-red-accent">/</span>
-              <input type="search" value={query} onChange={(e)=>setQuery(e.target.value)} placeholder={lang==="ru"?"Поиск по названию":"Search by title"} aria-label={lang==="ru"?"Поиск по названию работы":"Search by work title"} className="w-full bg-transparent text-xs uppercase tracking-[.12em] outline-none placeholder:normal-case placeholder:tracking-normal placeholder:text-muted-foreground" />
-              {query && <button type="button" onClick={()=>setQuery("")} aria-label={lang==="ru"?"Очистить":"Clear"} data-tip={lang==="ru"?"Очистить":"Clear"} className="text-xs opacity-50 hover:opacity-100">✕</button>}
-            </label>
-          </div>
+          <p className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.filters}</p>
+          <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap gap-x-6 gap-y-3">{categoryKeys.map((key,i)=>{const btn=<button key={key} onClick={()=>{setCategory(key); setProject("all");}} className={`text-sm transition-opacity ${category===key?"opacity-100 underline underline-offset-8":"opacity-45 hover:opacity-100"}`}>{t.categories[i]}</button>; return key!=="myth"?btn:(
             <div key={key} className="group/sub relative">{btn}
               <div className="invisible absolute left-0 top-full z-30 pt-3 [@media(hover:none)]:hidden opacity-0 transition-opacity duration-200 group-hover/sub:visible group-hover/sub:opacity-100 group-focus-within/sub:visible group-focus-within/sub:opacity-100">
                 <div className="flex w-max flex-col gap-1 border border-border bg-background p-3 shadow-sm">{mythProjects.map((p)=><button key={p.key} onClick={()=>openProject(p.key)} className="text-left text-xs uppercase tracking-[.12em] opacity-70 transition-colors hover:text-red-accent hover:opacity-100"><span className="text-red-accent">/ </span>{p[lang]}</button>)}</div>
               </div>
             </div>);})}</div>
+            <label className="flex w-full items-center gap-2 border-b border-border pb-1 transition-colors focus-within:border-red-accent sm:w-64">
+              <span className="text-xs text-red-accent">/</span>
+              <input type="search" value={query} onChange={(e)=>setQuery(e.target.value)} placeholder={lang==="ru"?"Поиск по названию":"Search by title"} aria-label={lang==="ru"?"Поиск по названию работы":"Search by work title"} className="w-full bg-transparent text-xs uppercase tracking-[.12em] outline-none placeholder:normal-case placeholder:tracking-normal placeholder:text-muted-foreground" />
+              {query && <button type="button" onClick={()=>setQuery("")} aria-label={lang==="ru"?"Очистить":"Clear"} data-tip={lang==="ru"?"Очистить":"Clear"} className="text-xs opacity-50 hover:opacity-100">✕</button>}
+            </label>
+          </div>
           {category === "myth" && (
             <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-border pt-4">
               <span className="text-[10px] uppercase tracking-[.18em] text-red-accent">/</span>
