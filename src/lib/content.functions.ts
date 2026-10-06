@@ -33,7 +33,7 @@ export const getGallery = createServerFn({ method: "GET" }).handler(async () => 
 
 export const getPosts = createServerFn({ method: "GET" }).handler(async () => {
   const sb = await publicClient();
-  const { data, error } = await sb.from("blog_posts").select("id,slug,title,excerpt,date,cover,sort,published").eq("published", true).order("sort", { ascending: false });
+  const { data, error } = await sb.from("blog_posts").select("id,slug,title,excerpt,date,cover,sort,published").eq("published", true).order("sort");
   if (error) throw new Error(error.message);
   return data as Omit<PostRow, "content_html">[];
 });
@@ -42,7 +42,7 @@ export const getPost = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ slug: z.string().min(1).max(200) }).parse(d))
   .handler(async ({ data }) => {
     const sb = await publicClient();
-    const { data: rows, error } = await sb.from("blog_posts").select("*").eq("published", true).order("sort", { ascending: false });
+    const { data: rows, error } = await sb.from("blog_posts").select("*").eq("published", true).order("sort");
     if (error) throw new Error(error.message);
     const list = rows as PostRow[];
     const i = list.findIndex((p) => p.slug === data.slug);
