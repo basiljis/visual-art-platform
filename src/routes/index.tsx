@@ -235,7 +235,7 @@ function Index() {
         <p className="mt-20 max-w-4xl text-[10px] uppercase leading-5 tracking-[.18em] opacity-60">{t.achievements}</p>
         <div className="h-[clamp(5rem,13vw,12rem)] overflow-hidden"><p className="translate-y-[18%] whitespace-nowrap font-display text-[clamp(5rem,17vw,16rem)] leading-none">DIKUNOVA</p></div>
       </footer>
-      <div className="fixed bottom-4 right-3 z-40 flex flex-col gap-1.5 md:bottom-5 md:right-5 md:gap-2"><button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label={lang==="ru"?"В начало":"To top"} className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowUp className="size-4"/></button><button onClick={() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" })} aria-label={lang==="ru"?"В конец":"To bottom"} className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowDown className="size-4"/></button></div>
+      <div className="fixed bottom-4 right-3 z-40 flex flex-col gap-1.5 md:bottom-5 md:right-5 md:gap-2"><button onClick={() => slowScroll(0)} aria-label={lang==="ru"?"В начало":"To top"} className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowUp className="size-4"/></button><button onClick={() => slowScroll(document.documentElement.scrollHeight - window.innerHeight)} aria-label={lang==="ru"?"В конец":"To bottom"} className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowDown className="size-4"/></button></div>
       {viewer !== null && <Viewer index={viewer} lang={lang} onChange={setViewer} onClose={() => setViewer(null)} />}
       {aboutOpen && <AboutModal lang={lang} onClose={() => setAboutOpen(false)} />}
     </main>
@@ -251,6 +251,21 @@ const backgrounds = [
   { key: "light", cls: "bg-paper text-ink" },
   { key: "muted", cls: "bg-[oklch(0.9_0_0)] text-ink" },
 ] as const;
+
+function slowScroll(target: number) {
+  const html = document.documentElement;
+  const start = window.scrollY, dist = target - start;
+  const duration = Math.min(2600, 1200 + Math.abs(dist) / 8);
+  const t0 = performance.now();
+  html.style.scrollBehavior = "auto";
+  const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const step = (now: number) => {
+    const p = Math.min(1, (now - t0) / duration);
+    window.scrollTo(0, start + dist * ease(p));
+    if (p < 1) requestAnimationFrame(step); else html.style.scrollBehavior = "";
+  };
+  requestAnimationFrame(step);
+}
 
 function Viewer({ index, lang, onChange, onClose }: { index: number; lang: Lang; onChange: (i: number) => void; onClose: () => void }) {
   const [bg, setBg] = useState(0);
