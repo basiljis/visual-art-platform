@@ -1,5 +1,8 @@
 import { EnquiryModal } from "@/components/EnquiryModal";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { galleryQuery, type CategoryRow, type WorkRow } from "@/lib/content.functions";
+import { mediaUrl } from "@/lib/media";
 import { ArrowDown, ArrowUp, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Settings, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
@@ -14,156 +17,21 @@ export const Route = createFileRoute("/")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ]}),
+  loader: ({ context }) => context.queryClient.ensureQueryData(galleryQuery),
+  errorComponent: () => <div className="grid min-h-screen place-items-center p-8 text-sm">Не удалось загрузить галерею. Обновите страницу.</div>,
   component: Index,
 });
 
 type Lang = "ru" | "en";
-type Category = "all" | "myth" | "china" | "portraits" | "children" | "nu" | "print" | "other";
-
-const workFiles = import.meta.glob("@/assets/works/site/*.jpg", { eager: true, import: "default" }) as Record<string, string>;
-const knownWorks: Record<string, { year: string; ru: string; en: string; size: string }> = {
-  "myth-01": { year: "2025", ru: "Вампир", en: "Vampire", size: "60 × 80 см" },
-  "myth-02": { year: "2025", ru: "Миф", en: "Myth", size: "60 × 80 см" },
-  "children-01": {"year": "2018", "ru": "МАРУСЯ В ЗАЗЕРКАЛЬЕ", "en": "МАРУСЯ В ЗАЗЕРКАЛЬЕ", "size": "Бумага/пастель, 100 × 70 см"},
-  "children-02": {"year": "2020", "ru": "ТИША. ЛЕТО.", "en": "ТИША. ЛЕТО.", "size": "Бумага/сангина/уголь, 100 × 70 см"},
-  "children-03": {"year": "2020", "ru": "GENERATION NEXT", "en": "GENERATION NEXT", "size": "Бумага/пастель, 40 × 30 см"},
-  "children-04": {"year": "2020", "ru": "ФЕДЯ", "en": "ФЕДЯ", "size": "Бумага/пастель, 80 × 60 см"},
-  "children-05": {"year": "2019", "ru": "МАРТА", "en": "МАРТА", "size": "Бумага/пастель, 60 × 40 см"},
-  "children-06": {"year": "2018", "ru": "ТИШКА", "en": "ТИШКА", "size": "Бумага/уголь, 40 × 30 см"},
-  "children-07": {"year": "2018", "ru": "ФЕДЯ", "en": "ФЕДЯ", "size": "Бумага/уголь, 50 × 30 см"},
-  "children-08": {"year": "2020", "ru": "ФЕДЯ. ЛЕТО.", "en": "ФЕДЯ. ЛЕТО.", "size": "Бумага/пастель, 40 × 30 см"},
-  "children-09": {"year": "2019", "ru": "АЛЕНКА", "en": "АЛЕНКА", "size": "Бумага/пастель, 60 × 30 см"},
-  "children-10": {"year": "2018", "ru": "ЕВА", "en": "ЕВА", "size": "Бумага/сепия, 60 × 40 см"},
-  "children-11": {"year": "2019", "ru": "НИКОЛАЙ", "en": "НИКОЛАЙ", "size": "Бумага/пастель, 40 × 30 см"},
-  "children-12": {"year": "2019", "ru": "ФИЛИПП", "en": "ФИЛИПП", "size": "Бумага/пастель, 40 × 30 см"},
-  "children-13": {"year": "2024", "ru": "ПУТЕШЕСТВЕННИЦА", "en": "ПУТЕШЕСТВЕННИЦА", "size": "Бумага/пастель, 100 × 70 см"},
-  "children-14": {"year": "2020", "ru": "ЮННОСТЬ", "en": "ЮННОСТЬ", "size": "Бумага/сепия, 80 × 60 см"},
-  "children-15": {"year": "2021", "ru": "НАТАША", "en": "НАТАША", "size": "Бумага/уголь, 100 × 70 см"},
-  "china-01": {"year": "2024", "ru": "СТАРЫЙ БУДДА", "en": "СТАРЫЙ БУДДА", "size": "Бумага/сангина/уголь, 100 × 70 см"},
-  "china-02": {"year": "2024", "ru": "ПОРТРЕТ АМГАЛАНА", "en": "ПОРТРЕТ АМГАЛАНА", "size": "Бумага/сангина/уголь, 110 × 70 см"},
-  "china-03": {"year": "2024", "ru": "ТИБЕТСКАЯ БАБУШКА", "en": "ТИБЕТСКАЯ БАБУШКА", "size": "Бумага/акварель/сепия, 80 × 60 см"},
-  "china-04": {"year": "2024", "ru": "ТИБЕТСКИЙ ПЕЙЗАЖ", "en": "ТИБЕТСКИЙ ПЕЙЗАЖ", "size": "Бумага/пастель, 80 × 60 см"},
-  "china-05": {"year": "2024", "ru": "КИТАЙСКАЯ ДЕВУШКА", "en": "КИТАЙСКАЯ ДЕВУШКА", "size": "Бумага/сепия/уголь 60 × 40 см"},
-  "china-06": {"year": "2023", "ru": "КИТАЙСКИЙ ПАРЕНЬ", "en": "КИТАЙСКИЙ ПАРЕНЬ", "size": "Бумага/пастель, 80 × 60 см"},
-  "china-07": {"year": "2023", "ru": "РОЗОЧКА В ВАЗОЧКЕ", "en": "РОЗОЧКА В ВАЗОЧКЕ", "size": "Бумага/пастель, 80 × 60 см"},
-  "china-08": {"year": "2024", "ru": "КИТАЯНКА", "en": "КИТАЯНКА", "size": "Бумага/сепия/уголь, 60 × 40 см"},
-  "china-09": {"year": "2023", "ru": "КИТАЙСКИЙ ПЕЙЗАЖ", "en": "КИТАЙСКИЙ ПЕЙЗАЖ", "size": "Бумага/пастель, 80 × 60 см"},
-  "china-10": {"year": "2023", "ru": "КИТАЙСКИЙ ЖЕМЧУГ", "en": "КИТАЙСКИЙ ЖЕМЧУГ", "size": "Бумага/уголь, 110 × 80 см"},
-  "nu-01": {"year": "2021", "ru": "«АРТЕМИДА» из серии «женщины античного мифа»", "en": "«АРТЕМИДА» из серии «женщины античного мифа»", "size": "Бумага/сангина/уголь, 700 × 100 см"},
-  "nu-02": {"year": "2021", "ru": "«АМАЗОНКА» из серии «женщины античного мифа»", "en": "«АМАЗОНКА» из серии «женщины античного мифа»", "size": "Бумага/сангина/уголь, 100 × 70 см"},
-  "nu-03": {"year": "2021", "ru": "«ДАФНА» из серии «женщины античного мифа»", "en": "«ДАФНА» из серии «женщины античного мифа»", "size": "Бумага/сангина/уголь, 70 × 100 см"},
-  "nu-04": {"year": "2021", "ru": "«ЛЕДИ КЕНТАВР» из серии «женщины античного мифа»", "en": "«ЛЕДИ КЕНТАВР» из серии «женщины античного мифа»", "size": "Бумага/сангина/уголь, 100 × 70 см"},
-  "nu-05": {"year": "2021", "ru": "«ОГОНЬ» из серии «стихии»", "en": "«ОГОНЬ» из серии «стихии»", "size": "Бумага/сангина/уголь, 100 × 70 см"},
-  "nu-06": {"year": "2023", "ru": "ДЕВУШКА С ЖЕМЧУЖНОЙ СЕРЬГОЙ", "en": "ДЕВУШКА С ЖЕМЧУЖНОЙ СЕРЬГОЙ", "size": "Бумага/сангина/уголь, 100 × 70 см"},
-  "nu-07": {"year": "2024", "ru": "ЦЕРЦЕЯ", "en": "ЦЕРЦЕЯ", "size": "Бумага/пастель, 100 × 70 см"},
-  "other-01": {"year": "2025", "ru": "НАТАША, ВСТАВАЙ", "en": "НАТАША, ВСТАВАЙ", "size": "Холст/масло, 100 × 70 см"},
-  "other-02": {"year": "2025", "ru": "КРАСИВОЕ!", "en": "КРАСИВОЕ!", "size": "Холст/масло, 70 × 100 см"},
-  "other-03": {"year": "2026", "ru": "СВЯЩЕННЫЙ ОЛЕНЬ", "en": "СВЯЩЕННЫЙ ОЛЕНЬ", "size": "Холст/масло, 100 × 100 см"},
-  "portraits-01": {"year": "2025", "ru": "16 ЛЕТ", "en": "16 ЛЕТ", "size": "Бумага/сепия/уголь, 120 × 80 см"},
-  "portraits-02": {"year": "2025", "ru": "АКТРИСА портрет Юлии Александровой", "en": "АКТРИСА портрет Юлии Александровой", "size": "Бумага/уголь, 115 × 80 см"},
-  "portraits-03": {"year": "2025", "ru": "ПОРТРЕТ Н.В. ЗВЕРЕВОЙ", "en": "ПОРТРЕТ Н.В. ЗВЕРЕВОЙ", "size": "Бумага/сепия/уголь, 70 × 60 см"},
-  "portraits-04": {"year": "2019", "ru": "ПОРТРЕТ АКТРИСЫ Ю.МЕЛЬНИКОВОЙ", "en": "ПОРТРЕТ АКТРИСЫ Ю.МЕЛЬНИКОВОЙ", "size": "Бумага/уголь, 100 × 70 см"},
-  "portraits-05": {"year": "2018", "ru": "ТАНЯ из серии «красивые мамы»", "en": "ТАНЯ из серии «красивые мамы»", "size": "Бумага/пастель, 100 × 70 см"},
-  "portraits-06": {"year": "2020", "ru": "ЖЕНЯ А из серии «красивые мамы»", "en": "ЖЕНЯ А из серии «красивые мамы»", "size": "Бумага/уголь, 100 × 70 см"},
-  "portraits-07": {"year": "2018", "ru": "СВЕТА А из серии «красивые мамы»", "en": "СВЕТА А из серии «красивые мамы»", "size": "Бумага/пастель, 70 × 60 см"},
-  "portraits-08": {"year": "2019", "ru": "ОКСАНА из серии «красивые мамы»", "en": "ОКСАНА из серии «красивые мамы»", "size": "Бумага/уголь, 100 × 70 см"},
-  "portraits-09": {"year": "2019", "ru": "ПОРТРЕТ РАВШАНЫ из серии «актеры»", "en": "ПОРТРЕТ РАВШАНЫ из серии «актеры»", "size": "Бумага/уголь, 50 × 40 см"},
-  "portraits-10": {"year": "2018", "ru": "МАША из серии «красивые мамы»", "en": "МАША из серии «красивые мамы»", "size": "Бумага/пастель, 100 × 70 см"},
-  "portraits-11": {"year": "2015", "ru": "ЖЕНЯ из серии «красивые мамы»", "en": "ЖЕНЯ из серии «красивые мамы»", "size": "Бумага/уголь, 60 × 50 см"},
-  "portraits-12": {"year": "2020", "ru": "ВЕСНА.НАТАША из серии «красивые мамы»", "en": "ВЕСНА.НАТАША из серии «красивые мамы»", "size": "Бумага/уголь, 65 × 45 см"},
-  "portraits-13": {"year": "2019", "ru": "ДОКТОР А. КРИВО", "en": "ДОКТОР А. КРИВО", "size": "Бумага/сепия/уголь, 100 × 70 см"},
-  "portraits-14": {"year": "2018", "ru": "АННА из серии «красивые мамы»", "en": "АННА из серии «красивые мамы»", "size": "Бумага/сангина/уголь, 80 × 60 см"},
-  "portraits-15": {"year": "2019", "ru": "АНТИЧНЫЙ УЖАС 2", "en": "АНТИЧНЫЙ УЖАС 2", "size": "Бумага/пастель, 80 × 75 см"},
-  "portraits-16": {"year": "2018", "ru": "МАША из серии «красивые мамы»", "en": "МАША из серии «красивые мамы»", "size": "Бумага/сепия, 100 × 70 см"},
-  "portraits-17": {"year": "2018", "ru": "НАТАЛИ из серии «красивые мамы»", "en": "НАТАЛИ из серии «красивые мамы»", "size": "Бумага/уголь, 100 × 70 см"},
-  "portraits-18": {"year": "2018", "ru": "ПАВЕЛ", "en": "ПАВЕЛ", "size": "Бумага/сепия, 80 × 65 см"},
-  "portraits-19": {"year": "2010", "ru": "ЭЛЯ из серии «красивые мамы»", "en": "ЭЛЯ из серии «красивые мамы»", "size": "Бумага/уголь, 70 × 50 см"},
-  "portraits-20": {"year": "2018", "ru": "МИХАИЛ", "en": "МИХАИЛ", "size": "Бумага/уголь, 100 × 70 см"},
-  "portraits-21": {"year": "2019", "ru": "МАМА из серии «красивые мамы»", "en": "МАМА из серии «красивые мамы»", "size": "40 × 35 см"},
-  "portraits-22": {"year": "2019", "ru": "КАТЯ из серии «красивые мамы»", "en": "КАТЯ из серии «красивые мамы»", "size": "100 × 70 см"},
-  "portraits-23": {"year": "2019", "ru": "ВАСИЛИСА", "en": "ВАСИЛИСА", "size": "Бумага/сепия, 100 × 70 см"},
-  "portraits-24": {"year": "2019", "ru": "ЛЕРА", "en": "ЛЕРА", "size": "Бумага/уголь, 60 × 45 см"},
-  "portraits-25": {"year": "2019", "ru": "ВЫСТРЕЛ", "en": "ВЫСТРЕЛ", "size": "Бумага/уголь 80 × 60 см"},
-  "portraits-26": {"year": "2019", "ru": "АФРИКАНКА 1", "en": "АФРИКАНКА 1", "size": "Бумага/пастель 50 × 35 см"},
-  "portraits-27": {"year": "2019", "ru": "АФРИКАНКА 2", "en": "АФРИКАНКА 2", "size": "бумага/пастель 50 × 35 см"},
-  "portraits-28": {"year": "2020", "ru": "МИША ХУРАНОВ", "en": "МИША ХУРАНОВ", "size": "Бумага/уголь 40 × 30 см"},
-  "portraits-29": {"year": "2022", "ru": "ПОРТРЕТ АКТЕРА АЛЕКСЕЯ ФИЛИМОНОВА", "en": "ПОРТРЕТ АКТЕРА АЛЕКСЕЯ ФИЛИМОНОВА", "size": "Бумага/уголь, 100 × 70 см"},
-  "portraits-30": {"year": "2019", "ru": "АНЕЧКА", "en": "АНЕЧКА", "size": "Бумага/пастель, 100 × 70 см"},
-  "portraits-31": {"year": "2018", "ru": "КАЗАЧКА", "en": "КАЗАЧКА", "size": "Бумага/пастель, 100 × 70 см"},
-  "portraits-32": {"year": "2011", "ru": "КУБИНКА", "en": "КУБИНКА", "size": "Бумага/пастель, 60 × 45 см"},
-  "portraits-33": {"year": "2019", "ru": "АЛЕКСЕЙ В ЧАПАНЕ", "en": "АЛЕКСЕЙ В ЧАПАНЕ", "size": "Бумага/пастель, 100 × 70 см"},
-  "portraits-34": {"year": "2020", "ru": "ПОРТРЕТ АКТРИСЫ ЮЛИИ МЕЛЬНИКОВОЙ", "en": "ПОРТРЕТ АКТРИСЫ ЮЛИИ МЕЛЬНИКОВОЙ", "size": "Бумага/сангина/уголь, 100 × 70 см"},
-  "portraits-35": {"year": "2021", "ru": "РОМАН", "en": "РОМАН", "size": "Бумага/уголь, 65 × 50 см"},
-  "portraits-36": {"year": "2021", "ru": "ЛИЗА", "en": "ЛИЗА", "size": "Бумага/уголь, 45 × 30 см"},
-  "portraits-37": {"year": "2021", "ru": "НАТАША", "en": "НАТАША", "size": "Бумага/уголь, 100 × 70 см"},
-  "portraits-38": {"year": "2025", "ru": "КИТАЙСКИЙ ХУДОЖНИК", "en": "КИТАЙСКИЙ ХУДОЖНИК", "size": "Бумага/сепия/уголь, 70 × 50 см"},
-  "print-01": {"year": "2025", "ru": "ПОРТРЕТ ХУДОЖНИКА", "en": "ПОРТРЕТ ХУДОЖНИКА", "size": "Цв.литография, 50 × 50 см"},
-  "print-02": {"year": "2025", "ru": "ПОРТРЕТ ХУДОЖНИКА", "en": "ПОРТРЕТ ХУДОЖНИКА", "size": "Цв.литография, 50 × 50 см"},
-  "print-03": {"year": "2025", "ru": "ДОБРОТА", "en": "ДОБРОТА", "size": "Цв.литография, 50 × 50 см"},
-  "print-04": {"year": "2025", "ru": "КРАДУЩИЙСЯ ТИГР, ЗАТАИВШИЙСЯ ДРАКОН", "en": "КРАДУЩИЙСЯ ТИГР, ЗАТАИВШИЙСЯ ДРАКОН", "size": "Цв.литография, 70 × 97 см"},
-  "print-05": {"year": "2025", "ru": "И ВОТ МНЕ ПРИСНИЛОСЬ", "en": "И ВОТ МНЕ ПРИСНИЛОСЬ", "size": "Цв.ксилография"},
-  "print-06": {"year": "2024", "ru": "ИДИ ВПЕРЕД", "en": "ИДИ ВПЕРЕД", "size": "Литография, 60 × 40 см"},
-  "print-07": {"year": "2021", "ru": "ПОХИЩЕНИЕ ЕВРОПЫ", "en": "ПОХИЩЕНИЕ ЕВРОПЫ", "size": "цветная литография, 20 × 15 см"},
-  "print-08": {"year": "", "ru": "ПРЕДЧУВСТВИЕ НОВОГО ГОДА", "en": "ПРЕДЧУВСТВИЕ НОВОГО ГОДА", "size": ""},
-  "print-09": {"year": "2020", "ru": "EX LIBRIS F&amp;T", "en": "EX LIBRIS F&amp;T", "size": "Литография 8 × 12 см"},
-  "print-10": {"year": "2020", "ru": "PER FELICE «С НОВЫМ ГОДОМ МЫШИ»", "en": "PER FELICE «С НОВЫМ ГОДОМ МЫШИ»", "size": "Литография"},
-  "print-11": {"year": "2020", "ru": "ОК", "en": "ОК", "size": "Литография"},
-  "print-12": {"year": "2020", "ru": "PER FELICE «ИГРА В СТЕКЛЯННЫЕ ШАРИКИ»", "en": "PER FELICE «ИГРА В СТЕКЛЯННЫЕ ШАРИКИ»", "size": "Литография, 18 × 12 см"},
-  "print-13": {"year": "2020", "ru": "EX LIBRIS A.Z.", "en": "EX LIBRIS A.Z.", "size": "Литография 10 × 6 см"},
-  "print-14": {"year": "2020", "ru": "PER FELICE «С РОЖДЕСТВОМ!»", "en": "PER FELICE «С РОЖДЕСТВОМ!»", "size": "Цветная литография, 18 × 12 см"},
-  "print-15": {"year": "2021", "ru": "«МЕДЕЯ» из серии «женщины античного мифа»", "en": "«МЕДЕЯ» из серии «женщины античного мифа»", "size": "Литография/акварель, 30 × 20 см"},
-  "print-16": {"year": "2021", "ru": "«МЕДУЗА» из серии «женщины античного мифа»", "en": "«МЕДУЗА» из серии «женщины античного мифа»", "size": "Литография/акварель, 30 × 20 см"},
-  "print-17": {"year": "2021", "ru": "«ЕЛЕНА» из серии «женщины античного мифа»", "en": "«ЕЛЕНА» из серии «женщины античного мифа»", "size": "Литография/акварель, 30 × 20 см"},
-  "print-18": {"year": "2021", "ru": "«СЕЛЕНА» из серии « женщины античного мифа»", "en": "«СЕЛЕНА» из серии « женщины античного мифа»", "size": "Литография/акварель, 30 × 20 см"},
-  "print-19": {"year": "2021", "ru": "«ПЕРСЕФОНА» из серии «женщины античного мифа»", "en": "«ПЕРСЕФОНА» из серии «женщины античного мифа»", "size": "Литография/акварель, 30 × 20 см"},
-  "print-20": {"year": "2021", "ru": "«ЦЕРЦЕЯ» из серии «женщины античного мифа»", "en": "«ЦЕРЦЕЯ» из серии «женщины античного мифа»", "size": "Литография/акварель, 30 × 20 см"},
-  "print-21": {"year": "2021", "ru": "«КАССАНДРА» из серии «женщины античного мифа»", "en": "«КАССАНДРА» из серии «женщины античного мифа»", "size": "Литография/акварель, 30 × 20 см"},
-  "print-22": {"year": "2021", "ru": "«ПАНДОРА» из серии «женщины античного мифа»", "en": "«ПАНДОРА» из серии «женщины античного мифа»", "size": "Литография/акварель, 30 × 20 см"},
-  "print-23": {"year": "2022", "ru": "РУКА СКУЛЬПТОРА", "en": "РУКА СКУЛЬПТОРА", "size": "Бумага/уголь, 60 × 40 см"},
-  "print-24": {"year": "2022", "ru": "EX LIBRIS A. Lytkin", "en": "EX LIBRIS A. Lytkin", "size": "Литография 10 × 10 см"},
-  "print-25": {"year": "2022", "ru": "PER FELICE «ТИГРЕНОК»", "en": "PER FELICE «ТИГРЕНОК»", "size": "Литография/акварель, 30 × 25 см"},
-  "print-26": {"year": "2022", "ru": "PER FELICE «ХОРОШИЙ ТИГР»", "en": "PER FELICE «ХОРОШИЙ ТИГР»", "size": "Литография/акварель, 15 × 10 см"},
-  "print-27": {"year": "2021", "ru": "МОСКВА", "en": "МОСКВА", "size": "Литография, 30 × 30 см"},
-  "print-28": {"year": "2021", "ru": "Ex libris biblioteca Bodio Lomnago. Dante", "en": "Ex libris biblioteca Bodio Lomnago. Dante", "size": "Литография, 18 × 12 см"},
-};
-const categoryNames: Record<string, { ru: string; en: string }> = { myth: { ru: "Миф артиста", en: "Artist’s myth" }, china: { ru: "Китай", en: "China" }, portraits: { ru: "Портрет", en: "Portrait" }, children: { ru: "Дети", en: "Children" }, nu: { ru: "Ню", en: "Nude" }, print: { ru: "Печатная графика", en: "Print" }, other: { ru: "Разное", en: "Miscellany" } };
-const categoryOrder = ["myth", "china", "portraits", "children", "nu", "print", "other"];
-const projectFiles = import.meta.glob("@/assets/projects/*.jpg", { eager: true, import: "default" }) as Record<string, string>;
-const mythProjects = [
-  { key: "vampire", ru: "Люблю всю. А. Ткаченко", en: "Love it all. A. Tkachenko" },
-  { key: "parts", ru: "Части целого. Ю. Колокольников", en: "Parts of the whole. Yu. Kolokolnikov" },
-] as const;
-type ProjectKey = (typeof mythProjects)[number]["key"];
-const projectMeta: Record<string, { ru: string; en: string; year: string; size: string }> = {
-  "vampire-01": { ru: "АРТЁМ ТКАЧЕНКО", en: "ARTYOM TKACHENKO", year: "2025", size: "Бумага/уголь, 50 × 50 см" },
-  "vampire-02": { ru: "АРТЁМ ТКАЧЕНКО", en: "ARTYOM TKACHENKO", year: "2025", size: "Бумага/уголь, 50 × 50 см" },
-  "vampire-03": { ru: "АРТЁМ ТКАЧЕНКО", en: "ARTYOM TKACHENKO", year: "2025", size: "Бумага/уголь, 50 × 50 см" },
-  "parts-09": { ru: "СУМКИ С ПРИНТАМИ", en: "PRINTED BAGS", year: "2025", size: "" },
-};
-const projectWorks = Object.entries(projectFiles).map(([path, image]) => {
-  const m = path.match(/(vampire|parts)-(\d+)\.jpg$/)!; const project = m[1] as ProjectKey; const num = Number(m[2]);
-  const meta = projectMeta[`${project}-${m[2]}`] ?? { ru: `КОЛОКОЛЬНИКОВ ${num}`, en: `KOLOKOLNIKOV ${num}`, year: "", size: "" };
-  return { image, category: "myth" as Exclude<Category, "all">, project: project as ProjectKey | undefined, order: (project === "vampire" ? 0 : 100) + num, cover: num === 1, ...meta };
-});
-const works = Object.entries(workFiles)
-  .map(([path, image]) => {
-    const m = path.match(/(\w+)-(\d+)\.jpg$/)!; const cat = m[1]!; const num = m[2]!;
-    const key = `${cat}-${num}`;
-    const known = knownWorks[key];
-    return { image, category: cat as Exclude<Category, "all">, order: categoryOrder.indexOf(cat) * 1000 + Number(num), year: known?.year ?? "", ru: known?.ru ?? `${categoryNames[cat]!.ru} ${Number(num)}`, en: known?.en ?? `${categoryNames[cat]!.en} ${Number(num)}`, size: known?.size ?? "", project: undefined as ProjectKey | undefined, cover: false };
-  })
-  .filter((w) => w.category !== "myth")
-  .concat(projectWorks)
-  .sort((a, b) => a.order - b.order);
-
-const categoryNotes: Record<Exclude<Category, "all">, { ru: string; en: string }> = {
-  myth: { ru: "Миф артиста — серия о художнике как о мифологическом герое: между автопортретом и легендой, личной историей и сценой.", en: "Artist’s myth — a series on the artist as a mythic figure: between self-portrait and legend, private story and stage." },
-  china: { ru: "Китай — дневник поездок: работы, написанные и отпечатанные в пути, где пейзаж и городская сцена становятся записью впечатления.", en: "China — a travel diary: works painted and printed on the road, where landscape and street become a record of impressions." },
-  portraits: { ru: "Портреты — встречи с конкретными людьми; каждая работа — попытка удержать присутствие человека за короткое время сеанса.", en: "Portraits — encounters with particular people; each work is an attempt to hold a person’s presence within a short sitting." },
-  children: { ru: "Дети — мир ранней памяти и игры, где взгляд ребёнка задаёт масштаб и интонацию картины.", en: "Children — a world of early memory and play, where a child’s gaze sets the scale and tone of the picture." },
-  nu: { ru: "Ню — пластические этюды тела: линия, свет и движение без сюжета, ради самого состояния формы.", en: "Nude — plastic studies of the body: line, light and movement without narrative, for the state of form itself." },
-  print: { ru: "Печатная графика — офорты, линогравюры и экслибрисы; тираж как способ говорить точнее и лаконичнее.", en: "Printmaking — etchings, linocuts and bookplates; the edition as a way to speak more precisely and more briefly." },
-  other: { ru: "Разное — эксперименты вне серий: работы, в которых рождаются темы и приёмы будущих проектов.", en: "Miscellany — experiments outside the series: works where the themes and techniques of future projects are born." },
+type Category = string;
+type Work = { id: string; image: string; category: string; project: string | undefined; cover: boolean; hero: boolean; ru: string; en: string; year: string; size: string };
+type Cat = { key: string; ru: string; en: string; noteRu: string; noteEn: string; children: { key: string; ru: string; en: string }[] };
+function buildGallery(data: { categories: CategoryRow[]; works: WorkRow[] }) {
+  const top = data.categories.filter((c) => !c.parent_key);
+  const cats: Cat[] = top.map((c) => ({ key: c.key, ru: c.name_ru, en: c.name_en, noteRu: c.description_ru, noteEn: c.description_en, children: data.categories.filter((s) => s.parent_key === c.key).map((s) => ({ key: s.key, ru: s.name_ru, en: s.name_en })) }));
+  const works: Work[] = data.works.map((w) => ({ id: w.id, image: mediaUrl(w.image), category: w.category_key, project: w.project_key ?? undefined, cover: w.cover, hero: w.hero, ru: w.title_ru, en: w.title_en || w.title_ru, year: w.year, size: w.size }));
+  return { cats, works };
+}
 };
 const copy = {
   ru: { artist: "НАТАЛЬЯ ДИКУНОВА", subtitle: "Художник · Москва / Воронеж", works: "Работы", about: "Об авторе", contact: "Контакты", all: "Все работы", filters: "Направления", buy: "Узнать о покупке", breadcrumb: "Главная / Работы", more: "Подробнее", close: "Закрыть", intro: "Живопись, рисунок и печатная графика о памяти, мифе и человеческом присутствии.", note: "Работы находятся в частных коллекциях России, Европы, США, Индии и Китая, а также в музеях России и Китая.", achievements: "Royal Society of British Artists · 1-е место DEG Exlibris · Guanlan Printmaking Base 2025", categories: ["Все", "Миф артиста", "Китай", "Портреты", "Дети", "Ню", "Печатная графика", "Разное"] },
@@ -235,9 +103,6 @@ const aboutBio = {
     ],
   },
 } as const;
-const heroWorks = [16, 3, 13, 19] as const;
-type Work = (typeof works)[number];
-const categoryKeys: Category[] = ["all", "myth", "china", "portraits", "children", "nu", "print", "other"];
 
 function Index() {
   const [lang, setLang] = useState<Lang>("ru");
