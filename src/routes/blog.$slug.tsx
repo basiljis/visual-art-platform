@@ -1,29 +1,30 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { BlogShell } from "@/components/BlogShell";
-import { blogImage, blogPosts, blogVideo } from "@/lib/blog";
 import { SubscribeForm } from "@/components/SubscribeForm";
+import { postQuery } from "@/lib/content.functions";
+import { htmlForDisplay } from "@/lib/media";
 
 export const Route = createFileRoute("/blog/$slug")({
-  loader: ({ params }) => {
-    const post = blogPosts.find((p) => p.slug === params.slug);
-    if (!post) throw notFound();
-    return { slug: post.slug };
+  loader: async ({ context, params }) => {
+    const res = await context.queryClient.ensureQueryData(postQuery(params.slug));
+    if (!res) throw notFound();
+    return { title: res.post.title, desc: res.post.excerpt || res.post.content_html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 150) || res.post.title };
   },
   head: ({ loaderData }) => {
-    const post = blogPosts.find((p) => p.slug === loaderData?.slug);
-    if (!post) return { meta: [{ title: "Запись не найдена" }, { name: "robots", content: "noindex" }] };
-    const desc = post.excerpt || (post.blocks.find((b) => "p" in b) as { p: string } | undefined)?.p.slice(0, 150) || post.title;
+    if (!loaderData) return { meta: [{ title: "Запись не найдена" }, { name: "robots", content: "noindex" }] };
     return {
       meta: [
-        { title: `${post.title} — Блог Натальи Дикуновой` },
-        { name: "description", content: desc },
-        { property: "og:title", content: post.title },
-        { property: "og:description", content: desc },
+        { title: `${loaderData.title} — Блог Натальи Дикуновой` },
+        { name: "description", content: loaderData.desc },
+        { property: "og:title", content: loaderData.title },
+        { property: "og:description", content: loaderData.desc },
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary_large_image" },
       ],
     };
   },
+  errorComponent: () => <BlogShell back={{ to: "/blog", label: "Блог" }}><p>Не удалось загрузить запись.</p></BlogShell>,
   notFoundComponent: PostNotFound,
   component: PostPage,
 });
@@ -33,24 +34,16 @@ function PostNotFound() {
 }
 
 function PostPage() {
-  const { slug } = Route.useLoaderData();
-  const i = blogPosts.findIndex((p) => p.slug === slug);
-  const post = blogPosts[i]!;
-  const next = blogPosts[i + 1];
+  const { slug } = Route.useParams();
+  const { data } = useSuspenseQuery(postQuery(slug));
+  if (!data) return <PostNotFound />;
+  const { post, next } = data;
   return (
     <BlogShell back={{ to: "/blog", label: "Блог" }}>
       <article className="mx-auto max-w-3xl">
         <p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">Блог / {post.date}</p>
         <h1 className="mt-4 font-display text-4xl leading-tight md:text-6xl">{post.title}</h1>
-        <div className="mt-10 space-y-6 text-base leading-relaxed md:text-lg">
-          {post.blocks.map((b, k) => "img" in b
-            ? <img key={k} src={blogImage(b.img)} alt={post.title} loading="lazy" className="w-full bg-muted" />
-            : "video" in b
-            ? <video key={k} src={blogVideo(b.video)} controls playsInline preload="metadata" className="w-full bg-ink" />
-            : b.href
-            ? <p key={k}><a href={b.href} target="_blank" rel="noreferrer" className="border-b border-current pb-0.5 transition-colors hover:text-red-accent">{b.p} ↗</a></p>
-            : <p key={k}>{b.p}</p>)}
-        </div>
+        <div className="post-body mt-10" dangerouslySetInnerHTML={{ __html: htmlForDisplay(post.content_html) }} />
         <SubscribeForm />
         {next && (
           <Link to="/blog/$slug" params={{ slug: next.slug }} className="mt-20 block border-t border-border pt-8">

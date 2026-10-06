@@ -15,6 +15,13 @@
       "when": 1791303651500,
       "tag": "0001_create_purchase_enquiries",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791304625476,
+      "tag": "0002_cms_admin",
+      "breakpoints": true
     }
   ]
 }
