@@ -9,3 +9,4 @@
 - [x] Keyboard-focus tooltips + accessible labels on icon buttons
 - [x] Translate tooltips and Миф артиста submenu labels
 - [x] Style tooltips in site style
+- [x] Preloader keeps same colours in both themes
