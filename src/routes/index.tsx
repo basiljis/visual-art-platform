@@ -45,10 +45,10 @@ const categoryNames: Record<string, { ru: string; en: string }> = { myth: { ru: 
 const categoryOrder = ["myth", "china", "portraits", "children", "nu", "print", "other"];
 const works = Object.entries(workFiles)
   .map(([path, image]) => {
-    const [, cat, num] = path.match(/(\w+)-(\d+)\.jpg$/)!;
+    const m = path.match(/(\w+)-(\d+)\.jpg$/)!; const cat = m[1]!; const num = m[2]!;
     const key = `${cat}-${num}`;
     const known = knownWorks[key];
-    return { image, category: cat as Exclude<Category, "all">, order: categoryOrder.indexOf(cat) * 1000 + Number(num), year: known?.year ?? "", ru: known?.ru ?? `${categoryNames[cat].ru} ${Number(num)}`, en: known?.en ?? `${categoryNames[cat].en} ${Number(num)}`, size: known?.size ?? "" };
+    return { image, category: cat as Exclude<Category, "all">, order: categoryOrder.indexOf(cat) * 1000 + Number(num), year: known?.year ?? "", ru: known?.ru ?? `${categoryNames[cat]!.ru} ${Number(num)}`, en: known?.en ?? `${categoryNames[cat]!.en} ${Number(num)}`, size: known?.size ?? "" };
   })
   .sort((a, b) => a.order - b.order);
 
@@ -68,7 +68,7 @@ function Index() {
   const [ready, setReady] = useState(false);
   const [viewer, setViewer] = useState<number | null>(null);
   const [heroIndex, setHeroIndex] = useState<number>(heroWorks[0]);
-  const heroWork: Work = works[heroIndex] ?? works[0];
+  const heroWork: Work = works[heroIndex] ?? works[0]!;
   useEffect(() => {
     const id = window.setInterval(() => setHeroIndex((cur) => heroWorks[(heroWorks.indexOf(cur as (typeof heroWorks)[number]) + 1) % heroWorks.length] ?? heroWorks[0]), 6000);
     return () => window.clearInterval(id);
@@ -126,7 +126,7 @@ function Index() {
           </div>
           <div className="flex min-h-[58vh] items-center justify-center px-5 py-10 md:px-12">
             <button onClick={() => setViewer(heroIndex)} className="relative aspect-[4/5] w-[min(78vw,26rem)] overflow-hidden bg-muted shadow-2xl" aria-label={heroWork[lang]}>
-              {heroWorks.map((idx) => <img key={idx} src={works[idx].image} alt={works[idx][lang]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${idx === heroIndex ? "opacity-100" : "opacity-0"}`} />)}
+              {heroWorks.map((idx) => <img key={idx} src={works[idx]!.image} alt={works[idx]![lang]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${idx === heroIndex ? "opacity-100" : "opacity-0"}`} />)}
             </button>
             <span className="absolute bottom-6 right-6 hidden text-[10px] uppercase tracking-[.16em] text-muted-foreground md:block">{heroWork[lang]} · {heroWork.year}</span>
           </div>
@@ -173,7 +173,7 @@ const backgrounds = [
 
 function Viewer({ index, lang, onChange, onClose }: { index: number; lang: Lang; onChange: (i: number) => void; onClose: () => void }) {
   const [bg, setBg] = useState(0);
-  const w: Work = works[index] ?? works[0];
+  const w: Work = works[index] ?? works[0]!;
   const c = viewerCopy[lang];
   const go = (d: number) => onChange((index + d + works.length) % works.length);
   useEffect(() => {
