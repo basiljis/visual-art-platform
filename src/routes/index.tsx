@@ -52,6 +52,15 @@ const works = Object.entries(workFiles)
   })
   .sort((a, b) => a.order - b.order);
 
+const categoryNotes: Record<Exclude<Category, "all">, { ru: string; en: string }> = {
+  myth: { ru: "Миф артиста — серия о художнике как о мифологическом герое: между автопортретом и легендой, личной историей и сценой.", en: "Artist’s myth — a series on the artist as a mythic figure: between self-portrait and legend, private story and stage." },
+  china: { ru: "Китай — дневник поездок: работы, написанные и отпечатанные в пути, где пейзаж и городская сцена становятся записью впечатления.", en: "China — a travel diary: works painted and printed on the road, where landscape and street become a record of impressions." },
+  portraits: { ru: "Портреты — встречи с конкретными людьми; каждая работа — попытка удержать присутствие человека за короткое время сеанса.", en: "Portraits — encounters with particular people; each work is an attempt to hold a person’s presence within a short sitting." },
+  children: { ru: "Дети — мир ранней памяти и игры, где взгляд ребёнка задаёт масштаб и интонацию картины.", en: "Children — a world of early memory and play, where a child’s gaze sets the scale and tone of the picture." },
+  nu: { ru: "Ню — пластические этюды тела: линия, свет и движение без сюжета, ради самого состояния формы.", en: "Nude — plastic studies of the body: line, light and movement without narrative, for the state of form itself." },
+  print: { ru: "Печатная графика — офорты, линогравюры и экслибрисы; тираж как способ говорить точнее и лаконичнее.", en: "Printmaking — etchings, linocuts and bookplates; the edition as a way to speak more precisely and more briefly." },
+  other: { ru: "Разное — эксперименты вне серий: работы, в которых рождаются темы и приёмы будущих проектов.", en: "Miscellany — experiments outside the series: works where the themes and techniques of future projects are born." },
+};
 const copy = {
   ru: { artist: "НАТАЛЬЯ ДИКУНОВА", subtitle: "Художник · Москва / Воронеж", works: "Работы", about: "Об авторе", contact: "Контакты", all: "Все работы", filters: "Направления", buy: "Узнать о покупке", breadcrumb: "Главная / Работы", intro: "Живопись, рисунок и печатная графика о памяти, мифе и человеческом присутствии.", note: "Работы находятся в частных коллекциях России, Европы, США, Индии и Китая, а также в музеях России и Китая.", achievements: "Royal Society of British Artists · 1-е место DEG Exlibris · Guanlan Printmaking Base 2025", categories: ["Все", "Миф артиста", "Китай", "Портреты", "Дети", "Ню", "Печатная графика", "Разное"] },
   en: { artist: "NATALIA DIKUNOVA", subtitle: "Artist · Moscow / Voronezh", works: "Works", about: "About", contact: "Contact", all: "All works", filters: "Practices", buy: "Purchase enquiry", breadcrumb: "Home / Works", intro: "Painting, drawing and printmaking exploring memory, myth and human presence.", note: "Works are held in private collections across Russia, Europe, the USA, India and China, as well as museums in Russia and China.", achievements: "Royal Society of British Artists · DEG Exlibris 1st prize · Guanlan Printmaking Base 2025", categories: ["All", "Artist’s myth", "China", "Portraits", "Children", "Nude", "Printmaking", "Other"] },
@@ -100,7 +109,7 @@ function Index() {
 
       <header className="fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center border-b border-border/60 bg-background/80 px-4 backdrop-blur-md md:px-8">
         <div className="flex items-center gap-4"><button aria-label="Menu" onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">Menu</span></button></div>
-        <a href="#top" className="text-center font-sans text-sm font-medium tracking-[.22em] sm:text-lg">{t.artist}</a>
+        <a href="#top" className="text-center font-sans text-sm font-medium tracking-[.22em] sm:text-lg">{t.artist} <span className="font-light text-red-accent">/</span> <span className="text-xs lowercase tracking-[.24em] opacity-60">artist</span></a>
         <div className="flex justify-end gap-1">
           <button onClick={() => setLang(lang === "ru" ? "en" : "ru")} className="h-9 w-10 text-xs font-semibold uppercase" aria-label="Language">{lang}</button>
           <button onClick={() => setDark(!dark)} className="grid size-9 place-items-center" aria-label="Theme">{dark ? <Sun className="size-4"/> : <Moon className="size-4"/>}</button>
@@ -145,6 +154,9 @@ function Index() {
             <div className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div><h2 className="text-base font-medium">{work[lang]}</h2><p className="mt-1 text-xs text-muted-foreground">{work.size}</p></div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
         </div>
+        {category !== "all" && (
+          <p className="mx-auto mt-20 max-w-2xl border-t border-border pt-6 text-center text-sm leading-relaxed text-muted-foreground">{categoryNotes[category][lang]}</p>
+        )}
       </section>
 
       <section id="about" className="grid border-t border-border px-5 py-24 md:grid-cols-2 md:px-8 md:py-36">
@@ -154,6 +166,7 @@ function Index() {
       <footer id="contact" className="relative overflow-hidden bg-foreground px-5 pb-0 pt-20 text-background md:px-8 md:pt-28">
         <div className="grid gap-14 md:grid-cols-2"><h2 className="font-display text-5xl md:text-7xl">{t.contact}</h2><div className="space-y-3 text-lg"><a className="block border-b border-background/30 pb-3" href="mailto:morrasdream@gmail.com">morrasdream@gmail.com</a><a className="block border-b border-background/30 pb-3" href="tel:+79268215342">+7 926 821-53-42</a></div></div>
         <p className="mt-20 max-w-4xl text-[10px] uppercase leading-5 tracking-[.18em] opacity-60">{t.achievements}</p>
+        <img src={signatureAsset.url} alt="Наталья Дикунова" className="mt-8 h-16 w-16 object-contain invert" />
         <div className="h-[clamp(5rem,13vw,12rem)] overflow-hidden"><p className="translate-y-[18%] whitespace-nowrap font-display text-[clamp(5rem,17vw,16rem)] leading-none">DIKUNOVA</p></div>
       </footer>
       {viewer !== null && <Viewer index={viewer} lang={lang} onChange={setViewer} onClose={() => setViewer(null)} />}
