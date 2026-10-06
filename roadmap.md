@@ -1,0 +1,2 @@
+- [x] Mobile adaptation
+- [ ] Smooth scroll for menu links and top/bottom buttons
