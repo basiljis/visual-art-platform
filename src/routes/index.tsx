@@ -2,24 +2,26 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
-import china1 from "@/assets/china-1.jpg.asset.json";
-import china2 from "@/assets/china-2.jpg.asset.json";
-import portraits1 from "@/assets/portraits-1.jpg.asset.json";
-import portraits2 from "@/assets/portraits-2.jpg.asset.json";
-import children1 from "@/assets/children-1.jpg.asset.json";
-import children2 from "@/assets/children-2.jpg.asset.json";
-import nu1 from "@/assets/nu-1.jpg.asset.json";
-import nu2 from "@/assets/nu-2.jpg.asset.json";
-import print1 from "@/assets/print-1.jpg.asset.json";
-import print2 from "@/assets/print-2.jpg.asset.json";
-import other1 from "@/assets/other-1.jpg.asset.json";
-import other2 from "@/assets/other-2.jpg.asset.json";
-import portraits3 from "@/assets/portraits-3.jpg.asset.json";
-import china3 from "@/assets/china-3.jpg.asset.json";
-import print3 from "@/assets/print-3.jpg.asset.json";
-import children3 from "@/assets/children-3.jpg.asset.json";
-import nu3 from "@/assets/nu-3.jpg.asset.json";
-import other3 from "@/assets/other-3.jpg.asset.json";
+import china1 from "@/assets/works/china-1.jpg";
+import china2 from "@/assets/works/china-2.jpg";
+import portraits1 from "@/assets/works/portraits-1.jpg";
+import portraits2 from "@/assets/works/portraits-2.jpg";
+import children1 from "@/assets/works/children-1.jpg";
+import children2 from "@/assets/works/children-2.jpg";
+import nu1 from "@/assets/works/nu-1.jpg";
+import nu2 from "@/assets/works/nu-2.jpg";
+import print1 from "@/assets/works/print-1.jpg";
+import print2 from "@/assets/works/print-2.jpg";
+import other1 from "@/assets/works/other-1.jpg";
+import other2 from "@/assets/works/other-2.jpg";
+import portraits3 from "@/assets/works/portraits-3.jpg";
+import china3 from "@/assets/works/china-3.jpg";
+import print3 from "@/assets/works/print-3.jpg";
+import children3 from "@/assets/works/children-3.jpg";
+import nu3 from "@/assets/works/nu-3.jpg";
+import other3 from "@/assets/works/other-3.jpg";
+import myth1 from "@/assets/works/myth-1.jpg";
+import myth2 from "@/assets/works/myth-2.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -37,24 +39,26 @@ type Lang = "ru" | "en";
 type Category = "all" | "myth" | "china" | "portraits" | "children" | "nu" | "print" | "other";
 
 const works = [
-  { image: portraits1.url, category: "portraits", year: "2021", ru: "Роман", en: "Roman", size: "60 × 80 см" },
-  { image: china1.url, category: "china", year: "2024", ru: "Дневник Китая I", en: "China Diary I", size: "70 × 50 см" },
-  { image: print1.url, category: "print", year: "2021", ru: "Маленькая история", en: "A Little Story", size: "23 × 30 см" },
-  { image: children1.url, category: "children", year: "2022", ru: "Лето", en: "Summer", size: "65 × 80 см" },
-  { image: nu1.url, category: "nu", year: "2021", ru: "Огонь", en: "Fire", size: "50 × 70 см" },
-  { image: other1.url, category: "other", year: "2023", ru: "Расстояние", en: "Distance", size: "40 × 55 см" },
-  { image: portraits2.url, category: "portraits", year: "2021", ru: "Лиза", en: "Lisa", size: "60 × 80 см" },
-  { image: portraits3.url, category: "portraits", year: "2021", ru: "Вера", en: "Vera", size: "60 × 80 см" },
-  { image: china2.url, category: "china", year: "2024", ru: "Дневник Китая II", en: "China Diary II", size: "70 × 50 см" },
-  { image: china3.url, category: "china", year: "2024", ru: "Дневник Китая III", en: "China Diary III", size: "70 × 50 см" },
-  { image: print2.url, category: "print", year: "2022", ru: "Письмо", en: "The Letter", size: "30 × 40 см" },
-  { image: print3.url, category: "print", year: "2021", ru: "Путь", en: "The Path", size: "23 × 30 см" },
-  { image: children2.url, category: "children", year: "2020", ru: "Юность", en: "Youth", size: "80 × 65 см" },
-  { image: children3.url, category: "children", year: "2022", ru: "Дочь", en: "Daughter", size: "65 × 80 см" },
-  { image: nu2.url, category: "nu", year: "2021", ru: "Фигура", en: "Figure", size: "50 × 70 см" },
-  { image: nu3.url, category: "nu", year: "2021", ru: "Танец", en: "Dance", size: "50 × 70 см" },
-  { image: other2.url, category: "other", year: "2023", ru: "Диссонанс", en: "Dissonance", size: "40 × 55 см" },
-  { image: other3.url, category: "other", year: "2023", ru: "Тишина", en: "Silence", size: "40 × 55 см" },
+  { image: myth1, category: "myth", year: "2025", ru: "Вампир", en: "Vampire", size: "60 × 80 см" },
+  { image: myth2, category: "myth", year: "2025", ru: "Миф", en: "Myth", size: "60 × 80 см" },
+  { image: portraits1, category: "portraits", year: "2021", ru: "Роман", en: "Roman", size: "60 × 80 см" },
+  { image: china1, category: "china", year: "2024", ru: "Дневник Китая I", en: "China Diary I", size: "70 × 50 см" },
+  { image: print1, category: "print", year: "2021", ru: "Маленькая история", en: "A Little Story", size: "23 × 30 см" },
+  { image: children1, category: "children", year: "2022", ru: "Лето", en: "Summer", size: "65 × 80 см" },
+  { image: nu1, category: "nu", year: "2021", ru: "Огонь", en: "Fire", size: "50 × 70 см" },
+  { image: other1, category: "other", year: "2023", ru: "Расстояние", en: "Distance", size: "40 × 55 см" },
+  { image: portraits2, category: "portraits", year: "2021", ru: "Лиза", en: "Lisa", size: "60 × 80 см" },
+  { image: portraits3, category: "portraits", year: "2021", ru: "Вера", en: "Vera", size: "60 × 80 см" },
+  { image: china2, category: "china", year: "2024", ru: "Дневник Китая II", en: "China Diary II", size: "70 × 50 см" },
+  { image: china3, category: "china", year: "2024", ru: "Дневник Китая III", en: "China Diary III", size: "70 × 50 см" },
+  { image: print2, category: "print", year: "2022", ru: "Письмо", en: "The Letter", size: "30 × 40 см" },
+  { image: print3, category: "print", year: "2021", ru: "Путь", en: "The Path", size: "23 × 30 см" },
+  { image: children2, category: "children", year: "2020", ru: "Юность", en: "Youth", size: "80 × 65 см" },
+  { image: children3, category: "children", year: "2022", ru: "Дочь", en: "Daughter", size: "65 × 80 см" },
+  { image: nu2, category: "nu", year: "2021", ru: "Фигура", en: "Figure", size: "50 × 70 см" },
+  { image: nu3, category: "nu", year: "2021", ru: "Танец", en: "Dance", size: "50 × 70 см" },
+  { image: other2, category: "other", year: "2023", ru: "Диссонанс", en: "Dissonance", size: "40 × 55 см" },
+  { image: other3, category: "other", year: "2023", ru: "Тишина", en: "Silence", size: "40 × 55 см" },
 ] as const;
 
 const copy = {
@@ -93,7 +97,7 @@ function Index() {
   useEffect(() => { if (ready) window.localStorage.setItem("dikunova-lang", lang); }, [lang, ready]);
 
   const t = copy[lang];
-  const filtered = category === "all" || category === "myth" ? works : works.filter((work) => work.category === category);
+  const filtered = category === "all" ? works : works.filter((work) => work.category === category);
 
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
