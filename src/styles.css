@@ -168,8 +168,7 @@
 html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 
 /* Site tooltips: shown on hover and keyboard focus */
-[data-tip] { position: relative; }
-.fixed[data-tip], .absolute[data-tip] { position: revert-layer; }
+@layer base { [data-tip] { position: relative; } }
 [data-tip]::after {
   content: attr(data-tip);
   position: absolute;
