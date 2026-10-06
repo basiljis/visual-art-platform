@@ -1,12 +1,4 @@
-- [x] Mobile adaptation
-- [x] Smooth scroll for menu links and top/bottom buttons
-- [x] Blog subscribe form (stored in Cloud)
-- [x] Mural post: 2 videos
-- [x] Mural post: clickable press links
-- [x] Footer name click → smooth scroll to top
-- [x] Mobile tap access to Миф артиста projects submenu
-- [x] Purchase enquiry form → email morrasdream@gmail.com
-- [x] Keyboard-focus tooltips + accessible labels on icon buttons
-- [x] Translate tooltips and Миф артиста submenu labels
-- [x] Style tooltips in site style
-- [x] Preloader keeps same colours in both themes
+# Roadmap
+- [ ] Admin panel: gear in footer, login, categories/works CRUD with uploads, blog editor (photo/video)
+- [ ] Move existing works & blog posts into the database
+- [ ] Mobile fixes: footer signature overlaps contacts; general mobile pass
