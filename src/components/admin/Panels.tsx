@@ -138,7 +138,7 @@ export function WorksPanel() {
       <div className="mb-8 grid gap-4 md:grid-cols-[1fr_16rem_auto] md:items-end">
         <div className="flex flex-wrap gap-x-5 gap-y-2">{[{ key: "all", name_ru: "Все" }, ...top].map((c) => <button key={c.key} onClick={() => setFilter(c.key)} className={`text-sm ${filter === c.key ? "underline underline-offset-8" : "opacity-45 hover:opacity-100"}`}>{c.name_ru}</button>)}</div>
         <input placeholder="Поиск по названию" value={q} onChange={(e) => setQ(e.target.value)} className={field} />
-        <button onClick={() => setEdit({ category_key: filter !== "all" ? filter : top[0]?.key, sort: nextSort })} className={primaryBtn}><Plus className="size-4" />Новая работа</button>
+        <button onClick={() => setEdit({ category_key: filter !== "all" ? filter : (top[0]?.key ?? ""), sort: nextSort })} className={primaryBtn}><Plus className="size-4" />Новая работа</button>
       </div>
       <p className="mb-4 text-xs text-muted-foreground">{list.length} работ</p>
       <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
