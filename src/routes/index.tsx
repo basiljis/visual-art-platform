@@ -49,7 +49,8 @@ const copy = {
   ru: { artist: "НАТАЛЬЯ ДИКУНОВА", subtitle: "Художник · Москва / Воронеж", works: "Работы", about: "Об авторе", contact: "Контакты", all: "Все работы", filters: "Направления", buy: "Узнать о покупке", breadcrumb: "Главная / Работы", intro: "Живопись, рисунок и печатная графика о памяти, мифе и человеческом присутствии.", note: "Работы находятся в частных коллекциях России, Европы, США, Индии и Китая, а также в музеях России и Китая.", achievements: "Royal Society of British Artists · 1-е место DEG Exlibris · Guanlan Printmaking Base 2025", categories: ["Все", "Миф артиста", "Китай", "Портреты", "Дети", "Ню", "Печатная графика", "Разное"] },
   en: { artist: "NATALIA DIKUNOVA", subtitle: "Artist · Moscow / Voronezh", works: "Works", about: "About", contact: "Contact", all: "All works", filters: "Practices", buy: "Purchase enquiry", breadcrumb: "Home / Works", intro: "Painting, drawing and printmaking exploring memory, myth and human presence.", note: "Works are held in private collections across Russia, Europe, the USA, India and China, as well as museums in Russia and China.", achievements: "Royal Society of British Artists · DEG Exlibris 1st prize · Guanlan Printmaking Base 2025", categories: ["All", "Artist’s myth", "China", "Portraits", "Children", "Nude", "Printmaking", "Other"] },
 };
-const heroWorks = [6, 1, 3, 9];
+const heroWorks = [6, 1, 3, 9] as const;
+type Work = (typeof works)[number];
 const categoryKeys: Category[] = ["all", "myth", "china", "portraits", "children", "nu", "print", "other"];
 
 function Index() {
@@ -58,10 +59,11 @@ function Index() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [category, setCategory] = useState<Category>("all");
   const [ready, setReady] = useState(false);
+  const heroWork: Work = works[heroIndex] ?? works[0];
   const [viewer, setViewer] = useState<number | null>(null);
-  const [heroIndex, setHeroIndex] = useState(heroWorks[0]);
+  const [heroIndex, setHeroIndex] = useState<number>(heroWorks[0]);
   useEffect(() => {
-    const id = window.setInterval(() => setHeroIndex((cur) => heroWorks[(heroWorks.indexOf(cur) + 1) % heroWorks.length]), 6000);
+    const id = window.setInterval(() => setHeroIndex((cur) => heroWorks[(heroWorks.indexOf(cur as (typeof heroWorks)[number]) + 1) % heroWorks.length] ?? heroWorks[0]), 6000);
     return () => window.clearInterval(id);
   }, []);
 
@@ -114,10 +116,10 @@ function Index() {
             <a href="#works" className="flex w-fit items-center gap-3 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.all}<ArrowDown className="size-4"/></a>
           </div>
           <div className="flex min-h-[58vh] items-center justify-center px-5 py-10 md:px-12">
-            <button onClick={() => setViewer(works.indexOf(works[heroIndex]))} className="relative aspect-[4/5] w-[min(78vw,26rem)] overflow-hidden bg-muted shadow-2xl" aria-label={works[heroIndex][lang]}>
-              {heroWorks.map((idx, i) => <img key={idx} src={works[idx].image} alt={works[idx][lang]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${idx === heroIndex ? "opacity-100" : "opacity-0"}`} />)}
+            <button onClick={() => setViewer(heroIndex)} className="relative aspect-[4/5] w-[min(78vw,26rem)] overflow-hidden bg-muted shadow-2xl" aria-label={heroWork[lang]}>
+              {heroWorks.map((idx) => <img key={idx} src={works[idx].image} alt={works[idx][lang]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${idx === heroIndex ? "opacity-100" : "opacity-0"}`} />)}
             </button>
-            <span className="absolute bottom-6 right-6 hidden text-[10px] uppercase tracking-[.16em] text-muted-foreground md:block">{works[heroIndex][lang]} · {works[heroIndex].year}</span>
+            <span className="absolute bottom-6 right-6 hidden text-[10px] uppercase tracking-[.16em] text-muted-foreground md:block">{heroWork[lang]} · {heroWork.year}</span>
           </div>
         </div>
       </section>
@@ -162,7 +164,7 @@ const backgrounds = [
 
 function Viewer({ index, lang, onChange, onClose }: { index: number; lang: Lang; onChange: (i: number) => void; onClose: () => void }) {
   const [bg, setBg] = useState(0);
-  const w = works[index];
+  const w: Work = works[index] ?? works[0];
   const c = viewerCopy[lang];
   const go = (d: number) => onChange((index + d + works.length) % works.length);
   useEffect(() => {
