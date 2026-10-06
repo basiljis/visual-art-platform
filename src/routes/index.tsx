@@ -1,19 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { works } from "@/lib/works";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
-import china1 from "@/assets/china-1.jpg.asset.json";
-import china2 from "@/assets/china-2.jpg.asset.json";
-import portraits1 from "@/assets/portraits-1.jpg.asset.json";
-import portraits2 from "@/assets/portraits-2.jpg.asset.json";
-import children1 from "@/assets/children-1.jpg.asset.json";
-import children2 from "@/assets/children-2.jpg.asset.json";
-import nu1 from "@/assets/nu-1.jpg.asset.json";
-import nu2 from "@/assets/nu-2.jpg.asset.json";
-import print1 from "@/assets/print-1.jpg.asset.json";
-import print2 from "@/assets/print-2.jpg.asset.json";
-import other1 from "@/assets/other-1.jpg.asset.json";
-import other2 from "@/assets/other-2.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -30,26 +19,12 @@ export const Route = createFileRoute("/")({
 type Lang = "ru" | "en";
 type Category = "all" | "myth" | "china" | "portraits" | "children" | "nu" | "print" | "other";
 
-const works = [
-  { image: portraits1.url, category: "portraits", year: "2021", ru: "Роман", en: "Roman", size: "60 × 80 см" },
-  { image: china1.url, category: "china", year: "2024", ru: "Дневник Китая I", en: "China Diary I", size: "70 × 50 см" },
-  { image: print1.url, category: "print", year: "2021", ru: "Маленькая история", en: "A Little Story", size: "23 × 30 см" },
-  { image: children1.url, category: "children", year: "2022", ru: "Лето", en: "Summer", size: "65 × 80 см" },
-  { image: nu1.url, category: "nu", year: "2021", ru: "Огонь", en: "Fire", size: "50 × 70 см" },
-  { image: other1.url, category: "other", year: "2023", ru: "Расстояние", en: "Distance", size: "40 × 55 см" },
-  { image: portraits2.url, category: "portraits", year: "2021", ru: "Лиза", en: "Lisa", size: "60 × 80 см" },
-  { image: china2.url, category: "china", year: "2024", ru: "Дневник Китая II", en: "China Diary II", size: "70 × 50 см" },
-  { image: print2.url, category: "print", year: "2022", ru: "Письмо", en: "The Letter", size: "30 × 40 см" },
-  { image: children2.url, category: "children", year: "2020", ru: "Юность", en: "Youth", size: "80 × 65 см" },
-  { image: nu2.url, category: "nu", year: "2021", ru: "Фигура", en: "Figure", size: "50 × 70 см" },
-  { image: other2.url, category: "other", year: "2023", ru: "Диссонанс", en: "Dissonance", size: "40 × 55 см" },
-] as const;
 
 const copy = {
   ru: { artist: "НАТАЛЬЯ ДИКУНОВА", subtitle: "Художник · Москва / Воронеж", works: "Работы", about: "Об авторе", contact: "Контакты", all: "Все работы", filters: "Направления", buy: "Узнать о покупке", breadcrumb: "Главная / Работы", intro: "Живопись, рисунок и печатная графика о памяти, мифе и человеческом присутствии.", note: "Работы находятся в частных коллекциях России, Европы, США, Индии и Китая, а также в музеях России и Китая.", achievements: "Royal Society of British Artists · 1-е место DEG Exlibris · Guanlan Printmaking Base 2025", categories: ["Все", "Миф артиста", "Китай", "Портреты", "Дети", "Ню", "Печатная графика", "Разное"] },
   en: { artist: "NATALIA DIKUNOVA", subtitle: "Artist · Moscow / Voronezh", works: "Works", about: "About", contact: "Contact", all: "All works", filters: "Practices", buy: "Purchase enquiry", breadcrumb: "Home / Works", intro: "Painting, drawing and printmaking exploring memory, myth and human presence.", note: "Works are held in private collections across Russia, Europe, the USA, India and China, as well as museums in Russia and China.", achievements: "Royal Society of British Artists · DEG Exlibris 1st prize · Guanlan Printmaking Base 2025", categories: ["All", "Artist’s myth", "China", "Portraits", "Children", "Nude", "Printmaking", "Other"] },
 };
-const heroWorks = [6, 1, 3, 9] as const;
+const heroWorks = [2, 12, 50, 72] as const;
 type Work = (typeof works)[number];
 const categoryKeys: Category[] = ["all", "myth", "china", "portraits", "children", "nu", "print", "other"];
 
@@ -81,7 +56,7 @@ function Index() {
   useEffect(() => { if (ready) window.localStorage.setItem("dikunova-lang", lang); }, [lang, ready]);
 
   const t = copy[lang];
-  const filtered = category === "all" || category === "myth" ? works : works.filter((work) => work.category === category);
+  const filtered = category === "all" ? works : works.filter((work) => work.category === category);
 
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
@@ -120,7 +95,7 @@ function Index() {
             <button onClick={() => setViewer(heroIndex)} className="relative aspect-[4/5] w-[min(78vw,26rem)] overflow-hidden bg-muted shadow-2xl" aria-label={heroWork[lang]}>
               {heroWorks.map((idx) => <img key={idx} src={works[idx].image} alt={works[idx][lang]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${idx === heroIndex ? "opacity-100" : "opacity-0"}`} />)}
             </button>
-            <span className="absolute bottom-6 right-6 hidden text-[10px] uppercase tracking-[.16em] text-muted-foreground md:block">{heroWork[lang]} · {heroWork.year}</span>
+            <span className="absolute bottom-6 right-6 hidden text-[10px] uppercase tracking-[.16em] text-muted-foreground md:block">{heroWork[lang]}</span>
           </div>
         </div>
       </section>
@@ -154,8 +129,8 @@ function Index() {
 }
 
 const viewerCopy = {
-  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: (typeof works)[number]) => `${w.ru}, ${w.year}. ${w.size}. Оригинальная работа Натальи Дикуновой.` },
-  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: (typeof works)[number]) => `${w.en}, ${w.year}. ${w.size.replace("см", "cm")}. Original work by Natalia Dikunova.` },
+  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: (typeof works)[number]) => `${w.ru}. Оригинальная работа Натальи Дикуновой.` },
+  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: (typeof works)[number]) => `${w.en}. Original work by Natalia Dikunova.` },
 };
 const backgrounds = [
   { key: "dark", cls: "bg-foreground text-background" },
