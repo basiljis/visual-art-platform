@@ -59,9 +59,9 @@ function Index() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [category, setCategory] = useState<Category>("all");
   const [ready, setReady] = useState(false);
-  const heroWork: Work = works[heroIndex] ?? works[0];
   const [viewer, setViewer] = useState<number | null>(null);
   const [heroIndex, setHeroIndex] = useState<number>(heroWorks[0]);
+  const heroWork: Work = works[heroIndex] ?? works[0];
   useEffect(() => {
     const id = window.setInterval(() => setHeroIndex((cur) => heroWorks[(heroWorks.indexOf(cur as (typeof heroWorks)[number]) + 1) % heroWorks.length] ?? heroWorks[0]), 6000);
     return () => window.clearInterval(id);
@@ -178,7 +178,7 @@ function Viewer({ index, lang, onChange, onClose }: { index: number; lang: Lang;
     return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
   });
   return (
-    <div role="dialog" aria-modal="true" aria-label={w[lang]} className={`fixed inset-0 z-[90] flex flex-col transition-colors duration-500 ${backgrounds[bg].cls}`}>
+    <div role="dialog" aria-modal="true" aria-label={w[lang]} className={`fixed inset-0 z-[90] flex flex-col transition-colors duration-500 ${backgrounds[bg]?.cls ?? ""}`}>
       <div className="flex h-16 items-center justify-between px-5 md:px-8">
         <div className="flex items-center gap-2 text-[10px] uppercase tracking-[.18em]"><span className="mr-2 opacity-60">{c.bg}</span>{backgrounds.map((b, i) => <button key={b.key} onClick={() => setBg(i)} aria-label={`${c.bg} ${b.key}`} className={`size-5 rounded-full border border-current ${b.cls} ${bg === i ? "ring-2 ring-current ring-offset-2 ring-offset-transparent" : ""}`} />)}</div>
         <button onClick={onClose} aria-label={c.close}><X className="size-7" /></button>
