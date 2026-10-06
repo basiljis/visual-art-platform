@@ -176,7 +176,7 @@ function Index() {
 
       <header className="fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center border-b border-border/60 bg-background/80 px-4 backdrop-blur-md md:px-8">
         <div className="flex items-center gap-4"><button aria-label="Menu" onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">Menu</span></button></div>
-        <a href="#top" className="text-center font-display text-sm tracking-[.18em] sm:text-lg">{t.artist} <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.24em] opacity-60">artist</span></a>
+        <a href="#top" className="whitespace-nowrap text-center font-display text-[11px] tracking-[.12em] sm:text-lg sm:tracking-[.18em]">{t.artist} <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-[10px] lowercase tracking-[.2em] opacity-60 sm:text-xs">artist</span></a>
         <div className="flex justify-end gap-1">
           <button onClick={() => setLang(lang === "ru" ? "en" : "ru")} className="h-9 w-10 text-xs font-semibold uppercase" aria-label="Language">{lang}</button>
           <button onClick={() => setDark(!dark)} className="grid size-9 place-items-center" aria-label="Theme">{dark ? <Sun className="size-4"/> : <Moon className="size-4"/>}</button>
@@ -196,7 +196,7 @@ function Index() {
       <section id="top" className="relative min-h-[92vh] pt-20">
         <div className="relative grid min-h-[calc(92vh-5rem)] grid-cols-1 md:grid-cols-[42%_58%]">
           <div className="relative flex flex-col justify-end px-5 pb-12 pt-16 md:px-8 md:pb-16">
-            <img src={signatureAsset.url} alt="" className="mb-4 h-60 w-60 object-contain invert transition-[filter] duration-500 dark:invert-0 md:h-72 md:w-72" />
+            <img src={signatureAsset.url} alt="" className="mb-4 h-44 w-44 sm:h-60 sm:w-60 object-contain invert transition-[filter] duration-500 dark:invert-0 md:h-72 md:w-72" />
             <p className="mb-5 max-w-md animate-reveal text-lg leading-relaxed md:text-2xl">{t.intro}</p>
             <a href="#works" className="flex w-fit items-center gap-3 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.all}<ArrowDown className="size-4"/></a>
           </div>
@@ -231,11 +231,11 @@ function Index() {
       </section>
 
       <footer id="contact" className="relative overflow-hidden bg-ink px-5 pb-0 pt-20 text-paper md:px-8 md:pt-28">
-        <div className="grid gap-14 md:grid-cols-2"><div className="flex items-center gap-6"><h2 className="font-display text-5xl md:text-7xl">{t.contact}</h2><img src={signatureAsset.url} alt="Наталья Дикунова" className="h-20 w-20 object-contain md:h-28 md:w-28" /></div><div className="space-y-3 text-lg"><a className="block border-b border-paper/30 pb-3" href="mailto:morrasdream@gmail.com">morrasdream@gmail.com</a><a className="block border-b border-paper/30 pb-3" href="tel:+79268215342">+7 926 821-53-42</a><div className="flex flex-wrap gap-6 pt-3 text-xs uppercase tracking-[.18em]"><a href="https://www.instagram.com/natasha_dikunova_zipalova" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Instagram<ArrowUpRight className="size-3"/></a><a href="https://www.facebook.com/share/15dxi5pfo6/" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Facebook<ArrowUpRight className="size-3"/></a><a href="https://t.me/Natasha_Dikunova_Zipalova" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Telegram<ArrowUpRight className="size-3"/></a></div></div></div>
+        <div className="grid gap-14 md:grid-cols-2"><div className="flex items-center gap-6"><h2 className="font-display text-4xl sm:text-5xl md:text-7xl">{t.contact}</h2><img src={signatureAsset.url} alt="Наталья Дикунова" className="h-14 w-14 shrink-0 object-contain md:h-28 md:w-28" /></div><div className="space-y-3 text-lg"><a className="block border-b border-paper/30 pb-3" href="mailto:morrasdream@gmail.com">morrasdream@gmail.com</a><a className="block border-b border-paper/30 pb-3" href="tel:+79268215342">+7 926 821-53-42</a><div className="flex flex-wrap gap-x-6 gap-y-3 pt-3 text-xs uppercase tracking-[.18em]"><a href="https://www.instagram.com/natasha_dikunova_zipalova" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Instagram<ArrowUpRight className="size-3"/></a><a href="https://www.facebook.com/share/15dxi5pfo6/" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Facebook<ArrowUpRight className="size-3"/></a><a href="https://t.me/Natasha_Dikunova_Zipalova" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Telegram<ArrowUpRight className="size-3"/></a></div></div></div>
         <p className="mt-20 max-w-4xl text-[10px] uppercase leading-5 tracking-[.18em] opacity-60">{t.achievements}</p>
         <div className="h-[clamp(5rem,13vw,12rem)] overflow-hidden"><p className="translate-y-[18%] whitespace-nowrap font-display text-[clamp(5rem,17vw,16rem)] leading-none">DIKUNOVA</p></div>
       </footer>
-      <div className="fixed bottom-5 right-5 z-40 flex flex-col gap-2"><button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label={lang==="ru"?"В начало":"To top"} className="grid size-11 place-items-center border border-border bg-background/80 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowUp className="size-4"/></button><button onClick={() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" })} aria-label={lang==="ru"?"В конец":"To bottom"} className="grid size-11 place-items-center border border-border bg-background/80 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowDown className="size-4"/></button></div>
+      <div className="fixed bottom-4 right-3 z-40 flex flex-col gap-1.5 md:bottom-5 md:right-5 md:gap-2"><button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label={lang==="ru"?"В начало":"To top"} className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowUp className="size-4"/></button><button onClick={() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" })} aria-label={lang==="ru"?"В конец":"To bottom"} className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowDown className="size-4"/></button></div>
       {viewer !== null && <Viewer index={viewer} lang={lang} onChange={setViewer} onClose={() => setViewer(null)} />}
       {aboutOpen && <AboutModal lang={lang} onClose={() => setAboutOpen(false)} />}
     </main>
@@ -273,10 +273,10 @@ function Viewer({ index, lang, onChange, onClose }: { index: number; lang: Lang;
         <div className="flex items-center gap-2 text-[10px] uppercase tracking-[.18em]"><span className="mr-2 opacity-60">{c.bg}</span>{backgrounds.map((b, i) => <button key={b.key} onClick={() => setBg(i)} aria-label={`${c.bg} ${b.key}`} className={`size-5 rounded-full border border-current ${b.cls} ${bg === i ? "ring-2 ring-current ring-offset-2 ring-offset-transparent" : ""}`} />)}</div>
         <button onClick={onClose} aria-label={c.close}><X className="size-7" /></button>
       </div>
-      <div className="relative flex min-h-0 flex-1 items-center justify-center px-14 md:px-24">
-        <button onClick={() => go(-1)} aria-label={c.prev} className="absolute left-3 grid size-11 place-items-center md:left-8"><ArrowLeft className="size-6" /></button>
+      <div className="relative flex min-h-0 flex-1 items-center justify-center px-2 md:px-24">
+        <button onClick={() => go(-1)} aria-label={c.prev} className="absolute left-1 z-10 grid size-11 bg-current/0 place-items-center md:left-8"><ArrowLeft className="size-6" /></button>
         <img key={w.image} src={w.image} alt={w[lang]} className="max-h-full max-w-full animate-reveal object-contain shadow-2xl" />
-        <button onClick={() => go(1)} aria-label={c.next} className="absolute right-3 grid size-11 place-items-center md:right-8"><ArrowRight className="size-6" /></button>
+        <button onClick={() => go(1)} aria-label={c.next} className="absolute right-1 z-10 grid size-11 place-items-center md:right-8"><ArrowRight className="size-6" /></button>
       </div>
       <div className="grid gap-4 px-5 py-5 md:grid-cols-[1fr_auto] md:items-end md:px-8">
         <div><h2 className="text-base font-medium md:text-lg">{w[lang]}</h2><p className="mt-1 max-w-xl text-xs opacity-70">{c.desc(w)}</p></div>
