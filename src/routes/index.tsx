@@ -14,6 +14,12 @@ import print1 from "@/assets/print-1.jpg.asset.json";
 import print2 from "@/assets/print-2.jpg.asset.json";
 import other1 from "@/assets/other-1.jpg.asset.json";
 import other2 from "@/assets/other-2.jpg.asset.json";
+import portraits3 from "@/assets/portraits-3.jpg.asset.json";
+import china3 from "@/assets/china-3.jpg.asset.json";
+import print3 from "@/assets/print-3.jpg.asset.json";
+import children3 from "@/assets/children-3.jpg.asset.json";
+import nu3 from "@/assets/nu-3.jpg.asset.json";
+import other3 from "@/assets/other-3.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -38,11 +44,17 @@ const works = [
   { image: nu1.url, category: "nu", year: "2021", ru: "Огонь", en: "Fire", size: "50 × 70 см" },
   { image: other1.url, category: "other", year: "2023", ru: "Расстояние", en: "Distance", size: "40 × 55 см" },
   { image: portraits2.url, category: "portraits", year: "2021", ru: "Лиза", en: "Lisa", size: "60 × 80 см" },
+  { image: portraits3.url, category: "portraits", year: "2021", ru: "Вера", en: "Vera", size: "60 × 80 см" },
   { image: china2.url, category: "china", year: "2024", ru: "Дневник Китая II", en: "China Diary II", size: "70 × 50 см" },
+  { image: china3.url, category: "china", year: "2024", ru: "Дневник Китая III", en: "China Diary III", size: "70 × 50 см" },
   { image: print2.url, category: "print", year: "2022", ru: "Письмо", en: "The Letter", size: "30 × 40 см" },
+  { image: print3.url, category: "print", year: "2021", ru: "Путь", en: "The Path", size: "23 × 30 см" },
   { image: children2.url, category: "children", year: "2020", ru: "Юность", en: "Youth", size: "80 × 65 см" },
+  { image: children3.url, category: "children", year: "2022", ru: "Дочь", en: "Daughter", size: "65 × 80 см" },
   { image: nu2.url, category: "nu", year: "2021", ru: "Фигура", en: "Figure", size: "50 × 70 см" },
+  { image: nu3.url, category: "nu", year: "2021", ru: "Танец", en: "Dance", size: "50 × 70 см" },
   { image: other2.url, category: "other", year: "2023", ru: "Диссонанс", en: "Dissonance", size: "40 × 55 см" },
+  { image: other3.url, category: "other", year: "2023", ru: "Тишина", en: "Silence", size: "40 × 55 см" },
 ] as const;
 
 const copy = {
