@@ -137,7 +137,6 @@ const projectMeta: Record<string, { ru: string; en: string; year: string; size: 
   "vampire-01": { ru: "АРТЁМ ТКАЧЕНКО", en: "ARTYOM TKACHENKO", year: "2025", size: "Бумага/уголь, 50 × 50 см" },
   "vampire-02": { ru: "АРТЁМ ТКАЧЕНКО", en: "ARTYOM TKACHENKO", year: "2025", size: "Бумага/уголь, 50 × 50 см" },
   "vampire-03": { ru: "АРТЁМ ТКАЧЕНКО", en: "ARTYOM TKACHENKO", year: "2025", size: "Бумага/уголь, 50 × 50 см" },
-  "parts-08": { ru: "СУМКИ С ПРИНТАМИ", en: "PRINTED BAGS", year: "2025", size: "" },
   "parts-09": { ru: "СУМКИ С ПРИНТАМИ", en: "PRINTED BAGS", year: "2025", size: "" },
 };
 const projectWorks = Object.entries(projectFiles).map(([path, image]) => {
