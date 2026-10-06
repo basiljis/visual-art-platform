@@ -190,7 +190,7 @@ function Viewer({ index, lang, onChange, onClose }: { index: number; lang: Lang;
         <button onClick={() => go(1)} aria-label={c.next} className="absolute right-3 grid size-11 place-items-center md:right-8"><ArrowRight className="size-6" /></button>
       </div>
       <div className="grid gap-4 px-5 py-5 md:grid-cols-[1fr_auto] md:items-end md:px-8">
-        <div><h2 className="font-display text-2xl md:text-3xl">{w[lang]}</h2><p className="mt-1 max-w-xl text-sm opacity-70">{c.desc(w)}</p></div>
+        <div><h2 className="text-base font-medium md:text-lg">{w[lang]}</h2><p className="mt-1 max-w-xl text-xs opacity-70">{c.desc(w)}</p></div>
         <a href={`mailto:morrasdream@gmail.com?subject=${encodeURIComponent(`${c.buy}: ${w[lang]}`)}`} className="flex w-fit items-center gap-2 border-b border-current pb-1 text-xs uppercase tracking-[.18em]">{c.buy}<ArrowUpRight className="size-4" /></a>
       </div>
     </div>
