@@ -1,19 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { works } from "@/lib/works";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
-import china1 from "@/assets/china-1.jpg.asset.json";
-import china2 from "@/assets/china-2.jpg.asset.json";
-import portraits1 from "@/assets/portraits-1.jpg.asset.json";
-import portraits2 from "@/assets/portraits-2.jpg.asset.json";
-import children1 from "@/assets/children-1.jpg.asset.json";
-import children2 from "@/assets/children-2.jpg.asset.json";
-import nu1 from "@/assets/nu-1.jpg.asset.json";
-import nu2 from "@/assets/nu-2.jpg.asset.json";
-import print1 from "@/assets/print-1.jpg.asset.json";
-import print2 from "@/assets/print-2.jpg.asset.json";
-import other1 from "@/assets/other-1.jpg.asset.json";
-import other2 from "@/assets/other-2.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -30,20 +19,6 @@ export const Route = createFileRoute("/")({
 type Lang = "ru" | "en";
 type Category = "all" | "myth" | "china" | "portraits" | "children" | "nu" | "print" | "other";
 
-const works = [
-  { image: portraits1.url, category: "portraits", year: "2021", ru: "Роман", en: "Roman", size: "60 × 80 см" },
-  { image: china1.url, category: "china", year: "2024", ru: "Дневник Китая I", en: "China Diary I", size: "70 × 50 см" },
-  { image: print1.url, category: "print", year: "2021", ru: "Маленькая история", en: "A Little Story", size: "23 × 30 см" },
-  { image: children1.url, category: "children", year: "2022", ru: "Лето", en: "Summer", size: "65 × 80 см" },
-  { image: nu1.url, category: "nu", year: "2021", ru: "Огонь", en: "Fire", size: "50 × 70 см" },
-  { image: other1.url, category: "other", year: "2023", ru: "Расстояние", en: "Distance", size: "40 × 55 см" },
-  { image: portraits2.url, category: "portraits", year: "2021", ru: "Лиза", en: "Lisa", size: "60 × 80 см" },
-  { image: china2.url, category: "china", year: "2024", ru: "Дневник Китая II", en: "China Diary II", size: "70 × 50 см" },
-  { image: print2.url, category: "print", year: "2022", ru: "Письмо", en: "The Letter", size: "30 × 40 см" },
-  { image: children2.url, category: "children", year: "2020", ru: "Юность", en: "Youth", size: "80 × 65 см" },
-  { image: nu2.url, category: "nu", year: "2021", ru: "Фигура", en: "Figure", size: "50 × 70 см" },
-  { image: other2.url, category: "other", year: "2023", ru: "Диссонанс", en: "Dissonance", size: "40 × 55 см" },
-] as const;
 
 const copy = {
   ru: { artist: "НАТАЛЬЯ ДИКУНОВА", subtitle: "Художник · Москва / Воронеж", works: "Работы", about: "Об авторе", contact: "Контакты", all: "Все работы", filters: "Направления", buy: "Узнать о покупке", breadcrumb: "Главная / Работы", intro: "Живопись, рисунок и печатная графика о памяти, мифе и человеческом присутствии.", note: "Работы находятся в частных коллекциях России, Европы, США, Индии и Китая, а также в музеях России и Китая.", achievements: "Royal Society of British Artists · 1-е место DEG Exlibris · Guanlan Printmaking Base 2025", categories: ["Все", "Миф артиста", "Китай", "Портреты", "Дети", "Ню", "Печатная графика", "Разное"] },
@@ -81,7 +56,7 @@ function Index() {
   useEffect(() => { if (ready) window.localStorage.setItem("dikunova-lang", lang); }, [lang, ready]);
 
   const t = copy[lang];
-  const filtered = category === "all" || category === "myth" ? works : works.filter((work) => work.category === category);
+  const filtered = category === "all" ? works : works.filter((work) => work.category === category);
 
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
