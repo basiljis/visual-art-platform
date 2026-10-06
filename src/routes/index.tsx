@@ -6,7 +6,7 @@ import { mediaUrl } from "@/lib/media";
 import { ArrowDown, ArrowUp, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Settings, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
-import preloaderArt from "@/assets/works/site/print-03.jpg";
+import preloaderArt from "@/assets/works/site/children-07.jpg";
 import portraitAsset from "@/assets/artist-portrait.png.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -150,7 +150,7 @@ function Index() {
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
       <div className="pointer-events-none fixed inset-0 z-[100] flex animate-preloader flex-col items-center justify-center overflow-hidden bg-ink text-paper" aria-hidden="true">
-        <img src={preloaderArt} alt="" className="absolute -right-[10%] top-1/2 h-[75vh] w-auto max-w-none -translate-y-1/2 object-cover opacity-20 grayscale [mask-image:linear-gradient(to_left,black_40%,transparent)] md:right-0 md:h-[85vh]" />
+        <img src={preloaderArt} alt="" className="absolute -right-[10%] top-1/2 h-[75vh] w-auto max-w-none -translate-y-1/2 object-cover opacity-30 [filter:grayscale(1)_invert(1)_contrast(1.6)_brightness(.85)] mix-blend-screen [mask-image:radial-gradient(ellipse_at_center,black_35%,transparent_72%)] md:right-0 md:h-[85vh]" />
         <img src={signatureAsset.url} alt="" className="relative h-56 w-56 object-contain md:h-72 md:w-72" />
         <p className="relative mt-6 font-display text-lg tracking-[.18em]">{t.artist} <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.24em] opacity-60">artist</span></p>
       </div>
