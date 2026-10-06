@@ -143,6 +143,7 @@ function Index() {
   const [category, setCategory] = useState<Category>("all");
   const [ready, setReady] = useState(false);
   const [viewer, setViewer] = useState<number | null>(null);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [heroIndex, setHeroIndex] = useState<number>(heroWorks[0]);
   const heroWork: Work = works[heroIndex] ?? works[0]!;
   useEffect(() => {
@@ -237,6 +238,7 @@ function Index() {
         <div className="h-[clamp(5rem,13vw,12rem)] overflow-hidden"><p className="translate-y-[18%] whitespace-nowrap font-display text-[clamp(5rem,17vw,16rem)] leading-none">DIKUNOVA</p></div>
       </footer>
       {viewer !== null && <Viewer index={viewer} lang={lang} onChange={setViewer} onClose={() => setViewer(null)} />}
+      {aboutOpen && <AboutModal lang={lang} onClose={() => setAboutOpen(false)} />}
     </main>
   );
 }
