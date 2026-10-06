@@ -86,8 +86,9 @@ function Index() {
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
       <div className="pointer-events-none fixed inset-0 z-[100] flex animate-preloader flex-col items-center justify-center overflow-hidden bg-foreground text-background" aria-hidden="true">
-        <img src={signatureAsset.url} alt="" className="h-36 w-36 object-contain invert dark:invert-0" />
-        <p className={`mt-5 font-display text-sm tracking-[.24em] transition-opacity ${ready ? "opacity-100" : "opacity-0"}`}>{t.artist} <span className="font-sans text-[11px] lowercase italic tracking-[.12em] opacity-70">artist</span></p>
+        <img src={signatureAsset.url} alt="" className="h-36 w-36 object-contain dark:invert" />
+        <p className="mt-6 font-sans text-base font-medium uppercase tracking-[.28em]">{t.artist}</p>
+        <p className="mt-2 font-sans text-[11px] lowercase italic tracking-[.14em] opacity-70">artist</p>
       </div>
 
       <header className="fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center border-b border-border/60 bg-background/80 px-4 backdrop-blur-md md:px-8">
