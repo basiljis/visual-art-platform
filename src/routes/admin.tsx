@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { CategoriesPanel, WorksPanel, BlogPanel } from "@/components/admin/Panels";
+import { CategoriesPanel, WorksPanel, BlogPanel, field, label, primaryBtn } from "@/components/admin/Panels";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -20,9 +20,6 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-export const field = "w-full border-b border-border bg-transparent py-2 text-sm outline-none transition-colors focus:border-red-accent";
-export const label = "block text-[10px] uppercase tracking-[.18em] text-muted-foreground";
-export const primaryBtn = "inline-flex items-center gap-2 bg-foreground px-5 py-3 text-xs uppercase tracking-[.18em] text-background transition-opacity hover:opacity-80 disabled:opacity-40";
 
 function Shell({ children, right }: { children: ReactNode; right?: ReactNode }) {
   return (
