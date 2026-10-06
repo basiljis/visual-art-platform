@@ -12,3 +12,4 @@
 - Keep the artist portfolio as a single editorial gallery experience; language and theme preferences remain browser-persisted because no backend is required.
 
 - Blog posts live in src/lib/blog-posts.json with images in src/assets/blog/, rendered by /blog and /blog/$slug routes — static content, no backend needed.
+- Blog subscriptions are inserted by a server function with the admin client; blog_subscribers has RLS on and no public policies.

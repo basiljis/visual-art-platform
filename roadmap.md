@@ -1,5 +1,5 @@
 - [x] Mobile adaptation
 - [x] Smooth scroll for menu links and top/bottom buttons
-- [ ] Blog subscribe form (stored in Cloud)
-- [ ] Mural post: 2 videos
-- [ ] Mural post: clickable press links
+- [x] Blog subscribe form (stored in Cloud)
+- [x] Mural post: 2 videos
+- [x] Mural post: clickable press links
