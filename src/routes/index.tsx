@@ -110,17 +110,23 @@ function Index() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [category, setCategory] = useState<Category>("all");
   const [query, setQuery] = useState("");
-  const [project, setProject] = useState<ProjectKey | "all">("all");
+  const [project, setProject] = useState<string>("all");
   const [ready, setReady] = useState(false);
   const [viewer, setViewer] = useState<number | null>(null);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [enquiry, setEnquiry] = useState<string | null>(null);
-  const [heroIndex, setHeroIndex] = useState<number>(heroWorks[0]);
-  const heroWork: Work = works[heroIndex] ?? works[0]!;
+  const { data: gallery } = useSuspenseQuery(galleryQuery);
+  const { cats, works } = buildGallery(gallery);
+  const heroWorks = works.map((w, i) => (w.hero ? i : -1)).filter((i) => i >= 0);
+  if (!heroWorks.length && works.length) heroWorks.push(0);
+  const [heroIndex, setHeroIndex] = useState<number>(heroWorks[0] ?? 0);
+  const heroWork: Work | undefined = works[heroIndex] ?? works[0];
+  const parentOf = (key: string) => cats.find((c) => c.key === key);
+  const hasSub = (key: string) => (parentOf(key)?.children.length ?? 0) > 0;
   useEffect(() => {
-    const id = window.setInterval(() => setHeroIndex((cur) => heroWorks[(heroWorks.indexOf(cur as (typeof heroWorks)[number]) + 1) % heroWorks.length] ?? heroWorks[0]), 6000);
+    const id = window.setInterval(() => setHeroIndex((cur) => heroWorks[(heroWorks.indexOf(cur) + 1) % heroWorks.length] ?? heroWorks[0] ?? 0), 6000);
     return () => window.clearInterval(id);
-  }, []);
+  }, [heroWorks.join(",")]);
 
   useEffect(() => {
     const savedLang = window.localStorage.getItem("dikunova-lang");
@@ -136,10 +142,10 @@ function Index() {
   useEffect(() => { if (ready) window.localStorage.setItem("dikunova-lang", lang); }, [lang, ready]);
 
   const t = copy[lang];
-  const filtered = category === "all" ? works : works.filter((work) => work.category === category && (category !== "myth" || (project === "all" ? work.cover : work.project === project)));
+  const filtered = category === "all" ? works : works.filter((work) => work.category === category && (!hasSub(category) || (project === "all" ? work.cover : work.project === project)));
   const q = query.trim().toLowerCase();
-  const visible = q ? works.filter((w) => `${w.ru} ${w.en}`.toLowerCase().includes(q)) : category === "all" ? works.filter((w) => w.category !== "myth" || w.cover) : filtered;
-  const openProject = (key: ProjectKey) => { setCategory("myth"); setProject(key); document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); };
+  const visible = q ? works.filter((w) => `${w.ru} ${w.en}`.toLowerCase().includes(q)) : category === "all" ? works.filter((w) => !hasSub(w.category) || w.cover) : filtered;
+  const openProject = (parent: string, key: string) => { setCategory(parent); setProject(key); document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); };
 
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
@@ -191,10 +197,10 @@ function Index() {
         <div className="mb-16 border-y border-border py-5">
           <p className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.filters}</p>
           <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap gap-x-6 gap-y-3">{categoryKeys.map((key,i)=>{const btn=<button key={key} onClick={()=>{setCategory(key); setProject("all");}} className={`text-sm transition-opacity ${category===key?"opacity-100 underline underline-offset-8":"opacity-45 hover:opacity-100"}`}>{t.categories[i]}</button>; return key!=="myth"?btn:(
+          <div className="flex flex-wrap gap-x-6 gap-y-3">{[{ key: "all", ru: "Все", en: "All", children: [] as Cat["children"] }, ...cats].map((cat)=>{const key=cat.key; const btn=<button key={key} onClick={()=>{setCategory(key); setProject("all");}} className={`text-sm transition-opacity ${category===key?"opacity-100 underline underline-offset-8":"opacity-45 hover:opacity-100"}`}>{cat[lang]}</button>; return !cat.children.length?btn:(
             <div key={key} className="group/sub relative">{btn}
               <div className="invisible absolute left-0 top-full z-30 pt-3 [@media(hover:none)]:hidden opacity-0 transition-opacity duration-200 group-hover/sub:visible group-hover/sub:opacity-100 group-focus-within/sub:visible group-focus-within/sub:opacity-100">
-                <div className="flex w-max flex-col gap-1 border border-border bg-background p-3 shadow-sm">{mythProjects.map((p)=><button key={p.key} onClick={()=>openProject(p.key)} className="text-left text-xs uppercase tracking-[.12em] opacity-70 transition-colors hover:text-red-accent hover:opacity-100"><span className="text-red-accent">/ </span>{p[lang]}</button>)}</div>
+                <div className="flex w-max flex-col gap-1 border border-border bg-background p-3 shadow-sm">{cat.children.map((p)=><button key={p.key} onClick={()=>openProject(key, p.key)} className="text-left text-xs uppercase tracking-[.12em] opacity-70 transition-colors hover:text-red-accent hover:opacity-100"><span className="text-red-accent">/ </span>{p[lang]}</button>)}</div>
               </div>
             </div>);})}</div>
             <label className="flex w-full items-center gap-2 border-b border-border pb-1 transition-colors focus-within:border-red-accent sm:w-64">
@@ -203,10 +209,10 @@ function Index() {
               {query && <button type="button" onClick={()=>setQuery("")} aria-label={lang==="ru"?"Очистить":"Clear"} data-tip={lang==="ru"?"Очистить":"Clear"} className="text-xs opacity-50 hover:opacity-100">✕</button>}
             </label>
           </div>
-          {category === "myth" && (
+          {hasSub(category) && (
             <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-border pt-4">
               <span className="text-[10px] uppercase tracking-[.18em] text-red-accent">/</span>
-              {([{ key: "all", ru: "Все проекты", en: "All projects" }, ...mythProjects] as const).map((p) => (
+              {[{ key: "all", ru: "Все проекты", en: "All projects" }, ...(parentOf(category)?.children ?? [])].map((p) => (
                 <button key={p.key} onClick={() => setProject(p.key)} className={`text-xs uppercase tracking-[.12em] transition-opacity ${project === p.key ? "opacity-100 underline underline-offset-8" : "opacity-45 hover:opacity-100"}`}>{p[lang]}</button>
               ))}
             </div>
@@ -219,7 +225,7 @@ function Index() {
           </article>)}
         </div>
         {category !== "all" && (
-          <p className="mx-auto mt-20 max-w-2xl border-t border-border pt-6 text-center text-sm leading-relaxed text-muted-foreground">{categoryNotes[category][lang]}</p>
+          <p className="mx-auto mt-20 max-w-2xl border-t border-border pt-6 text-center text-sm leading-relaxed text-muted-foreground">{lang === "ru" ? parentOf(category)?.noteRu : parentOf(category)?.noteEn}</p>
         )}
       </section>
 
@@ -233,7 +239,7 @@ function Index() {
         <div className="h-[min(12rem,calc((100vw-2.5rem)/7.6))] overflow-hidden"><button type="button" onClick={() => slowScroll(0)} aria-label={lang==="ru"?"В начало":"To top"} data-tip={lang==="ru"?"В начало":"To top"} data-tip-pos="left" className="block translate-y-[18%] cursor-pointer whitespace-nowrap font-display text-[min(16rem,calc((100vw-2.5rem)/5.9))] leading-none transition-colors hover:text-red-accent">DIKUNOVA</button></div>
       </footer>
       <div className="fixed bottom-4 right-3 z-40 flex flex-col gap-1.5 md:bottom-5 md:right-5 md:gap-2"><button onClick={() => slowScroll(0)} aria-label={lang==="ru"?"В начало":"To top"} data-tip={lang==="ru"?"В начало":"To top"} data-tip-pos="left" className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowUp className="size-4"/></button><button onClick={() => slowScroll(document.documentElement.scrollHeight - window.innerHeight)} aria-label={lang==="ru"?"В конец":"To bottom"} data-tip={lang==="ru"?"В конец":"To bottom"} data-tip-pos="left" className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowDown className="size-4"/></button></div>
-      {viewer !== null && <Viewer index={viewer} lang={lang} onChange={setViewer} onClose={() => setViewer(null)} onEnquire={setEnquiry} />}
+      {viewer !== null && <Viewer works={works} index={viewer} lang={lang} onChange={setViewer} onClose={() => setViewer(null)} onEnquire={setEnquiry} />}
       {enquiry !== null && <EnquiryModal artwork={enquiry} lang={lang} onClose={() => setEnquiry(null)} />}
       {aboutOpen && <AboutModal lang={lang} onClose={() => setAboutOpen(false)} />}
     </main>
@@ -241,8 +247,8 @@ function Index() {
 }
 
 const viewerCopy = {
-  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: (typeof works)[number]) => `${[w.ru, w.year, w.size].filter(Boolean).join(", ")}. Оригинальная работа Натальи Дикуновой.` },
-  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: (typeof works)[number]) => `${[w.en, w.year, w.size.replace("см", "cm")].filter(Boolean).join(", ")}. Original work by Natalia Dikunova.` },
+  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: Work) => `${[w.ru, w.year, w.size].filter(Boolean).join(", ")}. Оригинальная работа Натальи Дикуновой.` },
+  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: Work) => `${[w.en, w.year, w.size.replace("см", "cm")].filter(Boolean).join(", ")}. Original work by Natalia Dikunova.` },
 };
 const backgrounds = [
   { key: "dark", cls: "bg-ink text-paper" },
@@ -265,7 +271,7 @@ function slowScroll(target: number) {
   requestAnimationFrame(step);
 }
 
-function Viewer({ index, lang, onChange, onClose, onEnquire }: { index: number; lang: Lang; onChange: (i: number) => void; onClose: () => void; onEnquire: (w: string) => void }) {
+function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: Work[]; index: number; lang: Lang; onChange: (i: number) => void; onClose: () => void; onEnquire: (w: string) => void }) {
   const [bg, setBg] = useState(0);
   const w: Work = works[index] ?? works[0]!;
   const c = viewerCopy[lang];
