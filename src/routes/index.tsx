@@ -128,7 +128,7 @@ const knownWorks: Record<string, { year: string; ru: string; en: string; size: s
 const categoryNames: Record<string, { ru: string; en: string }> = { myth: { ru: "Миф артиста", en: "Artist’s myth" }, china: { ru: "Китай", en: "China" }, portraits: { ru: "Портрет", en: "Portrait" }, children: { ru: "Дети", en: "Children" }, nu: { ru: "Ню", en: "Nude" }, print: { ru: "Печатная графика", en: "Print" }, other: { ru: "Разное", en: "Miscellany" } };
 const categoryOrder = ["myth", "china", "portraits", "children", "nu", "print", "other"];
 const projectFiles = import.meta.glob("@/assets/projects/*.jpg", { eager: true, import: "default" }) as Record<string, string>;
-export const mythProjects = [
+const mythProjects = [
   { key: "vampire", ru: "Люблю всю. А. Ткаченко", en: "Love it all. A. Tkachenko" },
   { key: "parts", ru: "Части целого. Ю. Колокольников", en: "Parts of the whole. Yu. Kolokolnikov" },
 ] as const;
@@ -321,7 +321,7 @@ function Index() {
           <div className="flex flex-wrap gap-x-6 gap-y-3">{categoryKeys.map((key,i)=><button key={key} onClick={()=>{setCategory(key); setProject("all");}} className={`text-sm transition-opacity ${category===key?"opacity-100 underline underline-offset-8":"opacity-45 hover:opacity-100"}`}>{t.categories[i]}</button>)}</div>
           {category === "myth" && (
             <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-border pt-4">
-              <span className="text-[10px] uppercase tracking-[.18em] text-[var(--red-accent)]">/</span>
+              <span className="text-[10px] uppercase tracking-[.18em] text-red-accent">/</span>
               {([{ key: "all", ru: "Все проекты", en: "All projects" }, ...mythProjects] as const).map((p) => (
                 <button key={p.key} onClick={() => setProject(p.key)} className={`text-xs uppercase tracking-[.12em] transition-opacity ${project === p.key ? "opacity-100 underline underline-offset-8" : "opacity-45 hover:opacity-100"}`}>{p[lang]}</button>
               ))}
