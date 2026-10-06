@@ -129,7 +129,7 @@ function Index() {
       <section id="top" className="relative min-h-[92vh] pt-20">
         <div className="relative grid min-h-[calc(92vh-5rem)] grid-cols-1 md:grid-cols-[42%_58%]">
           <div className="relative flex flex-col justify-end px-5 pb-12 pt-16 md:px-8 md:pb-16">
-            <img src={signatureAsset.url} alt="" className="mb-4 h-14 w-14 object-contain invert transition-[filter] duration-500 dark:invert-0 md:h-16 md:w-16" />
+            <img src={signatureAsset.url} alt="" className="mb-4 h-42 w-42 object-contain invert transition-[filter] duration-500 dark:invert-0 md:h-48 md:w-48" />
             <p className="mb-5 max-w-md animate-reveal text-lg leading-relaxed md:text-2xl">{t.intro}</p>
             <a href="#works" className="flex w-fit items-center gap-3 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.all}<ArrowDown className="size-4"/></a>
           </div>
