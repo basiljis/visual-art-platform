@@ -127,13 +127,33 @@ const knownWorks: Record<string, { year: string; ru: string; en: string; size: s
 };
 const categoryNames: Record<string, { ru: string; en: string }> = { myth: { ru: "Миф артиста", en: "Artist’s myth" }, china: { ru: "Китай", en: "China" }, portraits: { ru: "Портрет", en: "Portrait" }, children: { ru: "Дети", en: "Children" }, nu: { ru: "Ню", en: "Nude" }, print: { ru: "Печатная графика", en: "Print" }, other: { ru: "Разное", en: "Miscellany" } };
 const categoryOrder = ["myth", "china", "portraits", "children", "nu", "print", "other"];
+const projectFiles = import.meta.glob("@/assets/projects/*.jpg", { eager: true, import: "default" }) as Record<string, string>;
+const mythProjects = [
+  { key: "vampire", ru: "Люблю всю. А. Ткаченко", en: "Love it all. A. Tkachenko" },
+  { key: "parts", ru: "Части целого. Ю. Колокольников", en: "Parts of the whole. Yu. Kolokolnikov" },
+] as const;
+type ProjectKey = (typeof mythProjects)[number]["key"];
+const projectMeta: Record<string, { ru: string; en: string; year: string; size: string }> = {
+  "vampire-01": { ru: "АРТЁМ ТКАЧЕНКО", en: "ARTYOM TKACHENKO", year: "2025", size: "Бумага/уголь, 50 × 50 см" },
+  "vampire-02": { ru: "АРТЁМ ТКАЧЕНКО", en: "ARTYOM TKACHENKO", year: "2025", size: "Бумага/уголь, 50 × 50 см" },
+  "vampire-03": { ru: "АРТЁМ ТКАЧЕНКО", en: "ARTYOM TKACHENKO", year: "2025", size: "Бумага/уголь, 50 × 50 см" },
+  "parts-08": { ru: "СУМКИ С ПРИНТАМИ", en: "PRINTED BAGS", year: "2025", size: "" },
+  "parts-09": { ru: "СУМКИ С ПРИНТАМИ", en: "PRINTED BAGS", year: "2025", size: "" },
+};
+const projectWorks = Object.entries(projectFiles).map(([path, image]) => {
+  const m = path.match(/(vampire|parts)-(\d+)\.jpg$/)!; const project = m[1] as ProjectKey; const num = Number(m[2]);
+  const meta = projectMeta[`${project}-${m[2]}`] ?? { ru: `КОЛОКОЛЬНИКОВ ${num}`, en: `KOLOKOLNIKOV ${num}`, year: "", size: "" };
+  return { image, category: "myth" as Exclude<Category, "all">, project: project as ProjectKey | undefined, order: (project === "vampire" ? 0 : 100) + num, ...meta };
+});
 const works = Object.entries(workFiles)
   .map(([path, image]) => {
     const m = path.match(/(\w+)-(\d+)\.jpg$/)!; const cat = m[1]!; const num = m[2]!;
     const key = `${cat}-${num}`;
     const known = knownWorks[key];
-    return { image, category: cat as Exclude<Category, "all">, order: categoryOrder.indexOf(cat) * 1000 + Number(num), year: known?.year ?? "", ru: known?.ru ?? `${categoryNames[cat]!.ru} ${Number(num)}`, en: known?.en ?? `${categoryNames[cat]!.en} ${Number(num)}`, size: known?.size ?? "" };
+    return { image, category: cat as Exclude<Category, "all">, order: categoryOrder.indexOf(cat) * 1000 + Number(num), year: known?.year ?? "", ru: known?.ru ?? `${categoryNames[cat]!.ru} ${Number(num)}`, en: known?.en ?? `${categoryNames[cat]!.en} ${Number(num)}`, size: known?.size ?? "", project: undefined as ProjectKey | undefined };
   })
+  .filter((w) => w.category !== "myth")
+  .concat(projectWorks)
   .sort((a, b) => a.order - b.order);
 
 const categoryNotes: Record<Exclude<Category, "all">, { ru: string; en: string }> = {
@@ -215,7 +235,7 @@ const aboutBio = {
     ],
   },
 } as const;
-const heroWorks = [6, 1, 3, 9] as const;
+const heroWorks = [16, 3, 13, 19] as const;
 type Work = (typeof works)[number];
 const categoryKeys: Category[] = ["all", "myth", "china", "portraits", "children", "nu", "print", "other"];
 
@@ -224,6 +244,7 @@ function Index() {
   const [dark, setDark] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [category, setCategory] = useState<Category>("all");
+  const [project, setProject] = useState<ProjectKey | "all">("all");
   const [ready, setReady] = useState(false);
   const [viewer, setViewer] = useState<number | null>(null);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -248,7 +269,7 @@ function Index() {
   useEffect(() => { if (ready) window.localStorage.setItem("dikunova-lang", lang); }, [lang, ready]);
 
   const t = copy[lang];
-  const filtered = category === "all" ? works : works.filter((work) => work.category === category);
+  const filtered = category === "all" ? works : works.filter((work) => work.category === category && (category !== "myth" || project === "all" || work.project === project));
 
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
@@ -297,7 +318,15 @@ function Index() {
         <div className="mb-14 flex items-end justify-between gap-6"><div><p className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.breadcrumb}</p><h1 className="font-display text-5xl md:text-8xl">{t.works}</h1></div><span className="text-sm tabular-nums">{String(filtered.length).padStart(2,"0")}</span></div>
         <div className="mb-16 border-y border-border py-5">
           <p className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.filters}</p>
-          <div className="flex flex-wrap gap-x-6 gap-y-3">{categoryKeys.map((key,i)=><button key={key} onClick={()=>setCategory(key)} className={`text-sm transition-opacity ${category===key?"opacity-100 underline underline-offset-8":"opacity-45 hover:opacity-100"}`}>{t.categories[i]}</button>)}</div>
+          <div className="flex flex-wrap gap-x-6 gap-y-3">{categoryKeys.map((key,i)=><button key={key} onClick={()=>{setCategory(key); setProject("all");}} className={`text-sm transition-opacity ${category===key?"opacity-100 underline underline-offset-8":"opacity-45 hover:opacity-100"}`}>{t.categories[i]}</button>)}</div>
+          {category === "myth" && (
+            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-border pt-4">
+              <span className="text-[10px] uppercase tracking-[.18em] text-red-accent">/</span>
+              {([{ key: "all", ru: "Все проекты", en: "All projects" }, ...mythProjects] as const).map((p) => (
+                <button key={p.key} onClick={() => setProject(p.key)} className={`text-xs uppercase tracking-[.12em] transition-opacity ${project === p.key ? "opacity-100 underline underline-offset-8" : "opacity-45 hover:opacity-100"}`}>{p[lang]}</button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((work,i)=><article key={`${work.image}-${i}`} className={i%3===1?"lg:pt-24":""}>
