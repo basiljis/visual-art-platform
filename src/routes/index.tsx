@@ -176,7 +176,7 @@ function Index() {
 
       <section id="top" className="relative min-h-[92vh] pt-20">
         <div className="relative grid min-h-[calc(92vh-5rem)] grid-cols-1 md:grid-cols-[42%_58%]">
-          <div className="relative flex flex-col justify-end px-5 pb-12 pt-16 md:px-8 md:pb-16">
+          <div className="relative flex flex-col justify-end px-5 pb-12 pt-8 md:px-8 md:pb-16 md:pt-16">
             <div className="mb-6 grid grid-cols-[auto_minmax(0,1fr)] items-end gap-4 md:mb-5 md:block">
               <img src={signatureAsset.url} alt="" className="h-36 w-28 object-contain invert transition-[filter] duration-500 dark:invert-0 sm:h-60 sm:w-60 md:mb-4 md:h-72 md:w-72" />
               <p className="max-w-md animate-reveal border-l border-border pb-1 pl-4 text-[15px] leading-snug md:border-0 md:pb-0 md:pl-0 md:text-2xl md:leading-relaxed"><span className="mb-2 block text-[10px] uppercase tracking-[.2em] text-red-accent md:hidden">/ artist</span>{t.intro}</p>
