@@ -9,3 +9,6 @@
 - [x] Подготовка к публикации на Timeweb (dikunova.art)
 - [x] Admin: edit About section (migrate existing content)
 - [x] Admin: hide works without deleting
+- [ ] Blog search
+- [ ] Verify all admin sections editing
+- [ ] Verify subscriptions
