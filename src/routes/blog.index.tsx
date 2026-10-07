@@ -27,8 +27,7 @@ function BlogIndex() {
   const { data: allPosts } = useSuspenseQuery(postsQuery);
   const [q, setQ] = useState("");
   const needle = q.trim().toLowerCase();
-  const strip = (h: string) => h.replace(/<[^>]+>/g, " ");
-  const blogPosts = needle ? allPosts.filter((p) => `${p.title} ${p.excerpt} ${p.date} ${strip(p.content_html ?? "")}`.toLowerCase().includes(needle)) : allPosts;
+  const blogPosts = needle ? allPosts.filter((p) => `${p.title} ${p.excerpt} ${p.date}`.toLowerCase().includes(needle)) : allPosts;
   return (
     <BlogShell back={{ to: "/", label: "Главная" }}>
       <p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">Главная / Блог</p>
