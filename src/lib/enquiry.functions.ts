@@ -12,8 +12,8 @@ const schema = z.object({
 export const sendEnquiry = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => schema.parse(data))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("purchase_enquiries").insert({ ...data, phone: data.phone || null, artwork: data.artwork || null });
+    const { publicDb } = await import("./public-db.server");
+    const { error } = await publicDb().from("purchase_enquiries").insert({ ...data, phone: data.phone || null, artwork: data.artwork || null });
     if (error) {
       console.error("enquiry failed", error);
       return { ok: false as const };

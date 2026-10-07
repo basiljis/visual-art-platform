@@ -29,6 +29,13 @@
       "when": 1791307933844,
       "tag": "0003_drop_public_media_read",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791352442427,
+      "tag": "0004_public_inserts_for_self_hosting",
+      "breakpoints": true
     }
   ]
 }

@@ -16,3 +16,4 @@
 - Admin role is granted only by claim_admin() to the confirmed owner email — no client-side role checks.
 - Blog subscriptions are inserted by a server function with the admin client; blog_subscribers has RLS on and no public policies.
 - Purchase enquiries are saved by a server function (admin client) into purchase_enquiries (RLS on, no public policies); emailing them needs a mail connection.
+- Self-hosted build (Timeweb): Dockerfile builds with NITRO_PRESET=node-server; edge/nginx proxies site + api.dikunova.art — server code must not depend on the service role key, which isn't available off-platform.
