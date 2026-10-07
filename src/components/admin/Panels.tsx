@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { CategoryRow, WorkRow, PostRow } from "@/lib/content.functions";
 import { mediaUrl, htmlForDisplay, htmlForStorage } from "@/lib/media";
 import { uploadMedia } from "@/lib/admin-media";
+import { defaultAbout, type AboutContent, type AboutLang } from "@/lib/about";
 import { RichEditor } from "./RichEditor";
 
 export const field = "w-full border-b border-border bg-transparent py-2 text-sm outline-none transition-colors focus:border-red-accent";
@@ -277,4 +278,53 @@ export function SubscribersPanel() {
         <button onClick={() => remove(r.id)} aria-label="Удалить" className="opacity-50 hover:text-red-accent hover:opacity-100"><Trash2 className="size-4" /></button>
       </div>))}</div>
   </div>;
+}
+
+/* ---------------- About ---------------- */
+export function AboutPanel() {
+  const [data, setData] = useState<AboutContent | null>(null);
+  const [lang, setLang] = useState<"ru" | "en">("ru");
+  const [saving, setSaving] = useState(false);
+  const invalidate = useInvalidate();
+  useEffect(() => { void (async () => {
+    const { data: row, error } = await supabase.from("site_content").select("data").eq("key", "about").maybeSingle();
+    if (error) alert(error.message);
+    setData((row?.data as unknown as AboutContent) ?? defaultAbout);
+  })(); }, []);
+  if (!data) return <p className="text-sm text-muted-foreground">Загрузка…</p>;
+  const L = data[lang];
+  const setL = (patch: Partial<AboutLang>) => setData({ ...data, [lang]: { ...L, ...patch } });
+  const lines = (s: string) => s.split("\n").map((x) => x.trim()).filter(Boolean);
+  const save = async () => {
+    setSaving(true);
+    const { error } = await supabase.from("site_content").upsert({ key: "about", data: data as never, updated_at: new Date().toISOString() });
+    setSaving(false);
+    if (error) alert(error.message); else { invalidate(); alert("Сохранено"); }
+  };
+  return (
+    <div className="max-w-3xl space-y-8">
+      <div className="flex gap-4 text-xs uppercase tracking-[.18em]">{(["ru", "en"] as const).map((k) => <button key={k} onClick={() => setLang(k)} className={lang === k ? "underline underline-offset-8" : "opacity-45"}>{k === "ru" ? "Русский" : "English"}</button>)}</div>
+      <F l="Портрет"><ImagePick value={data.portrait} onChange={(portrait) => setData({ ...data, portrait })} /></F>
+      <F l="Текст блока на главной"><textarea rows={3} className={field} value={L.note} onChange={(e) => setL({ note: e.target.value })} /></F>
+      <F l="Короткий список под текстом (каждый пункт с новой строки)"><textarea rows={4} className={field} defaultValue={L.highlights.join("\n")} key={lang + "h"} onBlur={(e) => setL({ highlights: lines(e.target.value) })} /></F>
+      <div className="grid gap-6 md:grid-cols-2">
+        <F l="Подпись (role)"><input className={field} value={L.role} onChange={(e) => setL({ role: e.target.value })} /></F>
+        <F l="Образование"><input className={field} value={L.academy} onChange={(e) => setL({ academy: e.target.value })} /></F>
+      </div>
+      <div className="space-y-6">
+        <p className={label}>Разделы окна «Подробнее»</p>
+        {L.sections.map((sec, i) => (
+          <div key={lang + i} className="space-y-3 border border-border p-4">
+            <div className="flex items-center gap-3">
+              <input className={field} value={sec.title} placeholder="Заголовок раздела" onChange={(e) => setL({ sections: L.sections.map((s, j) => j === i ? { ...s, title: e.target.value } : s) })} />
+              <button aria-label="Удалить раздел" onClick={() => confirm("Удалить раздел?") && setL({ sections: L.sections.filter((_, j) => j !== i) })} className="opacity-50 hover:text-red-accent hover:opacity-100"><Trash2 className="size-4" /></button>
+            </div>
+            <textarea rows={Math.max(3, sec.items.length + 1)} className={field} placeholder="Каждый пункт с новой строки" defaultValue={sec.items.join("\n")} onBlur={(e) => setL({ sections: L.sections.map((s, j) => j === i ? { ...s, items: lines(e.target.value) } : s) })} />
+          </div>
+        ))}
+        <button className={ghostBtn} onClick={() => setL({ sections: [...L.sections, { title: "", items: [] }] })}><Plus className="size-3.5" />Добавить раздел</button>
+      </div>
+      <button className={primaryBtn} disabled={saving} onClick={save}>{saving ? "Сохранение…" : "Сохранить"}</button>
+    </div>
+  );
 }
