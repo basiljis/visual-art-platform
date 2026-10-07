@@ -18,14 +18,14 @@ async function publicClient() {
 }
 
 export type CategoryRow = { id: string; key: string; parent_key: string | null; name_ru: string; name_en: string; description_ru: string; description_en: string; sort: number };
-export type WorkRow = { id: string; category_key: string; project_key: string | null; title_ru: string; title_en: string; year: string; size: string; image: string; cover: boolean; hero: boolean; sort: number };
+export type WorkRow = { id: string; category_key: string; project_key: string | null; title_ru: string; title_en: string; year: string; size: string; image: string; cover: boolean; hero: boolean; hidden?: boolean; sort: number };
 export type PostRow = { id: string; slug: string; title: string; excerpt: string; date: string; cover: string | null; content_html: string; published: boolean; sort: number };
 
 export const getGallery = createServerFn({ method: "GET" }).handler(async () => {
   const sb = await publicClient();
   const [c, w] = await Promise.all([
     sb.from("categories").select("*").order("sort"),
-    sb.from("works").select("*").order("sort"),
+    sb.from("works").select("*").eq("hidden", false).order("sort"),
   ]);
   const a = await sb.from("site_content").select("data").eq("key", "about").maybeSingle();
   const about = (a.data?.data as AboutContent | undefined) ?? defaultAbout;
