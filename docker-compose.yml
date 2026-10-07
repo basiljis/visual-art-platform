@@ -1,0 +1,29 @@
+services:
+  edge:
+    build: ./edge
+    ports:
+      - "8082:8080"
+    depends_on:
+      - app
+    volumes:
+      - maintenance_flags:/etc/nginx/flags
+    restart: always
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_PUBLISHABLE_KEY: ${VITE_SUPABASE_PUBLISHABLE_KEY}
+        VITE_SUPABASE_PROJECT_ID: ${VITE_SUPABASE_PROJECT_ID}
+    environment:
+      # Server-side calls go straight to the backend (outgoing traffic is not blocked)
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY}
+    expose:
+      - "8080"
+    restart: always
+
+volumes:
+  maintenance_flags:
