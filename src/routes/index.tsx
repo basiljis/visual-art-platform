@@ -6,6 +6,7 @@ import { mediaUrl } from "@/lib/media";
 import { ArrowDown, ArrowUp, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Settings, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
+import type { AboutContent } from "@/lib/about";
 import portraitAsset from "@/assets/artist-portrait.png.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -172,7 +173,7 @@ function Index() {
       </section>
 
       <section id="about" className="grid border-t border-border px-5 py-24 md:grid-cols-2 md:px-8 md:py-36">
-        <h2 className="font-display text-5xl md:text-7xl">{t.about}</h2><div className="mt-10 md:mt-0"><p className="max-w-xl text-xl leading-relaxed md:text-3xl">{t.note}</p><p className="mt-10 text-xs uppercase leading-7 tracking-[.12em] text-muted-foreground">St. Petersburg Academy of Fine Arts<br/>2024 — «За три моря», МСХ, Москва<br/>2023 — Royal Society of British Artists, London<br/>2022 — DEG Exlibris, Germany — 1st prize</p><button onClick={() => setAboutOpen(true)} className="mt-10 flex w-fit items-center gap-2 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.more}<ArrowUpRight className="size-4"/></button></div>
+        <h2 className="font-display text-5xl md:text-7xl">{t.about}</h2><div className="mt-10 md:mt-0"><p className="max-w-xl whitespace-pre-line text-xl leading-relaxed md:text-3xl">{gallery.about[lang].note}</p><p className="mt-10 text-xs uppercase leading-7 tracking-[.12em] text-muted-foreground">{gallery.about[lang].highlights.map((h, i) => <span key={i} className="block">{h}</span>)}</p><button onClick={() => setAboutOpen(true)} className="mt-10 flex w-fit items-center gap-2 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.more}<ArrowUpRight className="size-4"/></button></div>
       </section>
 
       <footer id="contact" className="relative overflow-hidden bg-ink px-5 pb-0 pt-20 text-paper md:px-8 md:pt-28">
@@ -183,7 +184,7 @@ function Index() {
       <div className="fixed bottom-4 right-3 z-40 flex flex-col gap-1.5 md:bottom-5 md:right-5 md:gap-2"><button onClick={() => slowScroll(0)} aria-label={lang==="ru"?"В начало":"To top"} data-tip={lang==="ru"?"В начало":"To top"} data-tip-pos="left" className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowUp className="size-4"/></button><button onClick={() => slowScroll(document.documentElement.scrollHeight - window.innerHeight)} aria-label={lang==="ru"?"В конец":"To bottom"} data-tip={lang==="ru"?"В конец":"To bottom"} data-tip-pos="left" className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowDown className="size-4"/></button></div>
       {viewer !== null && <Viewer works={works} index={viewer} lang={lang} onChange={setViewer} onClose={() => setViewer(null)} onEnquire={setEnquiry} />}
       {enquiry !== null && <EnquiryModal artwork={enquiry} lang={lang} onClose={() => setEnquiry(null)} />}
-      {aboutOpen && <AboutModal lang={lang} onClose={() => setAboutOpen(false)} />}
+      {aboutOpen && <AboutModal about={gallery.about} lang={lang} onClose={() => setAboutOpen(false)} />}
     </main>
   );
 }
@@ -247,9 +248,9 @@ function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: W
   );
 }
 
-function AboutModal({ lang, onClose }: { lang: Lang; onClose: () => void }) {
+function AboutModal({ about, lang, onClose }: { about: AboutContent; lang: Lang; onClose: () => void }) {
   const t = copy[lang];
-  const bio = aboutBio[lang];
+  const bio = about[lang];
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
@@ -270,13 +271,13 @@ function AboutModal({ lang, onClose }: { lang: Lang; onClose: () => void }) {
               <p className="mt-3 font-sans text-sm lowercase italic tracking-[.24em] text-muted-foreground">{bio.role}</p>
               <p className="mt-1 text-xs uppercase tracking-[.18em] text-muted-foreground">{bio.academy}</p>
             </div>
-            <img src={portraitAsset.url} alt={t.artist} className="aspect-[4/5] w-full max-w-[16rem] object-cover shadow-2xl md:justify-self-end" />
+            <img src={about.portrait ? mediaUrl(about.portrait) : portraitAsset.url} alt={t.artist} className="aspect-[4/5] w-full max-w-[16rem] object-cover shadow-2xl md:justify-self-end" />
           </div>
           <div className="mt-14 space-y-10 md:mt-20">
-            {bio.sections.map((section) => (
-              <section key={section.title}>
+            {bio.sections.map((section, si) => (
+              <section key={si}>
                 <h3 className="mb-4 border-b border-border pb-2 text-xs uppercase tracking-[.2em] text-muted-foreground">{section.title}</h3>
-                <ul className="space-y-2">{section.items.map((item) => <li key={item} className="text-sm leading-relaxed">{item}</li>)}</ul>
+                <ul className="space-y-2">{section.items.map((item, i) => <li key={i} className="text-sm leading-relaxed">{item}</li>)}</ul>
               </section>
             ))}
           </div>

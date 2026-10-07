@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
+import { defaultAbout, type AboutContent } from "./about";
 
 async function publicClient() {
   const { createClient } = await import("@supabase/supabase-js");
@@ -26,9 +27,11 @@ export const getGallery = createServerFn({ method: "GET" }).handler(async () => 
     sb.from("categories").select("*").order("sort"),
     sb.from("works").select("*").order("sort"),
   ]);
+  const a = await sb.from("site_content").select("data").eq("key", "about").maybeSingle();
+  const about = (a.data?.data as AboutContent | undefined) ?? defaultAbout;
   if (c.error) throw new Error(c.error.message);
   if (w.error) throw new Error(w.error.message);
-  return { categories: c.data as CategoryRow[], works: w.data as WorkRow[] };
+  return { categories: c.data as CategoryRow[], works: w.data as WorkRow[], about };
 });
 
 export const getPosts = createServerFn({ method: "GET" }).handler(async () => {
