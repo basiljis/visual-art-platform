@@ -43,6 +43,13 @@
       "when": 1791353030236,
       "tag": "0005_admin_read_leads",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791353126898,
+      "tag": "0006_site_content_about",
+      "breakpoints": true
     }
   ]
 }
