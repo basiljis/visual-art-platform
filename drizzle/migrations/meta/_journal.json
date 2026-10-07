@@ -36,6 +36,13 @@
       "when": 1791352442427,
       "tag": "0004_public_inserts_for_self_hosting",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791353030236,
+      "tag": "0005_admin_read_leads",
+      "breakpoints": true
     }
   ]
 }
