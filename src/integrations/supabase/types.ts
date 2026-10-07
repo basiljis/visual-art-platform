@@ -179,6 +179,7 @@ export type Database = {
           cover: boolean
           created_at: string
           hero: boolean
+          hidden: boolean
           id: string
           image: string
           project_key: string | null
@@ -193,6 +194,7 @@ export type Database = {
           cover?: boolean
           created_at?: string
           hero?: boolean
+          hidden?: boolean
           id?: string
           image: string
           project_key?: string | null
@@ -207,6 +209,7 @@ export type Database = {
           cover?: boolean
           created_at?: string
           hero?: boolean
+          hidden?: boolean
           id?: string
           image?: string
           project_key?: string | null
