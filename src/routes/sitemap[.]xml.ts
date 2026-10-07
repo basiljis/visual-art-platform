@@ -20,7 +20,10 @@ export const Route = createFileRoute("/sitemap.xml")({
             .eq("published", true)
             .order("sort");
           for (const p of data ?? []) {
-            urls.push({ loc: `${origin}/blog/${p.slug}`, lastmod: p.date ?? undefined });
+            // dates are stored as DD.MM.YYYY — convert to ISO for lastmod
+            const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(p.date ?? "");
+            const lastmod = m ? `${m[3]}-${m[2]}-${m[1]}` : undefined;
+            urls.push({ loc: `${origin}/blog/${p.slug}`, lastmod });
           }
         } catch {
           // DB unavailable — still serve the static routes
