@@ -6,7 +6,7 @@ function urlEntry(loc: string, lastmod?: string) {
   return `  <url>\n    <loc>${loc}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ""}\n  </url>`;
 }
 
-export const Route = createFileRoute("/sitemap.xml")({
+export const Route = createFileRoute("/sitemap/xml")({
   server: {
     handlers: {
       GET: async () => {

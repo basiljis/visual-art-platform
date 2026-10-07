@@ -14,6 +14,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media.$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapXmlRoute = SitemapXmlRouteImport.update({
+  id: '/sitemap/xml',
+  path: '/sitemap/xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
   id: '/api/public/media/$',
   path: '/api/public/media/$',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/reset-password': typeof ResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/reset-password': typeof ResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
   '/blog': typeof BlogIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/reset-password': typeof ResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/reset-password'
     | '/blog/$slug'
+    | '/sitemap/xml'
     | '/blog/'
     | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/reset-password'
     | '/blog/$slug'
+    | '/sitemap/xml'
     | '/blog'
     | '/api/public/media/$'
   id:
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/reset-password'
     | '/blog/$slug'
+    | '/sitemap/xml'
     | '/blog/'
     | '/api/public/media/$'
   fileRoutesById: FileRoutesById
@@ -104,6 +116,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  SitemapXmlRoute: typeof SitemapXmlRoute
   BlogIndexRoute: typeof BlogIndexRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap/xml': {
+      id: '/sitemap/xml'
+      path: '/sitemap/xml'
+      fullPath: '/sitemap/xml'
+      preLoaderRoute: typeof SitemapXmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/media/$': {
       id: '/api/public/media/$'
       path: '/api/public/media/$'
@@ -160,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   BlogSlugRoute: BlogSlugRoute,
+  SitemapXmlRoute: SitemapXmlRoute,
   BlogIndexRoute: BlogIndexRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
