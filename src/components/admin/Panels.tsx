@@ -151,7 +151,7 @@ export function WorksPanel() {
             </button>
             <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
               <div className="min-w-0"><p className="truncate text-sm">{w.title_ru || "Без названия"}</p><p className="truncate text-[11px] text-muted-foreground">{[w.year, w.size].filter(Boolean).join(" · ")}</p></div>
-              <button onClick={async () => { const { error } = await supabase.from("works").update({ hidden: !w.hidden }).eq("id", w.id); if (error) alert(error.message); else { await load(); invalidate(); } }} aria-label={w.hidden ? "Показать" : "Скрыть"} title={w.hidden ? "Показать на сайте" : "Скрыть с сайта"} className="opacity-40 hover:opacity-100">{w.hidden ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}</button>
+              <button onClick={async () => { const { error } = await supabase.from("works").update({ hidden: !w.hidden }).eq("id", w.id); if (error) alert(error.message); else { reload(); inv(); } }} aria-label={w.hidden ? "Показать" : "Скрыть"} title={w.hidden ? "Показать на сайте" : "Скрыть с сайта"} className="opacity-40 hover:opacity-100">{w.hidden ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}</button>
               <button onClick={() => remove(w)} aria-label="Удалить" className="opacity-40 hover:text-red-accent hover:opacity-100"><Trash2 className="size-3.5" /></button>
             </div>
           </div>
