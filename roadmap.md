@@ -6,4 +6,4 @@
 - [ ] Purchase enquiry emails — blocked: needs an email domain set up by the user
 
 - [x] Создать администратора morrasdream@gmail.com без подтверждения почты
-- [ ] Подготовка к публикации на Timeweb (dikunova.art)
+- [x] Подготовка к публикации на Timeweb (dikunova.art)
