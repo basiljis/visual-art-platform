@@ -9,7 +9,7 @@ export const Route = createFileRoute("/sitemap.xml")({
     handlers: {
       GET: async ({ request }) => {
         const origin = new URL(request.url).origin;
-        const urls: { loc: string; lastmod?: string }[] = [
+        const urls: { loc: string; lastmod: string | undefined }[] = [
           { loc: `${origin}/` },
           { loc: `${origin}/blog` },
         ];
