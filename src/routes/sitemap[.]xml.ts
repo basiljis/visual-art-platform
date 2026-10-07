@@ -10,8 +10,8 @@ export const Route = createFileRoute("/sitemap.xml")({
       GET: async ({ request }) => {
         const origin = new URL(request.url).origin;
         const urls: { loc: string; lastmod: string | undefined }[] = [
-          { loc: `${origin}/` },
-          { loc: `${origin}/blog` },
+          { loc: `${origin}/`, lastmod: undefined },
+          { loc: `${origin}/blog`, lastmod: undefined },
         ];
         try {
           const { data } = await publicDb()
