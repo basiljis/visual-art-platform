@@ -183,7 +183,7 @@ function Index() {
             </div>
             <a href="#works" className="flex w-fit items-center gap-3 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.all}<ArrowDown className="size-4"/></a>
           </div>
-          <div className="flex min-h-[58vh] items-center justify-center px-5 py-10 md:px-12">
+          <div className="order-first flex min-h-[58vh] items-center justify-center px-5 pb-4 pt-10 md:order-none md:px-12 md:py-10">
             <button onClick={() => setViewer(heroIndex)} className="relative aspect-[4/5] w-[min(78vw,26rem)] overflow-hidden bg-muted shadow-2xl" aria-label={heroWork?.[lang]}>
               {heroWorks.map((idx) => <img key={idx} src={works[idx]!.image} alt={works[idx]![lang]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${idx === heroIndex ? "opacity-100" : "opacity-0"}`} />)}
             </button>
