@@ -227,3 +227,54 @@ export function BlogPanel() {
     </div>
   );
 }
+
+type Enquiry = { id: string; name: string; email: string; phone: string | null; message: string; artwork: string | null; created_at: string };
+type Subscriber = { id: string; email: string; created_at: string };
+const fmtDate = (s: string) => new Date(s).toLocaleString("ru-RU", { dateStyle: "medium", timeStyle: "short" });
+
+function useLeads<T>(table: "purchase_enquiries" | "blog_subscribers") {
+  const [rows, setRows] = useState<T[] | null>(null);
+  const load = async () => {
+    const { data, error } = await supabase.from(table).select("*").order("created_at", { ascending: false });
+    if (error) alert(error.message); else setRows(data as T[]);
+  };
+  useEffect(() => { void load(); }, []);
+  const remove = async (id: string) => {
+    if (!confirm("Удалить запись?")) return;
+    const { error } = await supabase.from(table).delete().eq("id", id);
+    if (error) alert(error.message); else void load();
+  };
+  return { rows, remove };
+}
+
+export function EnquiriesPanel() {
+  const { rows, remove } = useLeads<Enquiry>("purchase_enquiries");
+  if (!rows) return <p className="text-sm text-muted-foreground">Загрузка…</p>;
+  if (!rows.length) return <p className="text-sm text-muted-foreground">Заявок пока нет.</p>;
+  return <div className="divide-y divide-border border-y border-border">{rows.map((r) => (
+    <article key={r.id} className="grid gap-2 py-5 md:grid-cols-[12rem_1fr_auto] md:gap-6">
+      <div className="text-xs text-muted-foreground">{fmtDate(r.created_at)}</div>
+      <div className="space-y-1 text-sm">
+        {r.artwork && <p className={label}>{r.artwork}</p>}
+        <p className="font-medium">{r.name} · <a className="underline" href={`mailto:${r.email}`}>{r.email}</a>{r.phone && <> · <a className="underline" href={`tel:${r.phone}`}>{r.phone}</a></>}</p>
+        <p className="whitespace-pre-wrap text-muted-foreground">{r.message}</p>
+      </div>
+      <button onClick={() => remove(r.id)} aria-label="Удалить" className="self-start opacity-50 hover:text-red-accent hover:opacity-100"><Trash2 className="size-4" /></button>
+    </article>))}</div>;
+}
+
+export function SubscribersPanel() {
+  const { rows, remove } = useLeads<Subscriber>("blog_subscribers");
+  if (!rows) return <p className="text-sm text-muted-foreground">Загрузка…</p>;
+  if (!rows.length) return <p className="text-sm text-muted-foreground">Подписчиков пока нет.</p>;
+  return <div>
+    <div className="mb-4 flex items-center justify-between text-sm"><span>Всего: {rows.length}</span>
+      <button className={ghostBtn} onClick={() => navigator.clipboard.writeText(rows.map((r) => r.email).join(", "))}>Скопировать все адреса</button></div>
+    <div className="divide-y divide-border border-y border-border">{rows.map((r) => (
+      <div key={r.id} className="flex items-center justify-between gap-4 py-3 text-sm">
+        <a className="underline-offset-4 hover:underline" href={`mailto:${r.email}`}>{r.email}</a>
+        <span className="ml-auto text-xs text-muted-foreground">{fmtDate(r.created_at)}</span>
+        <button onClick={() => remove(r.id)} aria-label="Удалить" className="opacity-50 hover:text-red-accent hover:opacity-100"><Trash2 className="size-4" /></button>
+      </div>))}</div>
+  </div>;
+}
