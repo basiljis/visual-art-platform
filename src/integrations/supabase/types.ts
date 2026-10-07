@@ -137,6 +137,24 @@ export type Database = {
         }
         Relationships: []
       }
+      site_content: {
+        Row: {
+          data: Json
+          key: string
+          updated_at: string
+        }
+        Insert: {
+          data: Json
+          key: string
+          updated_at?: string
+        }
+        Update: {
+          data?: Json
+          key?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -161,6 +179,7 @@ export type Database = {
           cover: boolean
           created_at: string
           hero: boolean
+          hidden: boolean
           id: string
           image: string
           project_key: string | null
@@ -175,6 +194,7 @@ export type Database = {
           cover?: boolean
           created_at?: string
           hero?: boolean
+          hidden?: boolean
           id?: string
           image: string
           project_key?: string | null
@@ -189,6 +209,7 @@ export type Database = {
           cover?: boolean
           created_at?: string
           hero?: boolean
+          hidden?: boolean
           id?: string
           image?: string
           project_key?: string | null

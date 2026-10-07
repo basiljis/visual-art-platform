@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { CategoriesPanel, WorksPanel, BlogPanel, field, label, primaryBtn } from "@/components/admin/Panels";
+import { CategoriesPanel, WorksPanel, BlogPanel, EnquiriesPanel, SubscribersPanel, AboutPanel, field, label, primaryBtn } from "@/components/admin/Panels";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -38,7 +38,7 @@ function AdminPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<"categories" | "works" | "blog">("works");
+  const [tab, setTab] = useState<"categories" | "works" | "blog" | "about" | "enquiries" | "subscribers">("works");
   const qc = useQueryClient();
 
   useEffect(() => {
@@ -59,15 +59,18 @@ function AdminPage() {
   if (isAdmin === null) return <Shell right={out}><p className="text-sm text-muted-foreground">Проверка доступа…</p></Shell>;
   if (!isAdmin) return <Shell right={out}><p className="max-w-md text-sm">У этой учётной записи ({session.user.email}) нет доступа к панели.</p></Shell>;
 
-  const tabs = [["works", "Работы"], ["categories", "Направления"], ["blog", "Блог"]] as const;
+  const tabs = [["works", "Работы"], ["categories", "Направления"], ["blog", "Блог"], ["about", "Об авторе"], ["enquiries", "Заявки"], ["subscribers", "Подписки"]] as const;
   return (
     <Shell right={out}>
-      <nav className="mb-10 flex gap-6 border-b border-border">
+      <nav className="mb-10 flex gap-6 overflow-x-auto whitespace-nowrap border-b border-border">
         {tabs.map(([k, l]) => <button key={k} onClick={() => setTab(k)} className={`-mb-px border-b pb-3 font-display text-2xl transition-opacity md:text-4xl ${tab === k ? "border-red-accent opacity-100" : "border-transparent opacity-40 hover:opacity-100"}`}>{l}</button>)}
       </nav>
       {tab === "categories" && <CategoriesPanel />}
       {tab === "works" && <WorksPanel />}
       {tab === "blog" && <BlogPanel />}
+      {tab === "about" && <AboutPanel />}
+      {tab === "enquiries" && <EnquiriesPanel />}
+      {tab === "subscribers" && <SubscribersPanel />}
     </Shell>
   );
 }

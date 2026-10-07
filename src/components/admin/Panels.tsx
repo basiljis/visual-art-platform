@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { CategoryRow, WorkRow, PostRow } from "@/lib/content.functions";
 import { mediaUrl, htmlForDisplay, htmlForStorage } from "@/lib/media";
 import { uploadMedia } from "@/lib/admin-media";
+import { defaultAbout, type AboutContent, type AboutLang } from "@/lib/about";
 import { RichEditor } from "./RichEditor";
 
 export const field = "w-full border-b border-border bg-transparent py-2 text-sm outline-none transition-colors focus:border-red-accent";
@@ -146,10 +147,11 @@ export function WorksPanel() {
           <div key={w.id} className="group">
             <button onClick={() => setEdit(w)} className="relative block aspect-[4/5] w-full overflow-hidden bg-muted">
               <img src={mediaUrl(w.image)} alt={w.title_ru} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
-              <span className="absolute left-2 top-2 flex gap-1">{w.hero && <span className="bg-background px-1.5 py-0.5 text-[9px] uppercase tracking-wider">главная</span>}{w.cover && <span className="bg-background px-1.5 py-0.5 text-[9px] uppercase tracking-wider">обложка</span>}</span>
+              <span className="absolute left-2 top-2 flex gap-1">{w.hidden && <span className="bg-red-accent px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-background">скрыта</span>}{w.hero && <span className="bg-background px-1.5 py-0.5 text-[9px] uppercase tracking-wider">главная</span>}{w.cover && <span className="bg-background px-1.5 py-0.5 text-[9px] uppercase tracking-wider">обложка</span>}</span>
             </button>
             <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
               <div className="min-w-0"><p className="truncate text-sm">{w.title_ru || "Без названия"}</p><p className="truncate text-[11px] text-muted-foreground">{[w.year, w.size].filter(Boolean).join(" · ")}</p></div>
+              <button onClick={async () => { const { error } = await supabase.from("works").update({ hidden: !w.hidden }).eq("id", w.id); if (error) alert(error.message); else { reload(); inv(); } }} aria-label={w.hidden ? "Показать" : "Скрыть"} title={w.hidden ? "Показать на сайте" : "Скрыть с сайта"} className="opacity-40 hover:opacity-100">{w.hidden ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}</button>
               <button onClick={() => remove(w)} aria-label="Удалить" className="opacity-40 hover:text-red-accent hover:opacity-100"><Trash2 className="size-3.5" /></button>
             </div>
           </div>
@@ -224,6 +226,106 @@ export function BlogPanel() {
           <div className="flex items-center gap-3">{p.published ? <Eye className="size-4 opacity-40" aria-label="Опубликовано" /> : <EyeOff className="size-4 text-red-accent" aria-label="Черновик" />}<button onClick={() => remove(p)} aria-label="Удалить" className="hover:text-red-accent"><Trash2 className="size-4" /></button></div>
         </div>
       ))}
+    </div>
+  );
+}
+
+type Enquiry = { id: string; name: string; email: string; phone: string | null; message: string; artwork: string | null; created_at: string };
+type Subscriber = { id: string; email: string; created_at: string };
+const fmtDate = (s: string) => new Date(s).toLocaleString("ru-RU", { dateStyle: "medium", timeStyle: "short" });
+
+function useLeads<T>(table: "purchase_enquiries" | "blog_subscribers") {
+  const [rows, setRows] = useState<T[] | null>(null);
+  const load = async () => {
+    const { data, error } = await supabase.from(table).select("*").order("created_at", { ascending: false });
+    if (error) alert(error.message); else setRows(data as T[]);
+  };
+  useEffect(() => { void load(); }, []);
+  const remove = async (id: string) => {
+    if (!confirm("Удалить запись?")) return;
+    const { error } = await supabase.from(table).delete().eq("id", id);
+    if (error) alert(error.message); else void load();
+  };
+  return { rows, remove };
+}
+
+export function EnquiriesPanel() {
+  const { rows, remove } = useLeads<Enquiry>("purchase_enquiries");
+  if (!rows) return <p className="text-sm text-muted-foreground">Загрузка…</p>;
+  if (!rows.length) return <p className="text-sm text-muted-foreground">Заявок пока нет.</p>;
+  return <div className="divide-y divide-border border-y border-border">{rows.map((r) => (
+    <article key={r.id} className="grid gap-2 py-5 md:grid-cols-[12rem_1fr_auto] md:gap-6">
+      <div className="text-xs text-muted-foreground">{fmtDate(r.created_at)}</div>
+      <div className="space-y-1 text-sm">
+        {r.artwork && <p className={label}>{r.artwork}</p>}
+        <p className="font-medium">{r.name} · <a className="underline" href={`mailto:${r.email}`}>{r.email}</a>{r.phone && <> · <a className="underline" href={`tel:${r.phone}`}>{r.phone}</a></>}</p>
+        <p className="whitespace-pre-wrap text-muted-foreground">{r.message}</p>
+      </div>
+      <button onClick={() => remove(r.id)} aria-label="Удалить" className="self-start opacity-50 hover:text-red-accent hover:opacity-100"><Trash2 className="size-4" /></button>
+    </article>))}</div>;
+}
+
+export function SubscribersPanel() {
+  const { rows, remove } = useLeads<Subscriber>("blog_subscribers");
+  if (!rows) return <p className="text-sm text-muted-foreground">Загрузка…</p>;
+  if (!rows.length) return <p className="text-sm text-muted-foreground">Подписчиков пока нет.</p>;
+  return <div>
+    <div className="mb-4 flex items-center justify-between text-sm"><span>Всего: {rows.length}</span>
+      <button className={ghostBtn} onClick={() => navigator.clipboard.writeText(rows.map((r) => r.email).join(", "))}>Скопировать все адреса</button></div>
+    <div className="divide-y divide-border border-y border-border">{rows.map((r) => (
+      <div key={r.id} className="flex items-center justify-between gap-4 py-3 text-sm">
+        <a className="underline-offset-4 hover:underline" href={`mailto:${r.email}`}>{r.email}</a>
+        <span className="ml-auto text-xs text-muted-foreground">{fmtDate(r.created_at)}</span>
+        <button onClick={() => remove(r.id)} aria-label="Удалить" className="opacity-50 hover:text-red-accent hover:opacity-100"><Trash2 className="size-4" /></button>
+      </div>))}</div>
+  </div>;
+}
+
+/* ---------------- About ---------------- */
+export function AboutPanel() {
+  const [data, setData] = useState<AboutContent | null>(null);
+  const [lang, setLang] = useState<"ru" | "en">("ru");
+  const [saving, setSaving] = useState(false);
+  const invalidate = useInvalidate();
+  useEffect(() => { void (async () => {
+    const { data: row, error } = await supabase.from("site_content").select("data").eq("key", "about").maybeSingle();
+    if (error) alert(error.message);
+    setData((row?.data as unknown as AboutContent) ?? defaultAbout);
+  })(); }, []);
+  if (!data) return <p className="text-sm text-muted-foreground">Загрузка…</p>;
+  const L = data[lang];
+  const setL = (patch: Partial<AboutLang>) => setData({ ...data, [lang]: { ...L, ...patch } });
+  const lines = (s: string) => s.split("\n").map((x) => x.trim()).filter(Boolean);
+  const save = async () => {
+    setSaving(true);
+    const { error } = await supabase.from("site_content").upsert({ key: "about", data: data as never, updated_at: new Date().toISOString() });
+    setSaving(false);
+    if (error) alert(error.message); else { invalidate(); alert("Сохранено"); }
+  };
+  return (
+    <div className="max-w-3xl space-y-8">
+      <div className="flex gap-4 text-xs uppercase tracking-[.18em]">{(["ru", "en"] as const).map((k) => <button key={k} onClick={() => setLang(k)} className={lang === k ? "underline underline-offset-8" : "opacity-45"}>{k === "ru" ? "Русский" : "English"}</button>)}</div>
+      <F l="Портрет"><ImagePick value={data.portrait} onChange={(portrait) => setData({ ...data, portrait })} /></F>
+      <F l="Текст блока на главной"><textarea rows={3} className={field} value={L.note} onChange={(e) => setL({ note: e.target.value })} /></F>
+      <F l="Короткий список под текстом (каждый пункт с новой строки)"><textarea rows={4} className={field} defaultValue={L.highlights.join("\n")} key={lang + "h"} onBlur={(e) => setL({ highlights: lines(e.target.value) })} /></F>
+      <div className="grid gap-6 md:grid-cols-2">
+        <F l="Подпись (role)"><input className={field} value={L.role} onChange={(e) => setL({ role: e.target.value })} /></F>
+        <F l="Образование"><input className={field} value={L.academy} onChange={(e) => setL({ academy: e.target.value })} /></F>
+      </div>
+      <div className="space-y-6">
+        <p className={label}>Разделы окна «Подробнее»</p>
+        {L.sections.map((sec, i) => (
+          <div key={lang + i} className="space-y-3 border border-border p-4">
+            <div className="flex items-center gap-3">
+              <input className={field} value={sec.title} placeholder="Заголовок раздела" onChange={(e) => setL({ sections: L.sections.map((s, j) => j === i ? { ...s, title: e.target.value } : s) })} />
+              <button aria-label="Удалить раздел" onClick={() => confirm("Удалить раздел?") && setL({ sections: L.sections.filter((_, j) => j !== i) })} className="opacity-50 hover:text-red-accent hover:opacity-100"><Trash2 className="size-4" /></button>
+            </div>
+            <textarea rows={Math.max(3, sec.items.length + 1)} className={field} placeholder="Каждый пункт с новой строки" defaultValue={sec.items.join("\n")} onBlur={(e) => setL({ sections: L.sections.map((s, j) => j === i ? { ...s, items: lines(e.target.value) } : s) })} />
+          </div>
+        ))}
+        <button className={ghostBtn} onClick={() => setL({ sections: [...L.sections, { title: "", items: [] }] })}><Plus className="size-3.5" />Добавить раздел</button>
+      </div>
+      <button className={primaryBtn} disabled={saving} onClick={save}>{saving ? "Сохранение…" : "Сохранить"}</button>
     </div>
   );
 }

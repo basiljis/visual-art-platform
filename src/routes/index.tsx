@@ -6,6 +6,7 @@ import { mediaUrl } from "@/lib/media";
 import { ArrowDown, ArrowUp, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Settings, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
+import type { AboutContent } from "@/lib/about";
 import portraitAsset from "@/assets/artist-portrait.png.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -36,72 +37,7 @@ const copy = {
   ru: { artist: "НАТАЛЬЯ ДИКУНОВА", subtitle: "Художник · Москва / Воронеж", works: "Работы", about: "Об авторе", contact: "Контакты", all: "Все работы", filters: "Направления", buy: "Узнать о покупке", breadcrumb: "Главная / Работы", more: "Подробнее", close: "Закрыть", intro: "Живопись, рисунок и печатная графика о памяти, мифе и человеческом присутствии.", note: "Работы находятся в частных коллекциях России, Европы, США, Индии и Китая, а также в музеях России и Китая.", achievements: "Royal Society of British Artists · 1-е место DEG Exlibris · Guanlan Printmaking Base 2025", categories: ["Все", "Миф артиста", "Китай", "Портреты", "Дети", "Ню", "Печатная графика", "Разное"] },
   en: { artist: "NATALIA DIKUNOVA", subtitle: "Artist · Moscow / Voronezh", works: "Works", about: "About", contact: "Contact", all: "All works", filters: "Practices", buy: "Purchase enquiry", breadcrumb: "Home / Works", more: "More", close: "Close", intro: "Painting, drawing and printmaking exploring memory, myth and human presence.", note: "Works are held in private collections across Russia, Europe, the USA, India and China, as well as museums in Russia and China.", achievements: "Royal Society of British Artists · DEG Exlibris 1st prize · Guanlan Printmaking Base 2025", categories: ["All", "Artist’s myth", "China", "Portraits", "Children", "Nude", "Printmaking", "Other"] },
 };
-const aboutBio = {
-  ru: {
-    role: "artist",
-    academy: "St. Petersburg academy of fine arts",
-    sections: [
-      { title: "Персональные выставки", items: [
-        "2024 — «За три моря», персональная выставка, МСХ, Москва",
-        "2019 — «Две линии», персональная выставка, РСХ, Воронеж",
-      ]},
-      { title: "Групповые выставки", items: [
-        "2024 — «Продолжение», выставка династии скульпторов и художников Дикуновых Максима, Алексея и Натальи. Областной художественный музей им. И. Крамского, Воронеж",
-        "2023 — «Международная выставка преподавателей художественных институтов», Уханьский институт дизайна и проектирования, Ухань, Китай",
-        "2023–2024 — выставки печатной графики, Ченду, Китай",
-        "2023 — Bicentennial Exhibition, Royal Society of British Artists, Лондон, Великобритания",
-        "2023 — выставка печатной графики, Southbank Printmakers Gallery, Лондон, Великобритания",
-        "2022 — «Мосты», международный проект «Минская инициатива» при поддержке фонда гуманитарного сотрудничества стран СНГ, Санкт-Петербург",
-        "2022 — юбилейная выставка 90 лет МСХ, Москва",
-        "2007 — юбилейная выставка «250 лет Академии художеств», ЦДХ, Москва",
-      ]},
-      { title: "Награды", items: [
-        "2022 — 1-е место, международный конкурс экслибриса DEG, Германия",
-        "2022 — 3-е место, международный конкурс экслибриса Всемирной организации экслибриса WFOEL. The 4th Hong Kong International Artists & Collectables Expo, Гонконг",
-        "2021 — особая отметка жюри, конкурс экслибриса «La Divina Comedia», Biblioteca di Bodio Lomnago",
-      ]},
-      { title: "Преподавание", items: [
-        "2023–2024 — преподаватель рисунка, живописи и композиции, Сычуаньский педагогический университет, факультет классической живописи (Sichuan Normal University), Ченду, Китай",
-      ]},
-      { title: "Резиденции и пленэры", items: [
-        "2025 — приглашённый участник арт-резиденции The Guanlan Original Printmaking Base, Шэньчжэнь, Китай",
-        "2022 — международный пленэр и выставка «Landour Plain Air», Ландур, Индия",
-      ]},
-    ],
-  },
-  en: {
-    role: "artist",
-    academy: "St. Petersburg academy of fine arts",
-    sections: [
-      { title: "Solo exhibitions", items: [
-        "2024 — «Across Three Seas», solo exhibition, Moscow Union of Artists, Moscow",
-        "2019 — «Two Lines», solo exhibition, Russian Union of Artists, Voronezh",
-      ]},
-      { title: "Group exhibitions", items: [
-        "2024 — «Continuation», exhibition of the Dikunov dynasty of sculptors and artists — Maxim, Alexey and Natalia. Kramskoy Regional Art Museum, Voronezh",
-        "2023 — International Exhibition of Teachers of Art Institutes, Wuhan Institute of Design and Sciences, Wuhan, China",
-        "2023–2024 — printmaking exhibitions, Chengdu, China",
-        "2023 — Bicentennial Exhibition, Royal Society of British Artists, London, UK",
-        "2023 — printmaking exhibition, Southbank Printmakers Gallery, London, UK",
-        "2022 — «Bridges», international project «Minsk Initiative» supported by the CIS Humanitarian Cooperation Fund, St. Petersburg",
-        "2022 — 90th anniversary exhibition of the Moscow Union of Artists, Moscow",
-        "2007 — 250th anniversary exhibition of the Academy of Arts, Central House of Artists, Moscow",
-      ]},
-      { title: "Awards", items: [
-        "2022 — 1st place, international ex libris competition DEG, Germany",
-        "2022 — 3rd place, international ex libris competition of the World Federation of Ex-libris Societies WFOEL. The 4th Hong Kong International Artists & Collectables Expo, Hong Kong",
-        "2021 — special jury mention, «La Divina Comedia» ex libris competition, Biblioteca di Bodio Lomnago",
-      ]},
-      { title: "Teaching", items: [
-        "2023–2024 — lecturer in drawing, painting and composition, Sichuan Normal University, faculty of classical painting, Chengdu, China",
-      ]},
-      { title: "Residencies and plein airs", items: [
-        "2025 — invited resident artist, The Guanlan Original Printmaking Base, Shenzhen, China",
-        "2022 — international plein air and exhibition «Landour Plain Air», Landour, India",
-      ]},
-    ],
-  },
-} as const;
+
 
 function Index() {
   const [lang, setLang] = useState<Lang>("ru");
@@ -237,7 +173,7 @@ function Index() {
       </section>
 
       <section id="about" className="grid border-t border-border px-5 py-24 md:grid-cols-2 md:px-8 md:py-36">
-        <h2 className="font-display text-5xl md:text-7xl">{t.about}</h2><div className="mt-10 md:mt-0"><p className="max-w-xl text-xl leading-relaxed md:text-3xl">{t.note}</p><p className="mt-10 text-xs uppercase leading-7 tracking-[.12em] text-muted-foreground">St. Petersburg Academy of Fine Arts<br/>2024 — «За три моря», МСХ, Москва<br/>2023 — Royal Society of British Artists, London<br/>2022 — DEG Exlibris, Germany — 1st prize</p><button onClick={() => setAboutOpen(true)} className="mt-10 flex w-fit items-center gap-2 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.more}<ArrowUpRight className="size-4"/></button></div>
+        <h2 className="font-display text-5xl md:text-7xl">{t.about}</h2><div className="mt-10 md:mt-0"><p className="max-w-xl whitespace-pre-line text-xl leading-relaxed md:text-3xl">{gallery.about[lang].note}</p><p className="mt-10 text-xs uppercase leading-7 tracking-[.12em] text-muted-foreground">{gallery.about[lang].highlights.map((h, i) => <span key={i} className="block">{h}</span>)}</p><button onClick={() => setAboutOpen(true)} className="mt-10 flex w-fit items-center gap-2 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.more}<ArrowUpRight className="size-4"/></button></div>
       </section>
 
       <footer id="contact" className="relative overflow-hidden bg-ink px-5 pb-0 pt-20 text-paper md:px-8 md:pt-28">
@@ -248,7 +184,7 @@ function Index() {
       <div className="fixed bottom-4 right-3 z-40 flex flex-col gap-1.5 md:bottom-5 md:right-5 md:gap-2"><button onClick={() => slowScroll(0)} aria-label={lang==="ru"?"В начало":"To top"} data-tip={lang==="ru"?"В начало":"To top"} data-tip-pos="left" className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowUp className="size-4"/></button><button onClick={() => slowScroll(document.documentElement.scrollHeight - window.innerHeight)} aria-label={lang==="ru"?"В конец":"To bottom"} data-tip={lang==="ru"?"В конец":"To bottom"} data-tip-pos="left" className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowDown className="size-4"/></button></div>
       {viewer !== null && <Viewer works={works} index={viewer} lang={lang} onChange={setViewer} onClose={() => setViewer(null)} onEnquire={setEnquiry} />}
       {enquiry !== null && <EnquiryModal artwork={enquiry} lang={lang} onClose={() => setEnquiry(null)} />}
-      {aboutOpen && <AboutModal lang={lang} onClose={() => setAboutOpen(false)} />}
+      {aboutOpen && <AboutModal about={gallery.about} lang={lang} onClose={() => setAboutOpen(false)} />}
     </main>
   );
 }
@@ -312,9 +248,9 @@ function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: W
   );
 }
 
-function AboutModal({ lang, onClose }: { lang: Lang; onClose: () => void }) {
+function AboutModal({ about, lang, onClose }: { about: AboutContent; lang: Lang; onClose: () => void }) {
   const t = copy[lang];
-  const bio = aboutBio[lang];
+  const bio = about[lang];
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
@@ -335,13 +271,13 @@ function AboutModal({ lang, onClose }: { lang: Lang; onClose: () => void }) {
               <p className="mt-3 font-sans text-sm lowercase italic tracking-[.24em] text-muted-foreground">{bio.role}</p>
               <p className="mt-1 text-xs uppercase tracking-[.18em] text-muted-foreground">{bio.academy}</p>
             </div>
-            <img src={portraitAsset.url} alt={t.artist} className="aspect-[4/5] w-full max-w-[16rem] object-cover shadow-2xl md:justify-self-end" />
+            <img src={about.portrait ? mediaUrl(about.portrait) : portraitAsset.url} alt={t.artist} className="aspect-[4/5] w-full max-w-[16rem] object-cover shadow-2xl md:justify-self-end" />
           </div>
           <div className="mt-14 space-y-10 md:mt-20">
-            {bio.sections.map((section) => (
-              <section key={section.title}>
+            {bio.sections.map((section, si) => (
+              <section key={si}>
                 <h3 className="mb-4 border-b border-border pb-2 text-xs uppercase tracking-[.2em] text-muted-foreground">{section.title}</h3>
-                <ul className="space-y-2">{section.items.map((item) => <li key={item} className="text-sm leading-relaxed">{item}</li>)}</ul>
+                <ul className="space-y-2">{section.items.map((item, i) => <li key={i} className="text-sm leading-relaxed">{item}</li>)}</ul>
               </section>
             ))}
           </div>
