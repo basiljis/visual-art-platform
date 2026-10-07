@@ -5,5 +5,5 @@
 - [x] Search: empty-state message + clear button
 - [ ] Purchase enquiry emails — blocked: needs an email domain set up by the user
 
-- [ ] Создать администратора morrasdream@gmail.com без подтверждения почты
+- [x] Создать администратора morrasdream@gmail.com без подтверждения почты
 - [ ] Подготовка к публикации на Timeweb (dikunova.art)
