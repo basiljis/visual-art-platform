@@ -8,3 +8,4 @@
 - [x] Создать администратора morrasdream@gmail.com без подтверждения почты
 - [x] Подготовка к публикации на Timeweb (dikunova.art)
 - [x] Admin: edit About section (migrate existing content)
+- [ ] Admin: hide works without deleting
