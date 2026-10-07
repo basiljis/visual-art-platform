@@ -3,6 +3,8 @@ import { BlogShell } from "@/components/BlogShell";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { postsQuery } from "@/lib/content.functions";
 import { mediaUrl } from "@/lib/media";
+import { useState } from "react";
+import { Search, X } from "lucide-react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 
 export const Route = createFileRoute("/blog/")({
@@ -22,7 +24,11 @@ export const Route = createFileRoute("/blog/")({
 });
 
 function BlogIndex() {
-  const { data: blogPosts } = useSuspenseQuery(postsQuery);
+  const { data: allPosts } = useSuspenseQuery(postsQuery);
+  const [q, setQ] = useState("");
+  const needle = q.trim().toLowerCase();
+  const strip = (h: string) => h.replace(/<[^>]+>/g, " ");
+  const blogPosts = needle ? allPosts.filter((p) => `${p.title} ${p.excerpt} ${p.date} ${strip(p.content_html ?? "")}`.toLowerCase().includes(needle)) : allPosts;
   return (
     <BlogShell back={{ to: "/", label: "Главная" }}>
       <p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">Главная / Блог</p>
@@ -30,6 +36,12 @@ function BlogIndex() {
         <h1 className="font-display text-5xl md:text-8xl">Блог</h1>
         <span className="text-sm text-muted-foreground">{blogPosts.length}</span>
       </div>
+      <label className="mt-8 flex max-w-sm items-center gap-3 border-b border-border pb-2 focus-within:border-foreground">
+        <Search className="size-4 shrink-0 text-muted-foreground" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Поиск по блогу" aria-label="Поиск по блогу" className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
+        {q && <button onClick={() => setQ("")} aria-label="Очистить поиск"><X className="size-4" /></button>}
+      </label>
+      {!blogPosts.length && <div className="py-16 text-center"><p className="text-sm text-muted-foreground">Ничего не найдено</p><button onClick={() => setQ("")} className="mt-4 border-b border-foreground pb-0.5 text-xs uppercase tracking-[.18em]">Сбросить поиск</button></div>}
       <div className="mt-12 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
         {blogPosts.map((p) => (
           <Link key={p.slug} to="/blog/$slug" params={{ slug: p.slug }} className="group block">
