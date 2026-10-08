@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { NewsPanel } from "@/components/admin/NewsPanel";
 import { CategoriesPanel, WorksPanel, BlogPanel, EnquiriesPanel, SubscribersPanel, AboutPanel, field, label, primaryBtn } from "@/components/admin/Panels";
 
 export const Route = createFileRoute("/admin")({
@@ -38,7 +39,7 @@ function AdminPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<"categories" | "works" | "blog" | "about" | "enquiries" | "subscribers">("works");
+  const [tab, setTab] = useState<"categories" | "works" | "blog" | "about" | "news" | "enquiries" | "subscribers">("works");
   const qc = useQueryClient();
 
   useEffect(() => {
@@ -59,7 +60,7 @@ function AdminPage() {
   if (isAdmin === null) return <Shell right={out}><p className="text-sm text-muted-foreground">Проверка доступа…</p></Shell>;
   if (!isAdmin) return <Shell right={out}><p className="max-w-md text-sm">У этой учётной записи ({session.user.email}) нет доступа к панели.</p></Shell>;
 
-  const tabs = [["works", "Работы"], ["categories", "Направления"], ["blog", "Блог"], ["about", "Об авторе"], ["enquiries", "Заявки"], ["subscribers", "Подписки"]] as const;
+  const tabs = [["works", "Работы"], ["categories", "Направления"], ["blog", "Блог"], ["about", "Об авторе"], ["news", "Новости"], ["enquiries", "Заявки"], ["subscribers", "Подписки"]] as const;
   return (
     <Shell right={out}>
       <nav className="mb-10 flex gap-6 overflow-x-auto whitespace-nowrap border-b border-border">
@@ -69,6 +70,7 @@ function AdminPage() {
       {tab === "works" && <WorksPanel />}
       {tab === "blog" && <BlogPanel />}
       {tab === "about" && <AboutPanel />}
+      {tab === "news" && <NewsPanel />}
       {tab === "enquiries" && <EnquiriesPanel />}
       {tab === "subscribers" && <SubscribersPanel />}
     </Shell>
