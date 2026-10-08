@@ -107,6 +107,54 @@ export type Database = {
         }
         Relationships: []
       }
+      news: {
+        Row: {
+          address_en: string
+          address_ru: string
+          body_en: string
+          body_ru: string
+          created_at: string
+          event_date: string
+          id: string
+          image: string | null
+          link: string | null
+          published: boolean
+          sort: number
+          title_en: string
+          title_ru: string
+        }
+        Insert: {
+          address_en?: string
+          address_ru?: string
+          body_en?: string
+          body_ru?: string
+          created_at?: string
+          event_date?: string
+          id?: string
+          image?: string | null
+          link?: string | null
+          published?: boolean
+          sort?: number
+          title_en?: string
+          title_ru?: string
+        }
+        Update: {
+          address_en?: string
+          address_ru?: string
+          body_en?: string
+          body_ru?: string
+          created_at?: string
+          event_date?: string
+          id?: string
+          image?: string | null
+          link?: string | null
+          published?: boolean
+          sort?: number
+          title_en?: string
+          title_ru?: string
+        }
+        Relationships: []
+      }
       purchase_enquiries: {
         Row: {
           artwork: string | null
