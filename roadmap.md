@@ -12,3 +12,4 @@
 - [x] Blog search
 - [x] Verify all admin sections editing
 - [x] Verify subscriptions
+- [x] News + timed popup in admin
