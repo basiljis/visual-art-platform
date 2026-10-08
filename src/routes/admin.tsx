@@ -63,8 +63,8 @@ function AdminPage() {
   const tabs = [["works", "Работы"], ["categories", "Направления"], ["blog", "Блог"], ["about", "Об авторе"], ["news", "Новости"], ["enquiries", "Заявки"], ["subscribers", "Подписки"]] as const;
   return (
     <Shell right={out}>
-      <nav className="mb-10 flex gap-6 overflow-x-auto whitespace-nowrap border-b border-border">
-        {tabs.map(([k, l]) => <button key={k} onClick={() => setTab(k)} className={`-mb-px border-b pb-3 font-display text-2xl transition-opacity md:text-4xl ${tab === k ? "border-red-accent opacity-100" : "border-transparent opacity-40 hover:opacity-100"}`}>{l}</button>)}
+      <nav className="mb-10 flex flex-wrap gap-x-6 gap-y-1 border-b border-border">
+        {tabs.map(([k, l]) => <button key={k} onClick={() => setTab(k)} className={`-mb-px border-b pb-2 font-display text-lg transition-opacity md:text-2xl ${tab === k ? "border-red-accent opacity-100" : "border-transparent opacity-40 hover:opacity-100"}`}>{l}</button>)}
       </nav>
       {tab === "categories" && <CategoriesPanel />}
       {tab === "works" && <WorksPanel />}
