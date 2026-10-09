@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Настройки шрифтов по блокам сайта в админ-панели
 - [x] Admin panel: gear in footer, login, categories/works CRUD with uploads, blog editor (photo/video)
 - [x] Move existing works & blog posts into the database
 - [x] Mobile fixes: footer signature overlap, DIKUNOVA fits width, hero intro beside signature
