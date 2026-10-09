@@ -1,10 +1,13 @@
 import { NewsPopup } from "@/components/NewsPopup";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useSuspenseQuery } from "@tanstack/react-query";
+import { typographyQuery } from "@/lib/typography.functions";
+import { fontOptions, typographyCss } from "@/lib/typography";
 import {
   Outlet,
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -75,6 +78,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: ({ context }) => context.queryClient.ensureQueryData(typographyQuery),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -94,7 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Prata&display=swap" },
+      { rel: "stylesheet", href: `https://fonts.googleapis.com/css2?${fontOptions.map(font => `family=${font.google}`).join("&")}&display=swap` },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
@@ -124,8 +128,17 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
-      <NewsPopup />
+      <TypographySite />
     </QueryClientProvider>
   );
+}
+
+function TypographySite() {
+  const { data } = useSuspenseQuery(typographyQuery);
+  const { pathname } = useLocation();
+  const admin = pathname.startsWith("/admin") || pathname.startsWith("/reset-password");
+  return <>
+    <style>{typographyCss(data)}</style>
+    <div className={admin ? "contents" : "site-typography contents"}><Outlet /><NewsPopup /></div>
+  </>;
 }
