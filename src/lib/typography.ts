@@ -43,8 +43,9 @@ export function typographyCss(settings: TypographySettings) {
     .site-typography .post-body { font-family: ${family("blog")}; }`;
   const scopes = typographyBlocks.filter(b => !["body", "headings", "blog"].includes(b.key)).map(b => {
     const selector = `.site-typography [data-font-block="${b.key}"]`;
-    return `${selector} { font-family: ${family(b.key)}; }
-      ${selector} .font-sans, ${selector} .font-display { font-family: inherit; }`;
+    const children = ["header", "navigation", "preloader"].includes(b.key)
+      ? `${selector} .font-sans, ${selector} .font-display { font-family: inherit; }` : "";
+    return `${selector} { font-family: ${family(b.key)}; } ${children}`;
   });
   return [base, ...scopes, ...fontOptions.map(f => `[data-font-preview="${f.id}"] { font-family: ${f.family}; }`)].join("\n");
 }
