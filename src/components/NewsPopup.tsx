@@ -53,11 +53,11 @@ export function NewsPopup() {
               <article key={n.id}>
                 {n.image && <img src={mediaUrl(n.image)} alt="" className="mb-5 max-h-64 w-full object-cover" />}
                 <h2 className="font-display text-3xl leading-tight">{title}</h2>
-                <div className="mt-4 space-y-2 text-sm">
+                <div data-font-block="news" className="mt-4 space-y-2 text-sm">
                   {n.event_date && <p className="flex items-start gap-2"><CalendarDays className="mt-0.5 size-4 shrink-0 text-red-accent" />{n.event_date}</p>}
                   {addr && <p className="flex items-start gap-2"><MapPin className="mt-0.5 size-4 shrink-0 text-red-accent" />{addr}</p>}
                 </div>
-                {body && <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{body}</p>}
+                {body && <p data-font-block="news" className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{body}</p>}
                 {n.link && <a href={n.link} target="_blank" rel="noreferrer" className="mt-4 inline-block border-b border-current pb-0.5 text-xs uppercase tracking-[.16em] hover:text-red-accent">{en ? "Learn more" : "Подробнее"}</a>}
               </article>
             );

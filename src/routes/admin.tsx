@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useState, type ReactNode } from "react";
+import { TypographyPanel } from "@/components/admin/TypographyPanel";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
 import { ArrowLeft, LogOut } from "lucide-react";
@@ -39,7 +40,7 @@ function AdminPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<"categories" | "works" | "blog" | "about" | "news" | "enquiries" | "subscribers">("works");
+  const [tab, setTab] = useState<"categories" | "works" | "blog" | "about" | "news" | "enquiries" | "subscribers" | "typography">("works");
   const qc = useQueryClient();
 
   useEffect(() => {
@@ -60,7 +61,7 @@ function AdminPage() {
   if (isAdmin === null) return <Shell right={out}><p className="text-sm text-muted-foreground">Проверка доступа…</p></Shell>;
   if (!isAdmin) return <Shell right={out}><p className="max-w-md text-sm">У этой учётной записи ({session.user.email}) нет доступа к панели.</p></Shell>;
 
-  const tabs = [["works", "Работы"], ["categories", "Направления"], ["blog", "Блог"], ["about", "Об авторе"], ["news", "Новости"], ["enquiries", "Заявки"], ["subscribers", "Подписки"]] as const;
+  const tabs = [["works", "Работы"], ["categories", "Направления"], ["blog", "Блог"], ["about", "Об авторе"], ["news", "Новости"], ["enquiries", "Заявки"], ["subscribers", "Подписки"], ["typography", "Шрифты"]] as const;
   return (
     <Shell right={out}>
       <nav className="mb-10 flex flex-wrap gap-x-6 gap-y-1 border-b border-border">
@@ -73,6 +74,7 @@ function AdminPage() {
       {tab === "news" && <NewsPanel />}
       {tab === "enquiries" && <EnquiriesPanel />}
       {tab === "subscribers" && <SubscribersPanel />}
+      {tab === "typography" && <Suspense fallback={<p className="text-sm text-muted-foreground">Загрузка…</p>}><TypographyPanel /></Suspense>}
     </Shell>
   );
 }
