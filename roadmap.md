@@ -14,3 +14,5 @@
 - [x] Verify all admin sections editing
 - [x] Verify subscriptions
 - [x] News + timed popup in admin
+- [ ] Hero: no shadow, self-portrait first, text+signature toward center, larger sanguine signature
+- [ ] Admin typography: per-block font size, weight, line-height with live preview
