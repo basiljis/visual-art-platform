@@ -73,7 +73,7 @@ function Index() {
   useEffect(() => {
     const el = document.getElementById("footer-mark");
     if (!el) return;
-    const io = new IntersectionObserver(([e]) => setMarkInView(e.isIntersecting), { threshold: 0.1 });
+    const io = new IntersectionObserver((entries) => setMarkInView(!!entries[0]?.isIntersecting), { threshold: 0.1 });
     io.observe(el);
     return () => io.disconnect();
   }, []);
