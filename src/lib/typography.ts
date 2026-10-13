@@ -51,10 +51,10 @@ export function normalizeTypography(value: unknown): TypographySettings {
     }
     const obj = raw && typeof raw === "object" ? raw as Record<string, unknown> : {};
     return [b.key, {
-      font: fontOptions.some(f => f.id === obj.font) ? obj.font as FontId : b.defaultFont,
-      size: pick(obj.size, SIZES, 1),
-      weight: pick(obj.weight, WEIGHTS, 0),
-      lineHeight: pick(obj.lineHeight, LINE_HEIGHTS, 0),
+      font: fontOptions.some(f => f.id === obj["font"]) ? obj["font"] as FontId : b.defaultFont,
+      size: pick(obj["size"], SIZES, 1),
+      weight: pick(obj["weight"], WEIGHTS, 0),
+      lineHeight: pick(obj["lineHeight"], LINE_HEIGHTS, 0),
     }];
   })) as TypographySettings;
 }
