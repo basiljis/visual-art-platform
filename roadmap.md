@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Проверить полный перенос старого блога, всех записей, фотографий и видео; дополнить недостающее
 - [ ] Настройки шрифтов по блокам сайта в админ-панели
 - [x] Admin panel: gear in footer, login, categories/works CRUD with uploads, blog editor (photo/video)
 - [x] Move existing works & blog posts into the database
