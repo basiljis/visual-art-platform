@@ -1,5 +1,5 @@
 # Roadmap
-- [ ] Проверить полный перенос старого блога, всех записей, фотографий и видео; дополнить недостающее
+- [x] Проверить полный перенос старого блога: 11 записей, 59 фотографий, 2 видео и 4 ссылки на публикации; добавлены 39 снимков
 - [ ] Настройки шрифтов по блокам сайта в админ-панели
 - [x] Admin panel: gear in footer, login, categories/works CRUD with uploads, blog editor (photo/video)
 - [x] Move existing works & blog posts into the database
