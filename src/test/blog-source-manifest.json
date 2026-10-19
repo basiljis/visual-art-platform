@@ -1,0 +1,329 @@
+[
+  {
+    "slug": "blog-001",
+    "source": "https://dikunova.art/blog_001",
+    "photos": [
+      {
+        "source": "https://static.tildacdn.com/tild6131-3365-4462-b633-373833333965/blog_001_1.jpg",
+        "ref": "asset:blog/blog-001-01.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6532-6130-4766-a263-663463303362/blog_001_2.jpg",
+        "ref": "asset:blog/blog-001-02.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3739-3262-4464-a633-353539366237/blog_001_3.jpg",
+        "ref": "asset:blog/blog-001-03.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6431-3062-4262-b262-366634376661/blog_001_4.jpg",
+        "ref": "asset:blog/blog-001-04.jpg"
+      }
+    ],
+    "videos": [],
+    "added": 0
+  },
+  {
+    "slug": "blog-002",
+    "source": "https://dikunova.art/blog_002",
+    "photos": [
+      {
+        "source": "https://static.tildacdn.com/tild3733-3734-4461-b036-336539393133/blog_002_1.jpg",
+        "ref": "asset:blog/blog-002-01.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6132-6234-4561-a166-613566393265/blog_002_2.jpg",
+        "ref": "asset:blog/blog-002-02.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6632-6439-4366-b063-623130613934/blog_002_3.jpg",
+        "ref": "asset:blog/blog-002-03.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6132-3130-4935-b565-306539383430/blog_002_4.jpg",
+        "ref": "asset:blog/blog-002-04.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3665-3864-4561-a232-616661396638/blog_002_6.jpg",
+        "ref": "asset:blog/blog-002-05.jpg"
+      }
+    ],
+    "videos": [],
+    "added": 0
+  },
+  {
+    "slug": "blog-003",
+    "source": "https://dikunova.art/blog_003",
+    "photos": [
+      {
+        "source": "https://static.tildacdn.com/tild3034-3566-4235-b431-646338343330/blog_003_1.jpg",
+        "ref": "asset:blog/blog-003-01.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3930-3431-4937-b764-366161663164/blog_003_2.jpg",
+        "ref": "asset:blog/blog-003-02.jpg"
+      }
+    ],
+    "videos": [],
+    "added": 0
+  },
+  {
+    "slug": "blog-004",
+    "source": "https://dikunova.art/blog_004",
+    "photos": [
+      {
+        "source": "https://static.tildacdn.com/tild3232-6435-4564-a332-316630366234/blog_004_1.jpg",
+        "ref": "asset:blog/blog-004-01.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3031-6466-4134-b866-306261633831/blog_004_2.jpg",
+        "ref": "asset:blog/blog-source-004-02.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3433-3230-4762-b034-343034386162/blog_004_3.jpg",
+        "ref": "asset:blog/blog-source-004-03.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3434-3736-4565-a133-326631633231/blog_004_4.jpg",
+        "ref": "asset:blog/blog-source-004-04.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3566-3531-4839-b761-363766633265/blog_004_5.jpg",
+        "ref": "asset:blog/blog-source-004-05.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3834-6633-4063-b534-336661653732/blog_004_6.jpg",
+        "ref": "asset:blog/blog-source-004-06.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3633-3635-4430-b230-393562616363/blog_004_7.jpg",
+        "ref": "asset:blog/blog-source-004-07.jpg"
+      }
+    ],
+    "videos": [],
+    "added": 6
+  },
+  {
+    "slug": "blog-005",
+    "source": "https://dikunova.art/blog_005",
+    "photos": [
+      {
+        "source": "https://static.tildacdn.com/tild3435-6531-4935-a163-306636626433/blog_005_1.jpg",
+        "ref": "asset:blog/blog-source-005-01.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6335-3130-4561-b466-623137393262/blog_005_2.jpg",
+        "ref": "asset:blog/blog-source-005-02.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3865-6338-4364-b435-633034623363/blog_005_3.jpg",
+        "ref": "asset:blog/blog-source-005-03.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3563-6632-4734-a663-333633613131/blog_005_4.jpg",
+        "ref": "asset:blog/blog-source-005-04.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6534-3038-4638-a533-303464333566/blog_005_5.jpg",
+        "ref": "asset:blog/blog-source-005-05.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3534-3064-4232-a637-353137623336/blog_005_6.jpg",
+        "ref": "asset:blog/blog-source-005-06.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3936-3037-4336-b038-643861363763/blog_005_7.jpg",
+        "ref": "asset:blog/blog-source-005-07.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3834-6164-4262-b462-376564313631/blog_005_8.jpg",
+        "ref": "asset:blog/blog-source-005-08.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6238-6331-4337-a338-393561613434/blog_005_9.jpg",
+        "ref": "asset:blog/blog-source-005-09.jpg"
+      }
+    ],
+    "videos": [],
+    "added": 9
+  },
+  {
+    "slug": "blog-006",
+    "source": "https://dikunova.art/blog_006",
+    "photos": [
+      {
+        "source": "https://static.tildacdn.com/tild3163-6132-4230-b437-356264306233/blog_006.jpg",
+        "ref": "asset:blog/blog-006-01.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6630-6337-4531-a431-323534643965/blog_006_1.jpg",
+        "ref": "asset:blog/blog-source-006-02.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6265-3066-4665-b766-373632363932/blog_006_2.jpg",
+        "ref": "asset:blog/blog-source-006-03.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3330-3231-4965-b665-646639313961/blog_006_3.jpg",
+        "ref": "asset:blog/blog-source-006-04.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6633-3335-4335-b334-323265343465/blog_006_4.jpg",
+        "ref": "asset:blog/blog-source-006-05.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3936-3862-4039-b434-653765653864/blog_006_5.jpg",
+        "ref": "asset:blog/blog-source-006-06.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3936-3538-4533-b531-393333366437/blog_006_6.jpg",
+        "ref": "asset:blog/blog-source-006-07.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6262-3130-4261-b565-356132626337/blog_006_7.jpg",
+        "ref": "asset:blog/blog-source-006-08.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3337-6533-4237-a136-303039643731/blog_006_8.jpg",
+        "ref": "asset:blog/blog-source-006-09.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3563-3764-4533-a231-666363323866/blog_006_9.jpg",
+        "ref": "asset:blog/blog-source-006-10.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3463-3366-4139-b630-326565643962/blog_006_10.jpg",
+        "ref": "asset:blog/blog-source-006-11.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3036-3063-4338-a133-653432323836/blog_006_11.jpg",
+        "ref": "asset:blog/blog-source-006-12.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3732-6464-4637-b136-613964326366/blog_006_12.jpg",
+        "ref": "asset:blog/blog-source-006-13.jpg"
+      }
+    ],
+    "videos": [],
+    "added": 12
+  },
+  {
+    "slug": "blog-007",
+    "source": "https://dikunova.art/blog_007",
+    "photos": [
+      {
+        "source": "https://static.tildacdn.com/tild3632-3863-4366-a564-663862633538/blog_007.jpg",
+        "ref": "asset:blog/blog-007-01.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6466-3365-4432-b832-343031373437/blog_007_1.jpg",
+        "ref": "asset:blog/blog-007-02.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6136-6564-4065-b630-633362323739/blog_007_2.jpg",
+        "ref": "asset:blog/blog-007-03.jpg"
+      }
+    ],
+    "videos": [],
+    "added": 0
+  },
+  {
+    "slug": "blog-008",
+    "source": "https://dikunova.art/blog_008",
+    "photos": [
+      {
+        "source": "https://static.tildacdn.com/tild3561-3862-4431-b033-306661626432/2023_001.jpg",
+        "ref": "asset:blog/blog-008-01.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6239-3362-4565-b533-333938623739/2023_002.jpg",
+        "ref": "asset:blog/blog-source-008-02.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3930-3438-4534-b261-306263383834/2023_003.jpg",
+        "ref": "asset:blog/blog-source-008-03.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3339-3265-4339-a636-343065373061/2023_004.jpg",
+        "ref": "asset:blog/blog-source-008-04.jpg"
+      }
+    ],
+    "videos": [],
+    "added": 3
+  },
+  {
+    "slug": "blog-009",
+    "source": "https://dikunova.art/blog_009",
+    "photos": [
+      {
+        "source": "https://static.tildacdn.com/tild3837-3738-4361-b439-353938363838/2024_002.jpg",
+        "ref": "asset:blog/blog-009-01.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3232-3462-4234-b665-656137666263/2024_001.jpg",
+        "ref": "asset:blog/blog-source-009-02.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3866-6264-4031-b737-353136386439/2024_003.jpg",
+        "ref": "asset:blog/blog-source-009-03.jpg"
+      }
+    ],
+    "videos": [],
+    "added": 2
+  },
+  {
+    "slug": "blog-010",
+    "source": "https://dikunova.art/blog_010",
+    "photos": [
+      {
+        "source": "https://static.tildacdn.com/tild3634-3137-4131-b361-653261353466/2021_001.jpg",
+        "ref": "asset:blog/blog-010-01.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6239-6163-4162-a161-346166363435/2021_002.jpg",
+        "ref": "asset:blog/blog-source-010-02.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6562-3234-4831-a632-653963316335/2021_003.jpg",
+        "ref": "asset:blog/blog-source-010-03.jpg"
+      }
+    ],
+    "videos": [],
+    "added": 2
+  },
+  {
+    "slug": "blog-011",
+    "source": "https://dikunova.art/blog_011",
+    "photos": [
+      {
+        "source": "https://static.tildacdn.com/tild3231-6364-4339-b264-633461363633/article_small.jpg",
+        "ref": "asset:blog/blog-011-01.jpg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3335-3239-4436-a461-376134646436/noroot.png",
+        "ref": "asset:blog/blog-source-011-02.png"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3362-3932-4238-a236-663336653064/IMG_3075.jpeg",
+        "ref": "asset:blog/blog-source-011-03.jpeg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6636-3331-4366-a335-376265323463/IMG_3061.jpeg",
+        "ref": "asset:blog/blog-source-011-04.jpeg"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild6631-3636-4162-b734-393039633735/noroot.png",
+        "ref": "asset:blog/blog-source-011-05.png"
+      },
+      {
+        "source": "https://static.tildacdn.com/tild3166-3263-4531-b730-363031333063/IMG_3050.jpeg",
+        "ref": "asset:blog/blog-source-011-06.jpeg"
+      }
+    ],
+    "videos": [
+      "https://www.test-poloska.ru/images/exchangefolder/dikunova/video_001.mp4",
+      "https://www.test-poloska.ru/images/exchangefolder/dikunova/video_002.mp4"
+    ],
+    "added": 5
+  }
+]

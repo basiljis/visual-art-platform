@@ -13,7 +13,7 @@ const Video = Node.create({
   name: "video",
   group: "block",
   atom: true,
-  addAttributes() { return { src: { default: null } }; },
+  addAttributes() { return { src: { default: null, parseHTML: (element) => element.getAttribute("src") || element.querySelector("source")?.getAttribute("src") } }; },
   parseHTML() { return [{ tag: "video" }]; },
   renderHTML({ HTMLAttributes }) { return ["video", mergeAttributes(HTMLAttributes, { controls: "true", playsinline: "true", preload: "metadata" })]; },
 });
