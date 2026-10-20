@@ -1,7 +1,7 @@
 import { EnquiryModal } from "@/components/EnquiryModal";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { galleryQuery, type CategoryRow, type WorkRow } from "@/lib/content.functions";
+import { galleryQuery, postsQuery, type CategoryRow, type WorkRow } from "@/lib/content.functions";
 import { mediaUrl } from "@/lib/media";
 import { ArrowDown, ArrowUp, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Settings, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -18,7 +18,10 @@ export const Route = createFileRoute("/")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ]}),
-  loader: ({ context }) => context.queryClient.ensureQueryData(galleryQuery),
+  validateSearch: (s: Record<string, unknown>) => ({ category: typeof s.category === "string" && s.category ? s.category : undefined }),
+  loader: async ({ context }) => {
+    await Promise.all([context.queryClient.ensureQueryData(galleryQuery), context.queryClient.ensureQueryData(postsQuery)]);
+  },
   errorComponent: () => <div className="grid min-h-screen place-items-center p-8 text-sm">Не удалось загрузить галерею. Обновите страницу.</div>,
   component: Index,
 });
