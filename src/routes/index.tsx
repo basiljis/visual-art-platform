@@ -54,8 +54,8 @@ function Index() {
   const { cats, works } = buildGallery(gallery);
   const heroWorks = works.map((w, i) => (w.hero ? i : -1)).filter((i) => i >= 0);
   if (!heroWorks.length && works.length) heroWorks.push(0);
-  // Автопортрет («ПОРТРЕТ ХУДОЖНИКА») всегда первый в сменяющихся картинах
-  const selfIdx = works.findIndex((w) => /ПОРТРЕТ ХУДОЖНИКА|PORTRAIT OF AN? ARTIST/i.test(w.ru));
+  // Автопортрет тушью всегда первый в сменяющихся картинах
+  const selfIdx = works.findIndex((w) => /АВТОПОРТРЕТ|SELF-PORTRAIT/i.test(w.ru));
   if (selfIdx >= 0) {
     const at = heroWorks.indexOf(selfIdx);
     if (at > 0) heroWorks.splice(at, 1);
