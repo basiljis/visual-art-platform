@@ -46,7 +46,8 @@ function Index() {
   const [lang, setLang] = useState<Lang>("ru");
   const [dark, setDark] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [category, setCategory] = useState<Category>("all");
+  const search = Route.useSearch();
+  const [category, setCategory] = useState<Category>(search.category ?? "all");
   const [query, setQuery] = useState("");
   const [project, setProject] = useState<string>("all");
   const [ready, setReady] = useState(false);
@@ -54,6 +55,7 @@ function Index() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [enquiry, setEnquiry] = useState<string | null>(null);
   const { data: gallery } = useSuspenseQuery(galleryQuery);
+  const { data: posts } = useSuspenseQuery(postsQuery);
   const { cats, works } = buildGallery(gallery);
   const heroWorks = works.map((w, i) => (w.hero ? i : -1)).filter((i) => i >= 0);
   if (!heroWorks.length && works.length) heroWorks.push(0);
