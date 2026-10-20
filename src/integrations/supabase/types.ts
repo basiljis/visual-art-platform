@@ -26,6 +26,8 @@ export type Database = {
           slug: string
           sort: number
           title: string
+          topic_keys: string[]
+          work_ids: string[]
         }
         Insert: {
           content_html?: string
@@ -38,6 +40,8 @@ export type Database = {
           slug: string
           sort?: number
           title?: string
+          topic_keys?: string[]
+          work_ids?: string[]
         }
         Update: {
           content_html?: string
@@ -50,6 +54,8 @@ export type Database = {
           slug?: string
           sort?: number
           title?: string
+          topic_keys?: string[]
+          work_ids?: string[]
         }
         Relationships: []
       }
