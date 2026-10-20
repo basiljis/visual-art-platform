@@ -58,10 +58,13 @@ export const getPost = createServerFn({ method: "GET" })
       ? (((await sb.from("works").select("id,category_key,title_ru,title_en,year,image").in("id", ids).eq("hidden", false)).data as RelatedWork[] | null) ?? [])
       : [];
     const topics = post.topic_keys ?? [];
+    const relatedTopics = topics.length
+      ? (((await sb.from("categories").select("key,name_ru,name_en").in("key", topics).order("sort")).data as { key: string; name_ru: string; name_en: string }[] | null) ?? [])
+      : [];
     const relatedPosts = topics.length
       ? list.filter((p) => p.id !== post.id && (p.topic_keys ?? []).some((k) => topics.includes(k))).map((p) => ({ slug: p.slug, title: p.title }))
       : [];
-    return { post, next: next ? { slug: next.slug, title: next.title } : null, relatedWorks, relatedPosts };
+    return { post, next: next ? { slug: next.slug, title: next.title } : null, relatedWorks, relatedTopics, relatedPosts };
   });
 
 export const galleryQuery = queryOptions({ queryKey: ["gallery"], queryFn: () => getGallery() });
