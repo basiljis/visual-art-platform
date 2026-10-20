@@ -95,6 +95,13 @@ function Index() {
     if (ready) window.localStorage.setItem("dikunova-theme", dark ? "dark" : "light");
   }, [dark, ready]);
   useEffect(() => { if (ready) window.localStorage.setItem("dikunova-lang", lang); }, [lang, ready]);
+  // Переход из блога по тематике: /?category=key
+  useEffect(() => {
+    if (!search.category) return;
+    setCategory(search.category);
+    setProject("all");
+    requestAnimationFrame(() => document.getElementById("works")?.scrollIntoView());
+  }, [search.category]);
 
   const t = copy[lang];
   const filtered = category === "all" ? works : works.filter((work) => work.category === category && (!hasSub(category) || (project === "all" ? work.cover : work.project === project)));
