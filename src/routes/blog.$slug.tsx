@@ -3,7 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { BlogShell } from "@/components/BlogShell";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { postQuery } from "@/lib/content.functions";
-import { htmlForDisplay } from "@/lib/media";
+import { htmlForDisplay, mediaUrl } from "@/lib/media";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ context, params }) => {
