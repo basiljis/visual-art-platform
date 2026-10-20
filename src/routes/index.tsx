@@ -108,6 +108,7 @@ function Index() {
   const q = query.trim().toLowerCase();
   const visible = q ? works.filter((w) => `${w.ru} ${w.en}`.toLowerCase().includes(q)) : category === "all" ? works.filter((w) => !hasSub(w.category) || w.cover) : filtered;
   const openProject = (parent: string, key: string) => { setCategory(parent); setProject(key); document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); };
+  const relatedPosts = category !== "all" && !q ? posts.filter((p) => (p.topic_keys ?? []).includes(category)) : [];
 
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
