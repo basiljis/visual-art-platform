@@ -183,15 +183,18 @@ export function WorksPanel() {
 /* ---------------- Blog ---------------- */
 export function BlogPanel() {
   const { rows, reload } = useRows<PostRow>("blog_posts", "sort");
+  const cats = useRows<CategoryRow>("categories", "sort");
+  const wks = useRows<WorkRow>("works", "sort");
   const inv = useInvalidate();
   const [edit, setEdit] = useState<Partial<PostRow> | null>(null);
+  const [workQ, setWorkQ] = useState("");
   if (!rows) return <p className="text-sm text-muted-foreground">Загрузка…</p>;
   const today = new Date().toLocaleDateString("ru-RU");
   const save = async () => {
     if (!edit?.title) { alert("Укажите заголовок"); return; }
     const html = htmlForStorage(edit.content_html ?? "");
     const firstImg = html.match(/<img[^>]+src="([^"]+)"/)?.[1] ?? null;
-    const payload = { title: edit.title, slug: edit.slug || slugify(edit.title).slice(0, 80), excerpt: edit.excerpt ?? "", date: edit.date || today, cover: edit.cover || firstImg, content_html: html, published: edit.published ?? true, sort: Number(edit.sort ?? 0) };
+    const payload = { title: edit.title, slug: edit.slug || slugify(edit.title).slice(0, 80), excerpt: edit.excerpt ?? "", date: edit.date || today, cover: edit.cover || firstImg, content_html: html, published: edit.published ?? true, sort: Number(edit.sort ?? 0), topic_keys: edit.topic_keys ?? [], work_ids: edit.work_ids ?? [] };
     const { error } = edit.id ? await supabase.from("blog_posts").update(payload).eq("id", edit.id) : await supabase.from("blog_posts").insert(payload);
     if (error) { alert(error.message.includes("duplicate") ? "Такой адрес записи уже есть" : error.message); return; }
     setEdit(null); reload(); inv();
