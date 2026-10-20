@@ -217,6 +217,34 @@ export function BlogPanel() {
         <div className="flex items-end md:col-span-2"><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.published ?? true} onChange={(e) => setEdit({ ...edit, published: e.target.checked })} className="accent-red-accent" />Опубликовано</label></div>
       </div>
       <div className="mt-8"><RichEditor value={htmlForDisplay(edit.content_html ?? "")} onChange={(content_html) => setEdit((cur) => cur && { ...cur, content_html })} /></div>
+      <div className="mt-12 border-t border-border pt-8">
+        <p className={label}>Связь с галереей — тематики</p>
+        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+          {(cats.rows ?? []).filter((c) => !c.parent_key).map((c) => {
+            const on = (edit.topic_keys ?? []).includes(c.key);
+            return (
+              <label key={c.key} className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={on} className="accent-red-accent" onChange={() => setEdit((cur) => cur && { ...cur, topic_keys: on ? (cur.topic_keys ?? []).filter((k) => k !== c.key) : [...(cur.topic_keys ?? []), c.key] })} />
+                {c.name_ru}
+              </label>
+            );
+          })}
+        </div>
+        <p className={`${label} mt-10`}>Связанные работы — выбрано {(edit.work_ids ?? []).length}</p>
+        <input placeholder="Поиск работы" value={workQ} onChange={(e) => setWorkQ(e.target.value)} className={`${field} mt-3 max-w-sm`} />
+        <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-7">
+          {(wks.rows ?? []).filter((w) => !workQ || `${w.title_ru} ${w.title_en}`.toLowerCase().includes(workQ.toLowerCase())).map((w) => {
+            const on = (edit.work_ids ?? []).includes(w.id);
+            return (
+              <button key={w.id} type="button" onClick={() => setEdit((cur) => cur && { ...cur, work_ids: on ? (cur.work_ids ?? []).filter((id) => id !== w.id) : [...(cur.work_ids ?? []), w.id] })} className={`relative block aspect-[4/5] overflow-hidden bg-muted ${on ? "outline outline-2 outline-red-accent" : "opacity-50 hover:opacity-100"}`}>
+                <img src={mediaUrl(w.image)} alt={w.title_ru} loading="lazy" className="h-full w-full object-cover" />
+                {on && <span className="absolute right-1 top-1 bg-red-accent px-1 text-[10px] text-background">✓</span>}
+                <span className="absolute inset-x-0 bottom-0 truncate bg-background/85 px-1 py-0.5 text-[10px]">{w.title_ru}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
   return (
