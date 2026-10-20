@@ -195,6 +195,19 @@ function Index() {
             <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div><h2 className="text-base font-medium">{work[lang]}</h2><p className="mt-1 text-xs text-muted-foreground">{work.size}</p>{work.cover && project === "all" && work.project && <button onClick={()=>openProject(work.category, work.project!)} className="mt-3 flex items-center gap-1 text-[11px] uppercase tracking-[.16em] transition-colors hover:text-red-accent">{t.more} · {parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}<ArrowUpRight className="size-3"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
         </div>
+        {relatedPosts.length > 0 && (
+          <div className="mx-auto mt-20 max-w-2xl">
+            <p className="text-[10px] uppercase tracking-[.18em] text-muted-foreground">{lang === "ru" ? "Статьи по теме" : "Related articles"}</p>
+            <div className="mt-5 flex flex-col gap-3">
+              {relatedPosts.map((p) => (
+                <Link key={p.slug} to="/blog/$slug" params={{ slug: p.slug }} className="group flex items-center justify-between gap-4 border-b border-border pb-3 transition-colors hover:border-red-accent hover:text-red-accent">
+                  <span className="font-display text-xl md:text-2xl">{p.title}</span>
+                  <ArrowUpRight className="size-4 shrink-0 opacity-40 transition-opacity group-hover:opacity-100" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
         {category !== "all" && (
           <p className="mx-auto mt-20 max-w-2xl border-t border-border pt-6 text-center text-sm leading-relaxed text-muted-foreground">{lang === "ru" ? parentOf(category)?.noteRu : parentOf(category)?.noteEn}</p>
         )}
