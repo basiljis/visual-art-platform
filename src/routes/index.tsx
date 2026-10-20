@@ -1,7 +1,7 @@
 import { EnquiryModal } from "@/components/EnquiryModal";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { galleryQuery, type CategoryRow, type WorkRow } from "@/lib/content.functions";
+import { galleryQuery, postsQuery, type CategoryRow, type WorkRow } from "@/lib/content.functions";
 import { mediaUrl } from "@/lib/media";
 import { ArrowDown, ArrowUp, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Settings, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -18,7 +18,10 @@ export const Route = createFileRoute("/")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ]}),
-  loader: ({ context }) => context.queryClient.ensureQueryData(galleryQuery),
+  validateSearch: (s: Record<string, unknown>) => ({ category: typeof s.category === "string" && s.category ? s.category : undefined }),
+  loader: async ({ context }) => {
+    await Promise.all([context.queryClient.ensureQueryData(galleryQuery), context.queryClient.ensureQueryData(postsQuery)]);
+  },
   errorComponent: () => <div className="grid min-h-screen place-items-center p-8 text-sm">Не удалось загрузить галерею. Обновите страницу.</div>,
   component: Index,
 });
@@ -43,7 +46,8 @@ function Index() {
   const [lang, setLang] = useState<Lang>("ru");
   const [dark, setDark] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [category, setCategory] = useState<Category>("all");
+  const search = Route.useSearch();
+  const [category, setCategory] = useState<Category>(search.category ?? "all");
   const [query, setQuery] = useState("");
   const [project, setProject] = useState<string>("all");
   const [ready, setReady] = useState(false);
@@ -51,6 +55,7 @@ function Index() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [enquiry, setEnquiry] = useState<string | null>(null);
   const { data: gallery } = useSuspenseQuery(galleryQuery);
+  const { data: posts } = useSuspenseQuery(postsQuery);
   const { cats, works } = buildGallery(gallery);
   const heroWorks = works.map((w, i) => (w.hero ? i : -1)).filter((i) => i >= 0);
   if (!heroWorks.length && works.length) heroWorks.push(0);
@@ -90,12 +95,20 @@ function Index() {
     if (ready) window.localStorage.setItem("dikunova-theme", dark ? "dark" : "light");
   }, [dark, ready]);
   useEffect(() => { if (ready) window.localStorage.setItem("dikunova-lang", lang); }, [lang, ready]);
+  // Переход из блога по тематике: /?category=key
+  useEffect(() => {
+    if (!search.category) return;
+    setCategory(search.category);
+    setProject("all");
+    requestAnimationFrame(() => document.getElementById("works")?.scrollIntoView());
+  }, [search.category]);
 
   const t = copy[lang];
   const filtered = category === "all" ? works : works.filter((work) => work.category === category && (!hasSub(category) || (project === "all" ? work.cover : work.project === project)));
   const q = query.trim().toLowerCase();
   const visible = q ? works.filter((w) => `${w.ru} ${w.en}`.toLowerCase().includes(q)) : category === "all" ? works.filter((w) => !hasSub(w.category) || w.cover) : filtered;
   const openProject = (parent: string, key: string) => { setCategory(parent); setProject(key); document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); };
+  const relatedPosts = category !== "all" && !q ? posts.filter((p) => (p.topic_keys ?? []).includes(category)) : [];
 
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
@@ -182,6 +195,19 @@ function Index() {
             <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div><h2 className="text-base font-medium">{work[lang]}</h2><p className="mt-1 text-xs text-muted-foreground">{work.size}</p>{work.cover && project === "all" && work.project && <button onClick={()=>openProject(work.category, work.project!)} className="mt-3 flex items-center gap-1 text-[11px] uppercase tracking-[.16em] transition-colors hover:text-red-accent">{t.more} · {parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}<ArrowUpRight className="size-3"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
         </div>
+        {relatedPosts.length > 0 && (
+          <div className="mx-auto mt-20 max-w-2xl">
+            <p className="text-[10px] uppercase tracking-[.18em] text-muted-foreground">{lang === "ru" ? "Статьи по теме" : "Related articles"}</p>
+            <div className="mt-5 flex flex-col gap-3">
+              {relatedPosts.map((p) => (
+                <Link key={p.slug} to="/blog/$slug" params={{ slug: p.slug }} className="group flex items-center justify-between gap-4 border-b border-border pb-3 transition-colors hover:border-red-accent hover:text-red-accent">
+                  <span className="font-display text-xl md:text-2xl">{p.title}</span>
+                  <ArrowUpRight className="size-4 shrink-0 opacity-40 transition-opacity group-hover:opacity-100" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
         {category !== "all" && (
           <p className="mx-auto mt-20 max-w-2xl border-t border-border pt-6 text-center text-sm leading-relaxed text-muted-foreground">{lang === "ru" ? parentOf(category)?.noteRu : parentOf(category)?.noteEn}</p>
         )}

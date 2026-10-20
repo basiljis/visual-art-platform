@@ -19,7 +19,8 @@ async function publicClient() {
 
 export type CategoryRow = { id: string; key: string; parent_key: string | null; name_ru: string; name_en: string; description_ru: string; description_en: string; sort: number };
 export type WorkRow = { id: string; category_key: string; project_key: string | null; title_ru: string; title_en: string; year: string; size: string; image: string; cover: boolean; hero: boolean; hidden?: boolean; sort: number };
-export type PostRow = { id: string; slug: string; title: string; excerpt: string; date: string; cover: string | null; content_html: string; published: boolean; sort: number };
+export type PostRow = { id: string; slug: string; title: string; excerpt: string; date: string; cover: string | null; content_html: string; published: boolean; sort: number; topic_keys?: string[]; work_ids?: string[] };
+export type RelatedWork = { id: string; category_key: string; title_ru: string; title_en: string; year: string; image: string };
 
 export const getGallery = createServerFn({ method: "GET" }).handler(async () => {
   const sb = await publicClient();
@@ -36,7 +37,7 @@ export const getGallery = createServerFn({ method: "GET" }).handler(async () => 
 
 export const getPosts = createServerFn({ method: "GET" }).handler(async () => {
   const sb = await publicClient();
-  const { data, error } = await sb.from("blog_posts").select("id,slug,title,excerpt,date,cover,sort,published").eq("published", true).order("sort");
+  const { data, error } = await sb.from("blog_posts").select("id,slug,title,excerpt,date,cover,sort,published,topic_keys").eq("published", true).order("sort");
   if (error) throw new Error(error.message);
   return data as Omit<PostRow, "content_html">[];
 });
@@ -51,7 +52,19 @@ export const getPost = createServerFn({ method: "GET" })
     const i = list.findIndex((p) => p.slug === data.slug);
     if (i < 0) return null;
     const next = list[i + 1];
-    return { post: list[i]!, next: next ? { slug: next.slug, title: next.title } : null };
+    const post = list[i]!;
+    const ids = post.work_ids ?? [];
+    const relatedWorks: RelatedWork[] = ids.length
+      ? (((await sb.from("works").select("id,category_key,title_ru,title_en,year,image").in("id", ids).eq("hidden", false)).data as RelatedWork[] | null) ?? [])
+      : [];
+    const topics = post.topic_keys ?? [];
+    const relatedTopics = topics.length
+      ? (((await sb.from("categories").select("key,name_ru,name_en").in("key", topics).order("sort")).data as { key: string; name_ru: string; name_en: string }[] | null) ?? [])
+      : [];
+    const relatedPosts = topics.length
+      ? list.filter((p) => p.id !== post.id && (p.topic_keys ?? []).some((k) => topics.includes(k))).map((p) => ({ slug: p.slug, title: p.title }))
+      : [];
+    return { post, next: next ? { slug: next.slug, title: next.title } : null, relatedWorks, relatedTopics, relatedPosts };
   });
 
 export const galleryQuery = queryOptions({ queryKey: ["gallery"], queryFn: () => getGallery() });
