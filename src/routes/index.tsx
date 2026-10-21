@@ -18,7 +18,7 @@ export const Route = createFileRoute("/")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ]}),
-  validateSearch: (s: Record<string, unknown>): { category?: string } => ({ category: typeof s["category"] === "string" && s["category"] ? s["category"] : undefined }),
+  validateSearch: (s: Record<string, unknown>): { category?: string | undefined } => ({ category: typeof s["category"] === "string" && s["category"] ? s["category"] : undefined }),
   loader: async ({ context }) => {
     await Promise.all([context.queryClient.ensureQueryData(galleryQuery), context.queryClient.ensureQueryData(postsQuery)]);
   },
