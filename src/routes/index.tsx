@@ -140,7 +140,7 @@ function Index() {
 
       <section id="top" className="relative min-h-[92vh] pt-20">
         <div className="relative grid min-h-[calc(92vh-5rem)] grid-cols-1 md:grid-cols-[42%_58%]">
-          <div className="relative flex flex-col justify-end px-5 pb-12 pt-8 md:pb-16 md:pl-20 md:pr-8 md:pt-16">
+          <div className="relative flex flex-col justify-end px-5 pb-12 pt-8 md:pb-16 md:pl-36 md:pr-8 md:pt-16">
             <div className="mb-6 grid grid-cols-[auto_minmax(0,1fr)] items-end gap-4 md:mb-5 md:block">
               <span aria-hidden className="mb-4 block h-44 w-36 bg-sanguine sm:h-72 sm:w-72 md:mb-4 md:h-80 md:w-80" style={{ WebkitMaskImage: `url(${signatureAsset.url})`, WebkitMaskSize: "contain", WebkitMaskRepeat: "no-repeat", WebkitMaskPosition: "center", maskImage: `url(${signatureAsset.url})`, maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center" }} />
               <p data-font-block="intro" className="max-w-md animate-reveal border-l border-border pb-1 pl-4 text-[15px] leading-snug md:border-0 md:pb-0 md:pl-0 md:text-2xl md:leading-relaxed"><span className="mb-2 block text-[10px] uppercase tracking-[.2em] text-red-accent md:hidden">/ artist</span>{t.intro}</p>
