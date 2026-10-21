@@ -147,11 +147,11 @@ function Index() {
             </div>
             <a href="#works" data-font-block="body" onClick={(e) => { const el = document.getElementById("works"); if (!el) return; e.preventDefault(); const y = el.getBoundingClientRect().top + window.scrollY - 64; if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) window.scrollTo(0, y); else slowScroll(y); }} className="flex w-fit items-center gap-3 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.all}<ArrowDown className="size-4"/></a>
           </div>
-          <div className="order-first flex min-h-[58vh] items-center justify-center px-5 pb-4 pt-10 md:order-none md:px-12 md:py-10">
-            <button onClick={() => setViewer(heroIndex)} className="relative aspect-[4/5] w-[min(78vw,26rem)] overflow-hidden bg-muted" aria-label={heroWork?.[lang]}>
+          <div className="order-first flex min-h-[58vh] flex-col items-center justify-center gap-3 px-5 pb-4 pt-10 md:order-none md:px-12 md:py-10">
+            <button onClick={() => setViewer(heroIndex)} className="relative aspect-[4/5] w-[min(80vw,30rem)] overflow-hidden bg-muted" aria-label={heroWork?.[lang]}>
               {heroWorks.map((idx) => <img key={idx} src={works[idx]!.image} alt={works[idx]![lang]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${idx === heroIndex ? "opacity-100" : "opacity-0"}`} />)}
             </button>
-            <span data-font-block="captions" className="absolute bottom-6 right-6 hidden text-[10px] uppercase tracking-[.16em] text-muted-foreground md:block">{heroWork?.[lang]} · {heroWork?.year}</span>
+            <span data-font-block="captions" className="text-center text-[10px] uppercase tracking-[.16em] text-muted-foreground">{heroWork?.[lang]} · {heroWork?.year}</span>
           </div>
         </div>
       </section>
