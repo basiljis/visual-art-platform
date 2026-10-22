@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { publicDb } from "@/lib/public-db.server";
+import { SITE_URL, articleDate } from "@/lib/seo";
 
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -7,26 +8,33 @@ const esc = (s: string) =>
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
-      GET: async ({ request }) => {
-        const origin = new URL(request.url).origin;
+      GET: async () => {
+        const origin = SITE_URL;
         const urls: { loc: string; lastmod: string | undefined }[] = [
           { loc: `${origin}/`, lastmod: undefined },
           { loc: `${origin}/blog`, lastmod: undefined },
         ];
         try {
-          const { data } = await publicDb()
-            .from("blog_posts")
-            .select("slug,date")
-            .eq("published", true)
-            .order("sort");
-          for (const p of data ?? []) {
-            // dates are stored as DD.MM.YYYY — convert to ISO for lastmod
-            const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(p.date ?? "");
-            const lastmod = m ? `${m[3]}-${m[2]}-${m[1]}` : undefined;
-            urls.push({ loc: `${origin}/blog/${p.slug}`, lastmod });
+          const db = publicDb();
+          const pageSize = 500;
+          for (let offset = 0; ; offset += pageSize) {
+            const { data, error } = await db.from("blog_posts")
+              .select("slug,date").eq("published", true)
+              .order("sort").order("id").range(offset, offset + pageSize - 1);
+            if (error) throw new Error(error.message);
+            if (!data) throw new Error("Missing sitemap content response");
+            for (const p of data) {
+              // Retain only the existing page-specific publication dates, never generation time.
+              urls.push({ loc: `${origin}/blog/${encodeURIComponent(p.slug)}`, lastmod: articleDate(p.date ?? "") });
+            }
+            if (data.length < pageSize) break;
           }
-        } catch {
-          // DB unavailable — still serve the static routes
+        } catch (error) {
+          console.error("Sitemap content could not be loaded", error);
+          return new Response("Sitemap temporarily unavailable", {
+            status: 503,
+            headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
+          });
         }
         const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
           .map(

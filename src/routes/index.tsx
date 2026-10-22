@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
 import type { AboutContent } from "@/lib/about";
 import portraitAsset from "@/assets/artist-portrait.png.asset.json";
+import { breadcrumbs, pageUrl } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -16,8 +17,14 @@ export const Route = createFileRoute("/")({
     { property: "og:title", content: "Наталья Дикунова — живопись и графика" },
     { property: "og:description", content: "Галерея живописи и печатной графики художника Натальи Дикуновой." },
     { property: "og:type", content: "website" },
+    { property: "og:url", content: pageUrl("/") },
     { name: "twitter:card", content: "summary_large_image" },
-  ]}),
+  ],
+    links: [{ rel: "canonical", href: pageUrl("/") }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify(breadcrumbs([
+      { name: "Главная", path: "/" }, { name: "Работы", path: "/#works" },
+    ])) }],
+  }),
   validateSearch: (s: Record<string, unknown>): { category?: string | undefined } => ({ category: typeof s["category"] === "string" && s["category"] ? s["category"] : undefined }),
   loader: async ({ context }) => {
     await Promise.all([context.queryClient.ensureQueryData(galleryQuery), context.queryClient.ensureQueryData(postsQuery)]);
