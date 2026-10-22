@@ -6,6 +6,7 @@ import { mediaUrl } from "@/lib/media";
 import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { SubscribeForm } from "@/components/SubscribeForm";
+import { breadcrumbs, pageUrl } from "@/lib/seo";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
@@ -15,8 +16,13 @@ export const Route = createFileRoute("/blog/")({
       { property: "og:title", content: "Блог — Наталья Дикунова" },
       { property: "og:description", content: "Выставки, проекты, преподавание в Китае и новости художника Натальи Дикуновой." },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: pageUrl("/blog") },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: pageUrl("/blog") }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify(breadcrumbs([
+      { name: "Главная", path: "/" }, { name: "Блог", path: "/blog" },
+    ])) }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),
   errorComponent: () => <BlogShell back={{ to: "/", label: "Главная" }}><p>Не удалось загрузить блог.</p></BlogShell>,

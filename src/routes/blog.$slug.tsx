@@ -4,12 +4,13 @@ import { BlogShell } from "@/components/BlogShell";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { postQuery } from "@/lib/content.functions";
 import { htmlForDisplay, mediaUrl } from "@/lib/media";
+import { articleSchema, breadcrumbs, pageUrl } from "@/lib/seo";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ context, params }) => {
     const res = await context.queryClient.ensureQueryData(postQuery(params.slug));
     if (!res) throw notFound();
-    return { title: res.post.title, desc: res.post.excerpt || res.post.content_html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 150) || res.post.title };
+    return { title: res.post.title, slug: res.post.slug, date: res.post.date, desc: res.post.excerpt || res.post.content_html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 150) || res.post.title };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Запись не найдена" }, { name: "robots", content: "noindex" }] };
@@ -20,7 +21,16 @@ export const Route = createFileRoute("/blog/$slug")({
         { property: "og:title", content: loaderData.title },
         { property: "og:description", content: loaderData.desc },
         { property: "og:type", content: "article" },
+        { property: "og:url", content: pageUrl(`/blog/${encodeURIComponent(loaderData.slug)}`) },
         { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [{ rel: "canonical", href: pageUrl(`/blog/${encodeURIComponent(loaderData.slug)}`) }],
+      scripts: [
+        { type: "application/ld+json", children: JSON.stringify(articleSchema(loaderData)) },
+        { type: "application/ld+json", children: JSON.stringify(breadcrumbs([
+          { name: "Главная", path: "/" }, { name: "Блог", path: "/blog" },
+          { name: loaderData.title, path: `/blog/${encodeURIComponent(loaderData.slug)}` },
+        ])) },
       ],
     };
   },

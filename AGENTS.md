@@ -19,3 +19,4 @@
 - Purchase enquiries are saved by a server function (admin client) into purchase_enquiries (RLS on, no public policies); emailing them needs a mail connection.
 - Self-hosted build (Timeweb): Dockerfile builds with NITRO_PRESET=node-server; edge/nginx proxies site + api.dikunova.art — server code must not depend on the service role key, which isn't available off-platform.
 - Site typography is stored in site_content under typography, publicly loaded at the root and applied through scoped CSS tokens and block attributes; admin edits use existing admin-only RLS so choices persist for all visitors without changing admin fonts.
+- Public SEO URLs and structured data use src/lib/seo.ts, not request origins; sitemap reads paginate with public access and fail explicitly to avoid proxy-host URLs and incomplete successful responses.
