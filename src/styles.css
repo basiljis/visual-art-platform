@@ -158,19 +158,13 @@
 @keyframes preload-out { 0%,78% { opacity: 1; visibility: visible } 100% { opacity: 0; visibility: hidden } }
 @keyframes reveal-up { from { opacity: 0; transform: translateY(24px) } to { opacity: 1; transform: translateY(0) } }
 @keyframes slow-zoom { from { transform: scale(1.04) } to { transform: scale(1) } }
-@keyframes sign-write { from { -webkit-mask-position: 100% 0; mask-position: 100% 0 } to { -webkit-mask-position: 0 0; mask-position: 0 0 } }
+@keyframes sign-draw { to { stroke-dashoffset: 0 } }
 
 @utility font-display { font-family: var(--font-display); }
 @utility animate-preloader { animation: preload-out 3.2s cubic-bezier(.7,0,.2,1) forwards; }
-/* Signature is revealed left-to-right with a soft "ink" edge, like a pen stroke */
-@utility animate-sign {
-  -webkit-mask-image: linear-gradient(90deg, #000 0 45%, transparent 55% 100%);
-  mask-image: linear-gradient(90deg, #000 0 45%, transparent 55% 100%);
-  -webkit-mask-size: 220% 100%; mask-size: 220% 100%;
-  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  mask-position: 100% 0; -webkit-mask-position: 100% 0;
-  animation: sign-write 1.8s cubic-bezier(.45,.05,.35,1) .25s forwards;
-}
+/* Preloader signature: pen-path reveal, each line drawn in writing order */
+.sign-stroke { stroke-dasharray: 1; stroke-dashoffset: 1; animation: sign-draw 1.9s cubic-bezier(.5,.1,.4,1) .2s forwards; }
+.sign-dot { stroke-dasharray: 1; stroke-dashoffset: 1; animation: sign-draw .25s ease-out 2.1s forwards; }
 @utility animate-reveal { animation: reveal-up .9s cubic-bezier(.2,.7,.2,1) both; }
 @utility animate-slow-zoom { animation: slow-zoom 1.8s cubic-bezier(.2,.7,.2,1) both; }
 
