@@ -128,6 +128,7 @@ export type Database = {
           sort: number
           title_en: string
           title_ru: string
+          type: string
         }
         Insert: {
           address_en?: string
@@ -143,6 +144,7 @@ export type Database = {
           sort?: number
           title_en?: string
           title_ru?: string
+          type?: string
         }
         Update: {
           address_en?: string
@@ -158,6 +160,7 @@ export type Database = {
           sort?: number
           title_en?: string
           title_ru?: string
+          type?: string
         }
         Relationships: []
       }
