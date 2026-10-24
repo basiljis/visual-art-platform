@@ -48,7 +48,7 @@ export function NewsPopup() {
             const title = (en && n.title_en) || n.title_ru;
             const body = (en && n.body_en) || n.body_ru;
             const addr = (en && n.address_en) || n.address_ru;
-            const type = NEWS_TYPES.find((t) => t.value === n.type) ?? NEWS_TYPES[0];
+            const type = NEWS_TYPES.find((t) => t.value === n.type) ?? { label_ru: "Ближайшие выставки", label_en: "Upcoming exhibitions" };
             return (
               <article key={n.id}>
                 <p className="text-[10px] uppercase tracking-[.22em] text-red-accent">{en ? type.label_en : type.label_ru}</p>
