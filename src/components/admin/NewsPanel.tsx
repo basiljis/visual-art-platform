@@ -3,7 +3,7 @@ import { Plus, Trash2, Eye, EyeOff, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { mediaUrl } from "@/lib/media";
 import { uploadMedia } from "@/lib/admin-media";
-import { defaultNewsSettings, type NewsRow, type NewsSettings } from "@/lib/news.functions";
+import { defaultNewsSettings, NEWS_TYPES, type NewsRow, type NewsSettings, type NewsType } from "@/lib/news.functions";
 import { field, label, primaryBtn } from "./Panels";
 
 const ghost = "inline-flex items-center gap-2 border-b border-current pb-0.5 text-xs uppercase tracking-[.16em] transition-colors hover:text-red-accent";
@@ -66,12 +66,14 @@ export function NewsPanel() {
         <div className="flex items-center justify-between"><h3 className="font-display text-2xl">Новости</h3><button onClick={() => setEdit({ ...empty })} className={primaryBtn}><Plus className="size-4" />Новость</button></div>
         {!rows ? <p className="text-sm text-muted-foreground">Загрузка…</p> : rows.length === 0 ? <p className="text-sm text-muted-foreground">Новостей пока нет.</p> : (
           <ul className="divide-y divide-border border-y border-border">
-            {rows.map((n) => (
+            {rows.map((n) => {
+              const typeLabel = NEWS_TYPES.find((t) => t.value === n.type)?.label_ru;
+              return (
               <li key={n.id} className="flex items-center gap-4 py-3">
                 <div className="size-14 shrink-0 overflow-hidden bg-muted">{n.image && <img src={mediaUrl(n.image)} alt="" className="h-full w-full object-cover" />}</div>
                 <button onClick={() => setEdit(n)} className="min-w-0 flex-1 text-left">
                   <p className="truncate text-sm">{n.title_ru}{!n.published && <span className="ml-2 text-[10px] uppercase tracking-[.16em] text-red-accent">скрыта</span>}</p>
-                  <p className="truncate text-xs text-muted-foreground">{[n.event_date, n.address_ru].filter(Boolean).join(" · ")}</p>
+                  <p className="truncate text-xs text-muted-foreground">{[typeLabel, n.event_date, n.address_ru].filter(Boolean).join(" · ")}</p>
                 </button>
                 <button onClick={() => toggle(n)} title={n.published ? "Скрыть" : "Показать"} aria-label={n.published ? "Скрыть" : "Показать"} className="hover:text-red-accent">{n.published ? <Eye className="size-4" /> : <EyeOff className="size-4" />}</button>
                 <button onClick={() => remove(n)} title="Удалить" aria-label="Удалить" className="hover:text-red-accent"><Trash2 className="size-4" /></button>
