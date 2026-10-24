@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "@tanstack/react-router";
 import { CalendarDays, MapPin, X } from "lucide-react";
-import { getNews, type NewsRow } from "@/lib/news.functions";
+import { getNews, NEWS_TYPES, type NewsRow } from "@/lib/news.functions";
 import { mediaUrl } from "@/lib/media";
 
 const SEEN_KEY = "dikunova-news-seen";
@@ -43,15 +43,16 @@ export function NewsPopup() {
     <div className="fixed inset-0 z-[70] flex items-center justify-center overflow-y-auto bg-foreground/40 p-3 backdrop-blur-sm animate-in fade-in" onClick={() => setOpen(false)} role="dialog" aria-modal="true" aria-label={en ? "News" : "Новости"}>
       <div className="relative max-h-[90vh] w-[min(100%,36rem)] overflow-y-auto bg-background p-6 text-foreground shadow-2xl md:p-10" onClick={(e) => e.stopPropagation()}>
         <button onClick={() => setOpen(false)} aria-label={en ? "Close" : "Закрыть"} className="absolute right-4 top-4 hover:text-red-accent"><X className="size-5" /></button>
-        <p className="text-[10px] uppercase tracking-[.22em] text-red-accent">{en ? "Upcoming exhibitions" : "Ближайшие выставки"}</p>
-        <div className="mt-6 space-y-10">
+        <div className="mt-2 space-y-10">
           {news.map((n) => {
             const title = (en && n.title_en) || n.title_ru;
             const body = (en && n.body_en) || n.body_ru;
             const addr = (en && n.address_en) || n.address_ru;
+            const type = NEWS_TYPES.find((t) => t.value === n.type) ?? NEWS_TYPES[0];
             return (
               <article key={n.id}>
-                {n.image && <img src={mediaUrl(n.image)} alt="" className="mb-5 max-h-64 w-full object-cover" />}
+                <p className="text-[10px] uppercase tracking-[.22em] text-red-accent">{en ? type.label_en : type.label_ru}</p>
+                {n.image && <img src={mediaUrl(n.image)} alt="" className="mb-5 mt-3 max-h-64 w-full bg-muted object-contain" />}
                 <h2 className="font-display text-3xl leading-tight">{title}</h2>
                 <div data-font-block="news" className="mt-4 space-y-2 text-sm">
                   {n.event_date && <p className="flex items-start gap-2"><CalendarDays className="mt-0.5 size-4 shrink-0 text-red-accent" />{n.event_date}</p>}
