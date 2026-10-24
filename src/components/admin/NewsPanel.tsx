@@ -7,7 +7,7 @@ import { defaultNewsSettings, type NewsRow, type NewsSettings } from "@/lib/news
 import { field, label, primaryBtn } from "./Panels";
 
 const ghost = "inline-flex items-center gap-2 border-b border-current pb-0.5 text-xs uppercase tracking-[.16em] transition-colors hover:text-red-accent";
-const empty: Omit<NewsRow, "id"> = { title_ru: "", title_en: "", body_ru: "", body_en: "", event_date: "", address_ru: "", address_en: "", link: null, image: null, published: true, sort: 0 };
+const empty: Omit<NewsRow, "id"> = { type: "exhibition", title_ru: "", title_en: "", body_ru: "", body_en: "", event_date: "", address_ru: "", address_en: "", link: null, image: null, published: true, sort: 0 };
 
 export function NewsPanel() {
   const [rows, setRows] = useState<NewsRow[] | null>(null);
