@@ -78,7 +78,8 @@ export function NewsPanel() {
                 <button onClick={() => toggle(n)} title={n.published ? "Скрыть" : "Показать"} aria-label={n.published ? "Скрыть" : "Показать"} className="hover:text-red-accent">{n.published ? <Eye className="size-4" /> : <EyeOff className="size-4" />}</button>
                 <button onClick={() => remove(n)} title="Удалить" aria-label="Удалить" className="hover:text-red-accent"><Trash2 className="size-4" /></button>
               </li>
-            ))}
+              );
+            })}
           </ul>
         )}
       </section>
@@ -88,6 +89,7 @@ export function NewsPanel() {
           <div className="mx-auto my-6 w-[min(100%-1.5rem,48rem)] space-y-5 bg-background p-5 shadow-2xl md:my-12 md:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between"><h2 className="font-display text-3xl">{edit.id ? "Новость" : "Новая новость"}</h2><button onClick={() => setEdit(null)} aria-label="Закрыть" className="hover:text-red-accent"><X className="size-5" /></button></div>
             <div className="grid gap-5 md:grid-cols-2">
+              <div className="md:col-span-2"><span className={label}>Тип</span><select value={edit.type} onChange={(e) => set("type", e.target.value as NewsType)} className={field}>{NEWS_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label_ru}</option>)}</select></div>
               <div><span className={label}>Заголовок (RU)</span><input value={edit.title_ru} onChange={(e) => set("title_ru", e.target.value)} className={field} /></div>
               <div><span className={label}>Заголовок (EN)</span><input value={edit.title_en} onChange={(e) => set("title_en", e.target.value)} className={field} /></div>
               <div className="md:col-span-2"><span className={label}>Дата (например, 12–30 ноября 2026)</span><input value={edit.event_date} onChange={(e) => set("event_date", e.target.value)} className={field} /></div>
