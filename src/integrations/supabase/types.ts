@@ -242,6 +242,8 @@ export type Database = {
           project_key: string | null
           size: string
           sort: number
+          status: string
+          technique: string
           title_en: string
           title_ru: string
           year: string
@@ -257,6 +259,8 @@ export type Database = {
           project_key?: string | null
           size?: string
           sort?: number
+          status?: string
+          technique?: string
           title_en?: string
           title_ru?: string
           year?: string
@@ -272,6 +276,8 @@ export type Database = {
           project_key?: string | null
           size?: string
           sort?: number
+          status?: string
+          technique?: string
           title_en?: string
           title_ru?: string
           year?: string
