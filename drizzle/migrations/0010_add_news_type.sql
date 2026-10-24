@@ -1,0 +1,1 @@
+ALTER TABLE public.news ADD COLUMN IF NOT EXISTS type text NOT NULL DEFAULT 'exhibition'; COMMENT ON COLUMN public.news.type IS 'Категория новости: exhibition (ближайшие выставки), news, event, blog';

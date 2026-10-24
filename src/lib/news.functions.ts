@@ -1,6 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 
-export type NewsRow = { id: string; title_ru: string; title_en: string; body_ru: string; body_en: string; event_date: string; address_ru: string; address_en: string; link: string | null; image: string | null; published: boolean; sort: number };
+export type NewsType = "exhibition" | "news" | "event" | "blog";
+export const NEWS_TYPES: { value: NewsType; label_ru: string; label_en: string }[] = [
+  { value: "exhibition", label_ru: "Ближайшие выставки", label_en: "Upcoming exhibitions" },
+  { value: "news", label_ru: "Новости", label_en: "News" },
+  { value: "event", label_ru: "Мероприятия", label_en: "Events" },
+  { value: "blog", label_ru: "Блог", label_en: "Blog" },
+];
+export type NewsRow = { id: string; type: NewsType; title_ru: string; title_en: string; body_ru: string; body_en: string; event_date: string; address_ru: string; address_en: string; link: string | null; image: string | null; published: boolean; sort: number };
 export type NewsSettings = { enabled: boolean; delay: number };
 export const defaultNewsSettings: NewsSettings = { enabled: true, delay: 10 };
 

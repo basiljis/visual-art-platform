@@ -3,11 +3,11 @@ import { Plus, Trash2, Eye, EyeOff, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { mediaUrl } from "@/lib/media";
 import { uploadMedia } from "@/lib/admin-media";
-import { defaultNewsSettings, type NewsRow, type NewsSettings } from "@/lib/news.functions";
+import { defaultNewsSettings, NEWS_TYPES, type NewsRow, type NewsSettings, type NewsType } from "@/lib/news.functions";
 import { field, label, primaryBtn } from "./Panels";
 
 const ghost = "inline-flex items-center gap-2 border-b border-current pb-0.5 text-xs uppercase tracking-[.16em] transition-colors hover:text-red-accent";
-const empty: Omit<NewsRow, "id"> = { title_ru: "", title_en: "", body_ru: "", body_en: "", event_date: "", address_ru: "", address_en: "", link: null, image: null, published: true, sort: 0 };
+const empty: Omit<NewsRow, "id"> = { type: "exhibition", title_ru: "", title_en: "", body_ru: "", body_en: "", event_date: "", address_ru: "", address_en: "", link: null, image: null, published: true, sort: 0 };
 
 export function NewsPanel() {
   const [rows, setRows] = useState<NewsRow[] | null>(null);
@@ -66,17 +66,20 @@ export function NewsPanel() {
         <div className="flex items-center justify-between"><h3 className="font-display text-2xl">Новости</h3><button onClick={() => setEdit({ ...empty })} className={primaryBtn}><Plus className="size-4" />Новость</button></div>
         {!rows ? <p className="text-sm text-muted-foreground">Загрузка…</p> : rows.length === 0 ? <p className="text-sm text-muted-foreground">Новостей пока нет.</p> : (
           <ul className="divide-y divide-border border-y border-border">
-            {rows.map((n) => (
+            {rows.map((n) => {
+              const typeLabel = NEWS_TYPES.find((t) => t.value === n.type)?.label_ru;
+              return (
               <li key={n.id} className="flex items-center gap-4 py-3">
                 <div className="size-14 shrink-0 overflow-hidden bg-muted">{n.image && <img src={mediaUrl(n.image)} alt="" className="h-full w-full object-cover" />}</div>
                 <button onClick={() => setEdit(n)} className="min-w-0 flex-1 text-left">
                   <p className="truncate text-sm">{n.title_ru}{!n.published && <span className="ml-2 text-[10px] uppercase tracking-[.16em] text-red-accent">скрыта</span>}</p>
-                  <p className="truncate text-xs text-muted-foreground">{[n.event_date, n.address_ru].filter(Boolean).join(" · ")}</p>
+                  <p className="truncate text-xs text-muted-foreground">{[typeLabel, n.event_date, n.address_ru].filter(Boolean).join(" · ")}</p>
                 </button>
                 <button onClick={() => toggle(n)} title={n.published ? "Скрыть" : "Показать"} aria-label={n.published ? "Скрыть" : "Показать"} className="hover:text-red-accent">{n.published ? <Eye className="size-4" /> : <EyeOff className="size-4" />}</button>
                 <button onClick={() => remove(n)} title="Удалить" aria-label="Удалить" className="hover:text-red-accent"><Trash2 className="size-4" /></button>
               </li>
-            ))}
+              );
+            })}
           </ul>
         )}
       </section>
@@ -86,6 +89,7 @@ export function NewsPanel() {
           <div className="mx-auto my-6 w-[min(100%-1.5rem,48rem)] space-y-5 bg-background p-5 shadow-2xl md:my-12 md:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between"><h2 className="font-display text-3xl">{edit.id ? "Новость" : "Новая новость"}</h2><button onClick={() => setEdit(null)} aria-label="Закрыть" className="hover:text-red-accent"><X className="size-5" /></button></div>
             <div className="grid gap-5 md:grid-cols-2">
+              <div className="md:col-span-2"><span className={label}>Тип</span><select value={edit.type} onChange={(e) => set("type", e.target.value as NewsType)} className={field}>{NEWS_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label_ru}</option>)}</select></div>
               <div><span className={label}>Заголовок (RU)</span><input value={edit.title_ru} onChange={(e) => set("title_ru", e.target.value)} className={field} /></div>
               <div><span className={label}>Заголовок (EN)</span><input value={edit.title_en} onChange={(e) => set("title_en", e.target.value)} className={field} /></div>
               <div className="md:col-span-2"><span className={label}>Дата (например, 12–30 ноября 2026)</span><input value={edit.event_date} onChange={(e) => set("event_date", e.target.value)} className={field} /></div>
