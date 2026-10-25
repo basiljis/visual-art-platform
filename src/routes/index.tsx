@@ -11,7 +11,7 @@ import portraitAsset from "@/assets/artist-portrait.png.asset.json";
 import { absoluteImage, breadcrumbs, pageUrl, visualArtwork } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
-  head: ({ loaderData }) => ({ meta: [
+  head: ({ loaderData }: { loaderData?: { ogImage?: string | undefined; artwork?: { name: string; image?: string | undefined; technique?: string | undefined; year?: string | undefined } | undefined } | undefined }) => ({ meta: [
     { title: "Наталья Дикунова — живопись и графика" },
     { name: "description", content: "Галерея живописи и печатной графики художника Натальи Дикуновой." },
     { property: "og:title", content: "Наталья Дикунова — живопись и графика" },
