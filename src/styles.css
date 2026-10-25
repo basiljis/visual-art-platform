@@ -64,6 +64,9 @@
   --color-red-accent: var(--red-accent);
   --color-sanguine: var(--sanguine);
   --color-ink: oklch(0.14 0 0);
+  --color-wall: oklch(0.93 0.012 85);
+  --color-floor: oklch(0.62 0.04 60);
+  --color-sofa: oklch(0.55 0.03 150);
   --color-paper: oklch(0.98 0 0);
 }
 
@@ -234,3 +237,6 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 @media (max-width: 640px) {
   .paper-grain { background-size: 100% 100%, 100% 100%, 110px 110px; opacity: .07; }
 }
+
+/* Preloader plays once per browser session (flag set by inline head script) */
+.no-preloader .site-preloader { display: none; }

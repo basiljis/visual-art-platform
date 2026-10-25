@@ -72,7 +72,7 @@ export function InteriorView({ src, alt, size, lang }: { src: string; alt: strin
     <div className="flex h-full w-full items-center justify-center p-2">
       <div className="relative w-[min(100%,calc((100vh-14rem)*420/270))] overflow-hidden bg-wall shadow-2xl" style={{ aspectRatio: `${WALL_W}/${WALL_H}` }}>
         <div className="absolute inset-x-0 bottom-0 bg-floor" style={{ height: "6%" }} />
-        <img src={src} alt={alt} className="absolute object-cover shadow-[0_8px_18px_-6px_color-mix(in_oklab,var(--ink)_45%,transparent)]"
+        <img src={src} alt={alt} className="absolute object-cover shadow-[0_8px_18px_-6px_color-mix(in_oklab,var(--color-ink)_45%,transparent)]"
           style={{ width: pct(size.w, WALL_W), height: pct(size.h, WALL_H), left: `calc(50% - ${pct(size.w / 2, WALL_W)})`, bottom: pct(Math.min(SOFA_H + GAP, WALL_H - size.h - 5) + WALL_H * 0.06, WALL_H) }} />
         <div className="absolute" style={{ width: pct(SOFA_W, WALL_W), height: pct(SOFA_H, WALL_H), left: pct((WALL_W - SOFA_W) / 2, WALL_W), bottom: "6%" }}>
           <div className="absolute inset-x-[4%] top-0 h-[55%] rounded-t-md bg-sofa" />
