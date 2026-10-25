@@ -14,10 +14,11 @@ function textOf(node: DOMNode): string {
 
 function photosIn(node: DOMNode): Photo[] {
   if (!(node instanceof Element)) return [];
-  if (node.name === "img" && node.attribs.src) {
+  const src = node.attribs["src"];
+  if (node.name === "img" && src) {
     const figure = node.parent instanceof Element && node.parent.name === "figure" ? node.parent : null;
     const caption = figure?.children.find((child) => child instanceof Element && child.name === "figcaption");
-    return [{ src: node.attribs.src, alt: node.attribs.alt || "", caption: caption ? textOf(caption as DOMNode).trim() : "" }];
+    return [{ src, alt: node.attribs["alt"] || "", caption: caption ? textOf(caption as DOMNode).trim() : "" }];
   }
   return node.children.flatMap((child) => photosIn(child as DOMNode));
 }
@@ -55,17 +56,21 @@ export function BlogArticleBody({ html }: { html: string }) {
   );
   const options: HTMLReactParserOptions = {
     replace: (node) => {
-      if (node instanceof Element && node.name === "img") return renderGallery(photosIn(node), node.attribs.src);
+      if (node instanceof Element && node.name === "img") return renderGallery(photosIn(node), node.attribs["src"] || "photo");
+      return undefined;
     },
   };
   const content = [];
   for (let index = 0; index < nodes.length; index++) {
     const node = nodes[index];
+    if (!node) continue;
     if (isPhotoBlock(node) && photosIn(node).length > 0) {
       const group = photosIn(node);
-      while (index + 1 < nodes.length && isPhotoBlock(nodes[index + 1])) {
+      let next = nodes[index + 1];
+      while (next && isPhotoBlock(next)) {
         index++;
-        group.push(...photosIn(nodes[index]));
+        group.push(...photosIn(next));
+        next = nodes[index + 1];
       }
       content.push(renderGallery(group, index));
     } else {
@@ -85,8 +90,8 @@ export function BlogArticleBody({ html }: { html: string }) {
               <Dialog.Close asChild><Button variant="ghost" size="icon" aria-label={en ? "Close" : "Закрыть"} title={en ? "Close" : "Закрыть"} className="hover:bg-transparent hover:text-red-accent"><X /></Button></Dialog.Close>
             </div>
             <div className="relative flex min-h-0 flex-1 items-center justify-center px-12 py-4 sm:px-20"
-              onTouchStart={(event) => { event.currentTarget.dataset.touchStart = String(event.touches[0]?.clientX ?? 0); }}
-              onTouchEnd={(event) => { const delta = (event.changedTouches[0]?.clientX ?? 0) - Number(event.currentTarget.dataset.touchStart); if (Math.abs(delta) > 50) move(delta < 0 ? 1 : -1); }}>
+              onTouchStart={(event) => { event.currentTarget.dataset["touchStart"] = String(event.touches[0]?.clientX ?? 0); }}
+              onTouchEnd={(event) => { const delta = (event.changedTouches[0]?.clientX ?? 0) - Number(event.currentTarget.dataset["touchStart"]); if (Math.abs(delta) > 50) move(delta < 0 ? 1 : -1); }}>
               {current && <img src={current.src} alt={current.alt} className="h-full w-full object-contain" />}
               {photos.length > 1 && <>
                 <Button variant="ghost" size="icon" onClick={() => move(-1)} aria-label={en ? "Previous photo" : "Предыдущая фотография"} title={en ? "Previous photo" : "Предыдущая фотография"} className="absolute left-1 sm:left-5 hover:bg-transparent hover:text-red-accent"><ArrowLeft /></Button>
