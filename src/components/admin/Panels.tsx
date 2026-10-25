@@ -7,6 +7,9 @@ import { mediaUrl, htmlForDisplay, htmlForStorage } from "@/lib/media";
 import { uploadMedia } from "@/lib/admin-media";
 import { defaultAbout, type AboutContent, type AboutLang } from "@/lib/about";
 import { RichEditor } from "./RichEditor";
+import { Button } from "@/components/ui/button";
+import { SortableGallery, SortableGalleryItem } from "./SortableGallery";
+import { reorderScope } from "@/lib/gallery-order";
 
 export const field = "w-full border-b border-border bg-transparent py-2 text-sm outline-none transition-colors focus:border-red-accent";
 export const label = "block text-[10px] uppercase tracking-[.18em] text-muted-foreground";
@@ -16,11 +19,42 @@ const ghostBtn = "inline-flex items-center gap-2 border-b border-current pb-0.5 
 function useRows<T>(table: "categories" | "works" | "blog_posts", order: string) {
   const [rows, setRows] = useState<T[] | null>(null);
   const load = async () => {
-    const { data, error } = await supabase.from(table).select("*").order(order);
+    const { data, error } = await supabase.from(table).select("*").order(order).order("id");
     if (error) alert(error.message); else setRows(data as T[]);
   };
   useEffect(() => { load(); }, []);
-  return { rows, reload: load };
+  return { rows, setRows, reload: load };
+}
+function useOrder<T extends { id: string; sort: number }>(table: "categories" | "works", rows: T[] | null, setRows: (rows: T[]) => void, reload: () => Promise<void>, invalidate: () => void) {
+  const [dirty, setDirty] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const move = (ids: string[], active: string, over: string) => {
+    if (!rows || busy) return;
+    const next = reorderScope(rows, ids, active, over);
+    if (next === rows) return;
+    setRows(next); setDirty(true); setMessage("");
+  };
+  const save = async () => {
+    if (!rows || busy) return;
+    setBusy(true); setMessage("");
+    try {
+      const results = await Promise.all(rows.map((row) => supabase.from(table).update({ sort: row.sort }).eq("id", row.id).select("id")));
+      if (results.some((result) => result.error || result.data?.length !== 1)) {
+        setMessage("Не удалось сохранить весь порядок. Повторите сохранение.");
+        invalidate();
+      } else {
+        await reload(); invalidate(); setDirty(false); setMessage("Порядок сохранён");
+      }
+    } catch { setMessage("Не удалось сохранить порядок. Повторите сохранение."); }
+    finally { setBusy(false); }
+  };
+  const cancel = async () => { setBusy(true); await reload(); setDirty(false); setMessage(""); setBusy(false); };
+  const controls = <div className="flex flex-wrap items-center gap-3" role="status">
+    {dirty && <><Button variant="outline" disabled={busy} onClick={save}>{busy ? "Сохранение…" : "Сохранить порядок"}</Button><Button variant="ghost" disabled={busy} onClick={cancel}>Отменить</Button></>}
+    {message && <span className="text-xs text-muted-foreground">{message}</span>}
+  </div>;
+  return { move, controls, busy, dirty };
 }
 function useInvalidate() {
   const qc = useQueryClient();
@@ -55,8 +89,9 @@ function ImagePick({ value, onChange, accept = "image/*" }: { value: string | nu
 
 /* ---------------- Categories ---------------- */
 export function CategoriesPanel() {
-  const { rows, reload } = useRows<CategoryRow>("categories", "sort");
+  const { rows, setRows, reload } = useRows<CategoryRow>("categories", "sort");
   const inv = useInvalidate();
+  const order = useOrder("categories", rows, setRows, reload, inv);
   const [edit, setEdit] = useState<Partial<CategoryRow> | null>(null);
   if (!rows) return <p className="text-sm text-muted-foreground">Загрузка…</p>;
   const top = rows.filter((r) => !r.parent_key);
@@ -76,21 +111,31 @@ export function CategoriesPanel() {
     if (error) alert(error.message); else { reload(); inv(); }
   };
   const Row = ({ c, sub }: { c: CategoryRow; sub?: boolean }) => (
-    <div className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-b border-border py-4 ${sub ? "pl-6" : ""}`}>
-      <button onClick={() => setEdit(c)} className="min-w-0 text-left">
+    <div className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-b border-border py-4 pl-10 ${sub ? "ml-6" : ""}`}>
+      <button disabled={order.dirty || order.busy} onClick={() => setEdit(c)} className="min-w-0 text-left">
         <p className={sub ? "text-sm" : "font-display text-2xl"}>{sub && <span className="text-red-accent">/ </span>}{c.name_ru} <span className="text-xs text-muted-foreground">· {c.name_en}</span></p>
         {c.description_ru && <p className="mt-1 truncate text-xs text-muted-foreground">{c.description_ru}</p>}
       </button>
       <div className="flex items-center gap-4">
-        {!sub && <button onClick={() => setEdit({ parent_key: c.key, sort: rows.filter((r) => r.parent_key === c.key).length + 1 })} className={ghostBtn}><Plus className="size-3" />Подраздел</button>}
-        <button onClick={() => remove(c)} aria-label="Удалить" className="hover:text-red-accent"><Trash2 className="size-4" /></button>
+        {!sub && <button disabled={order.dirty || order.busy} onClick={() => setEdit({ parent_key: c.key, sort: rows.filter((r) => r.parent_key === c.key).length + 1 })} className={ghostBtn}><Plus className="size-3" />Подраздел</button>}
+        <button disabled={order.dirty || order.busy} onClick={() => remove(c)} aria-label="Удалить" className="hover:text-red-accent"><Trash2 className="size-4" /></button>
       </div>
     </div>
   );
   return (
     <div>
-      <div className="mb-6 flex justify-end"><button onClick={() => setEdit({ sort: top.length + 1 })} className={primaryBtn}><Plus className="size-4" />Новое направление</button></div>
-      {top.map((c) => <div key={c.id}><Row c={c} />{rows.filter((s) => s.parent_key === c.key).map((s) => <Row key={s.id} c={s} sub />)}</div>)}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">{order.controls}<button disabled={order.dirty || order.busy} onClick={() => setEdit({ sort: top.length + 1 })} className={primaryBtn}><Plus className="size-4" />Новое направление</button></div>
+      <SortableGallery ids={top.map((c) => c.id)} disabled={order.busy} onMove={(a, b) => order.move(top.map((c) => c.id), a, b)}>
+        {top.map((c) => {
+          const children = rows.filter((s) => s.parent_key === c.key);
+          return <SortableGalleryItem key={c.id} id={c.id} name={c.name_ru} disabled={order.busy}>
+            <Row c={c} />
+            <SortableGallery ids={children.map((s) => s.id)} disabled={order.busy} onMove={(a, b) => order.move(children.map((s) => s.id), a, b)}>
+              {children.map((s) => <SortableGalleryItem key={s.id} id={s.id} name={s.name_ru} disabled={order.busy} className="ml-6"><Row c={s} sub /></SortableGalleryItem>)}
+            </SortableGallery>
+          </SortableGalleryItem>;
+        })}
+      </SortableGallery>
       {edit && (
         <Modal title={edit.id ? "Направление" : edit.parent_key ? "Новый подраздел" : "Новое направление"} onClose={() => setEdit(null)}>
           <div className="grid gap-6 md:grid-cols-2">
@@ -121,15 +166,17 @@ export function CategoriesPanel() {
 /* ---------------- Works ---------------- */
 export function WorksPanel() {
   const cats = useRows<CategoryRow>("categories", "sort");
-  const { rows, reload } = useRows<WorkRow>("works", "sort");
+  const { rows, setRows, reload } = useRows<WorkRow>("works", "sort");
   const inv = useInvalidate();
+  const order = useOrder("works", rows, setRows, reload, inv);
   const [filter, setFilter] = useState("all");
+  const [projectFilter, setProjectFilter] = useState("all");
   const [q, setQ] = useState("");
   const [edit, setEdit] = useState<Partial<WorkRow> | null>(null);
   const top = (cats.rows ?? []).filter((c) => !c.parent_key);
-  const list = useMemo(() => (rows ?? []).filter((w) => (filter === "all" || w.category_key === filter) && (!q || `${w.title_ru} ${w.title_en}`.toLowerCase().includes(q.toLowerCase()))), [rows, filter, q]);
+  const list = useMemo(() => (rows ?? []).filter((w) => (filter === "all" || w.category_key === filter) && (projectFilter === "all" || w.project_key === projectFilter) && (!q || `${w.title_ru} ${w.title_en}`.toLowerCase().includes(q.toLowerCase()))), [rows, filter, projectFilter, q]);
   if (!rows || !cats.rows) return <p className="text-sm text-muted-foreground">Загрузка…</p>;
-  const subs = (key?: string) => cats.rows!.filter((c) => c.parent_key === key);
+  const subs = (key?: string) => (cats.rows ?? []).filter((c) => c.parent_key === key);
   const save = async () => {
     if (!edit?.image) { alert("Загрузите изображение"); return; }
     if (!edit.category_key) { alert("Выберите направление"); return; }
@@ -147,26 +194,29 @@ export function WorksPanel() {
   return (
     <div>
       <div className="mb-8 grid gap-4 md:grid-cols-[1fr_16rem_auto] md:items-end">
-        <div className="flex flex-wrap gap-x-5 gap-y-2">{[{ key: "all", name_ru: "Все" }, ...top].map((c) => <button key={c.key} onClick={() => setFilter(c.key)} className={`text-sm ${filter === c.key ? "underline underline-offset-8" : "opacity-45 hover:opacity-100"}`}>{c.name_ru}</button>)}</div>
+        <div className="flex flex-wrap gap-x-5 gap-y-2">{[{ key: "all", name_ru: "Все" }, ...top].map((c) => <button key={c.key} disabled={order.busy} onClick={() => { setFilter(c.key); setProjectFilter("all"); }} className={`text-sm ${filter === c.key ? "underline underline-offset-8" : "opacity-45 hover:opacity-100"}`}>{c.name_ru}</button>)}</div>
         <input placeholder="Поиск по названию" value={q} onChange={(e) => setQ(e.target.value)} className={field} />
-        <button onClick={() => setEdit({ category_key: filter !== "all" ? filter : (top[0]?.key ?? ""), sort: nextSort })} className={primaryBtn}><Plus className="size-4" />Новая работа</button>
+        <button disabled={order.dirty || order.busy} onClick={() => setEdit({ category_key: filter !== "all" ? filter : (top[0]?.key ?? ""), project_key: projectFilter === "all" ? null : projectFilter, sort: nextSort })} className={primaryBtn}><Plus className="size-4" />Новая работа</button>
       </div>
-      <p className="mb-4 text-xs text-muted-foreground">{list.length} работ</p>
+      {filter !== "all" && subs(filter).length > 0 && <div className="mb-6 flex flex-wrap gap-2">{[{ key: "all", name_ru: "Все подразделы" }, ...subs(filter)].map((c) => <Button key={c.key} variant={projectFilter === c.key ? "outline" : "ghost"} size="sm" disabled={order.busy} onClick={() => setProjectFilter(c.key)}>{c.name_ru}</Button>)}</div>}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><p className="text-xs text-muted-foreground">{list.length} работ</p>{order.controls}</div>
+      <SortableGallery ids={list.map((w) => w.id)} disabled={order.busy || filter === "all" || !!q} onMove={(a, b) => order.move(list.map((w) => w.id), a, b)}>
       <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
         {list.map((w) => (
-          <div key={w.id} className="group">
-            <button onClick={() => setEdit(w)} className="relative block aspect-[4/5] w-full overflow-hidden bg-muted">
+          <SortableGalleryItem key={w.id} id={w.id} name={w.title_ru || "Без названия"} disabled={order.busy || filter === "all" || !!q} className="group">
+            <button disabled={order.dirty || order.busy} onClick={() => setEdit(w)} className="relative block aspect-[4/5] w-full overflow-hidden bg-muted">
               <img src={mediaUrl(w.image)} alt={w.title_ru} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
               <span className="absolute left-2 top-2 flex gap-1">{w.hidden && <span className="bg-red-accent px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-background">скрыта</span>}{w.hero && <span className="bg-background px-1.5 py-0.5 text-[9px] uppercase tracking-wider">главная</span>}{w.cover && <span className="bg-background px-1.5 py-0.5 text-[9px] uppercase tracking-wider">обложка</span>}</span>
             </button>
             <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
               <div className="min-w-0"><p className="truncate text-sm">{w.title_ru || "Без названия"}</p><p className="truncate text-[11px] text-muted-foreground">{[w.year, w.size].filter(Boolean).join(" · ")}</p></div>
-              <button onClick={async () => { const { error } = await supabase.from("works").update({ hidden: !w.hidden }).eq("id", w.id); if (error) alert(error.message); else { reload(); inv(); } }} aria-label={w.hidden ? "Показать" : "Скрыть"} title={w.hidden ? "Показать на сайте" : "Скрыть с сайта"} className="opacity-40 hover:opacity-100">{w.hidden ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}</button>
-              <button onClick={() => remove(w)} aria-label="Удалить" className="opacity-40 hover:text-red-accent hover:opacity-100"><Trash2 className="size-3.5" /></button>
+              <button disabled={order.dirty || order.busy} onClick={async () => { const { error } = await supabase.from("works").update({ hidden: !w.hidden }).eq("id", w.id); if (error) alert(error.message); else { reload(); inv(); } }} aria-label={w.hidden ? "Показать" : "Скрыть"} title={w.hidden ? "Показать на сайте" : "Скрыть с сайта"} className="opacity-40 hover:opacity-100">{w.hidden ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}</button>
+              <button disabled={order.dirty || order.busy} onClick={() => remove(w)} aria-label="Удалить" className="opacity-40 hover:text-red-accent hover:opacity-100"><Trash2 className="size-3.5" /></button>
             </div>
-          </div>
+          </SortableGalleryItem>
         ))}
       </div>
+      </SortableGallery>
       {edit && (
         <Modal title={edit.id ? "Работа" : "Новая работа"} onClose={() => setEdit(null)}>
           <div className="grid gap-6 md:grid-cols-2">
