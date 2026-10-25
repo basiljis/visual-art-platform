@@ -12,6 +12,12 @@ export function EnquiryModal({ artwork, lang, onClose }: { artwork: string; lang
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: artwork ? c.def(artwork) : "" });
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   useEffect(() => {
+    setForm((current) => {
+      const defaults = [copy.ru.def(artwork), copy.en.def(artwork)];
+      return defaults.includes(current.message) ? { ...current, message: c.def(artwork) } : current;
+    });
+  }, [lang, artwork]);
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);

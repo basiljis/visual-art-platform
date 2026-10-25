@@ -36,10 +36,15 @@ export const Route = createFileRoute("/blog/$slug")({
       ],
     };
   },
-  errorComponent: () => <BlogShell back={{ to: "/blog", label: "Блог" }}><p>Не удалось загрузить запись.</p></BlogShell>,
+  errorComponent: PostError,
   notFoundComponent: PostNotFound,
   component: PostPage,
 });
+
+function PostError() {
+  const { lang } = useLanguage();
+  return <BlogShell back={{ to: "/blog", label: "Блог" }}><p>{lang === "en" ? "Could not load the post." : "Не удалось загрузить запись."}</p></BlogShell>;
+}
 
 function PostNotFound() {
   const { lang } = useLanguage();

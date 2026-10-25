@@ -26,9 +26,14 @@ export const Route = createFileRoute("/blog/")({
     ])) }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),
-  errorComponent: () => <BlogShell back={{ to: "/", label: "Главная" }}><p>Не удалось загрузить блог.</p></BlogShell>,
+  errorComponent: BlogError,
   component: BlogIndex,
 });
+
+function BlogError() {
+  const { lang } = useLanguage();
+  return <BlogShell back={{ to: "/", label: "Главная" }}><p>{lang === "en" ? "Could not load the blog." : "Не удалось загрузить блог."}</p></BlogShell>;
+}
 
 function BlogIndex() {
   const { lang } = useLanguage();
