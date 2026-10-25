@@ -80,35 +80,50 @@ export type Database = {
       categories: {
         Row: {
           created_at: string
+          curator_en: string
+          curator_ru: string
           description_en: string
           description_ru: string
+          exhibited_en: string
+          exhibited_ru: string
           id: string
           key: string
           name_en: string
           name_ru: string
           parent_key: string | null
+          process_images: string[]
           sort: number
         }
         Insert: {
           created_at?: string
+          curator_en?: string
+          curator_ru?: string
           description_en?: string
           description_ru?: string
+          exhibited_en?: string
+          exhibited_ru?: string
           id?: string
           key: string
           name_en?: string
           name_ru?: string
           parent_key?: string | null
+          process_images?: string[]
           sort?: number
         }
         Update: {
           created_at?: string
+          curator_en?: string
+          curator_ru?: string
           description_en?: string
           description_ru?: string
+          exhibited_en?: string
+          exhibited_ru?: string
           id?: string
           key?: string
           name_en?: string
           name_ru?: string
           parent_key?: string | null
+          process_images?: string[]
           sort?: number
         }
         Relationships: []
