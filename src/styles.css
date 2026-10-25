@@ -216,6 +216,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 .post-body { font-size: 1rem; line-height: 1.7; }
 @media (min-width: 768px) { .post-body { font-size: 1.125rem; } }
 .post-body > * + * { margin-top: 1.5rem; }
+.post-body > .contents > * { margin-top: 1.5rem; }
 .post-body h2 { font-family: var(--font-display); font-size: 2rem; line-height: 1.15; margin-top: 2.5rem; }
 .post-body h3 { font-size: 1.25rem; font-weight: 500; margin-top: 2rem; }
 .post-body img, .post-body video { width: 100%; background: var(--muted); }
