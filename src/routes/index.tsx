@@ -78,6 +78,7 @@ function Index() {
   const [ready, setReady] = useState(false);
   const [viewer, setViewer] = useState<number | null>(null);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [descOpen, setDescOpen] = useState(false);
   const [enquiry, setEnquiry] = useState<string | null>(null);
   const { data: gallery } = useSuspenseQuery(galleryQuery);
   const { data: posts } = useSuspenseQuery(postsQuery);
@@ -129,7 +130,7 @@ function Index() {
   }, [search.category]);
 
   const t = copy[lang];
-  const filtered = category === "all" ? works : works.filter((work) => work.category === category && (!hasSub(category) || (project === "all" ? work.cover : work.project === project)));
+  const filtered = category === "all" ? works : works.filter((work) => work.category === category && (!hasSub(category) || (project === "all" ? (work.cover || !works.some((x) => x.category === category && x.cover)) : work.project === project)));
   const q = query.trim().toLowerCase();
   const featured = [...works.filter((w) => w.hero), ...works.filter((w) => !w.hero && (!hasSub(w.category) || w.cover))].slice(0, 12);
   const rowOf = (key: string) => gallery.categories.find((r) => r.key === key);
@@ -250,6 +251,17 @@ function Index() {
           </div>
         )}
         {category !== "all" && !q && (() => {
+          const note = (lang === "ru" ? parentOf(category)?.noteRu : parentOf(category)?.noteEn) ?? "";
+          if (!note) return null;
+          const long = note.length > 220;
+          return (
+            <div className="mb-14 max-w-3xl">
+              <p data-font-block="body" className={`text-base leading-relaxed text-muted-foreground md:text-lg ${long && !descOpen ? "line-clamp-3" : ""}`}>{note}</p>
+              {long && <button type="button" onClick={() => setDescOpen((v) => !v)} className="mt-3 border-b border-current pb-0.5 text-[11px] uppercase tracking-[.16em] transition-colors hover:text-red-accent">{descOpen ? (lang === "ru" ? "Свернуть" : "Less") : (lang === "ru" ? "Подробнее" : "More")}</button>}
+            </div>
+          );
+        })()}
+        {category !== "all" && !q && (() => {
           const own = rowOf(project !== "all" ? project : category);
           const src = L(own, "curator") ? own : rowOf(category);
           const text = L(src, "curator");
@@ -284,9 +296,6 @@ function Index() {
               ))}
             </div>
           </div>
-        )}
-        {category !== "all" && (
-          <p className="mx-auto mt-20 max-w-2xl border-t border-border pt-6 text-center text-sm leading-relaxed text-muted-foreground">{lang === "ru" ? parentOf(category)?.noteRu : parentOf(category)?.noteEn}</p>
         )}
       </section>
 
