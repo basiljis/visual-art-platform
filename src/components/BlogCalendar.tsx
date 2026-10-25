@@ -15,9 +15,10 @@ export function BlogCalendar({ dates, selected, onSelect }: { dates: string[]; s
   return (
     <aside className="border-t border-border pt-6 lg:border-t-0 lg:border-l lg:pl-7 lg:pt-0" aria-label={en ? "Publication calendar" : "Календарь публикаций"}>
       <h2 className="mb-4 font-display text-2xl">{en ? "Publication calendar" : "Календарь публикаций"}</h2>
-      <Calendar mode="single" selected={selected} onSelect={onSelect} month={month} onMonthChange={setMonth}
+      <Calendar mode="single" selected={selected} onSelect={onSelect} {...(month ? { month } : {})} onMonthChange={setMonth}
         locale={en ? enUS : ru} weekStartsOn={1} captionLayout="dropdown" showOutsideDays={false}
-        startMonth={earliest} endMonth={latest} modifiers={{ published: days }}
+        {...(earliest ? { startMonth: earliest } : {})} {...(latest ? { endMonth: latest } : {})} modifiers={{ published: days }}
+        labels={{ labelMonthDropdown: () => en ? "Choose month" : "Выбрать месяц", labelYearDropdown: () => en ? "Choose year" : "Выбрать год", labelPrevious: () => en ? "Previous month" : "Предыдущий месяц", labelNext: () => en ? "Next month" : "Следующий месяц" }}
         modifiersClassNames={{ published: "blog-publication-day" }}
         className="mx-auto bg-transparent p-0 lg:mx-0"
         classNames={{ today: "", selected: "blog-selected-day" }}
