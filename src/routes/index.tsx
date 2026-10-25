@@ -8,10 +8,10 @@ import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
 import type { AboutContent } from "@/lib/about";
 import portraitAsset from "@/assets/artist-portrait.png.asset.json";
-import { breadcrumbs, pageUrl } from "@/lib/seo";
+import { absoluteImage, breadcrumbs, pageUrl, visualArtwork } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
-  head: () => ({ meta: [
+  head: ({ loaderData }) => ({ meta: [
     { title: "Наталья Дикунова — живопись и графика" },
     { name: "description", content: "Галерея живописи и печатной графики художника Натальи Дикуновой." },
     { property: "og:title", content: "Наталья Дикунова — живопись и графика" },
@@ -19,15 +19,27 @@ export const Route = createFileRoute("/")({
     { property: "og:type", content: "website" },
     { property: "og:url", content: pageUrl("/") },
     { name: "twitter:card", content: "summary_large_image" },
+    ...(loaderData?.ogImage ? [{ property: "og:image", content: loaderData.ogImage }, { name: "twitter:image", content: loaderData.ogImage }] : []),
   ],
     links: [{ rel: "canonical", href: pageUrl("/") }],
-    scripts: [{ type: "application/ld+json", children: JSON.stringify(breadcrumbs([
-      { name: "Главная", path: "/" }, { name: "Работы", path: "/#works" },
-    ])) }],
+    scripts: [
+      { type: "application/ld+json", children: JSON.stringify(breadcrumbs([
+        { name: "Главная", path: "/" }, { name: "Работы", path: "/#works" },
+      ])) },
+      ...(loaderData?.artwork ? [{ type: "application/ld+json", children: JSON.stringify(visualArtwork(loaderData.artwork)) }] : []),
+    ],
   }),
   validateSearch: (s: Record<string, unknown>): { category?: string | undefined } => ({ category: typeof s["category"] === "string" && s["category"] ? s["category"] : undefined }),
   loader: async ({ context }) => {
-    await Promise.all([context.queryClient.ensureQueryData(galleryQuery), context.queryClient.ensureQueryData(postsQuery)]);
+    const [gallery] = await Promise.all([context.queryClient.ensureQueryData(galleryQuery), context.queryClient.ensureQueryData(postsQuery)]);
+    const g = gallery as { works: WorkRow[] };
+    // Превью для соцсетей: автопортрет тушью (первая картина карусели), иначе главная работа, иначе первая
+    const best = g.works.find((w) => /АВТОПОРТРЕТ|SELF-PORTRAIT/i.test(w.title_ru)) ?? g.works.find((w) => w.hero) ?? g.works[0];
+    const ogImage = absoluteImage(best?.image);
+    return {
+      ogImage,
+      artwork: best ? { name: best.title_ru, image: ogImage, technique: best.technique || undefined, year: best.year || undefined } : undefined,
+    };
   },
   errorComponent: () => <div className="grid min-h-screen place-items-center p-8 text-sm">Не удалось загрузить галерею. Обновите страницу.</div>,
   component: Index,
@@ -35,12 +47,17 @@ export const Route = createFileRoute("/")({
 
 type Lang = "ru" | "en";
 type Category = string;
-type Work = { id: string; image: string; category: string; project: string | undefined; cover: boolean; hero: boolean; ru: string; en: string; year: string; size: string };
+type Work = { id: string; image: string; category: string; project: string | undefined; cover: boolean; hero: boolean; ru: string; en: string; year: string; size: string; technique: string; status: string };
 type Cat = { key: string; ru: string; en: string; noteRu: string; noteEn: string; children: { key: string; ru: string; en: string }[] };
+const statusLabels: Record<Lang, Record<string, string>> = {
+  ru: { "for-sale": "В продаже", sold: "Продана", private: "В частной коллекции", "on-request": "По запросу" },
+  en: { "for-sale": "For sale", sold: "Sold", private: "Private collection", "on-request": "On request" },
+};
+const statusLabel = (status: string, lang: Lang) => statusLabels[lang][status] ?? status;
 function buildGallery(data: { categories: CategoryRow[]; works: WorkRow[] }) {
   const top = data.categories.filter((c) => !c.parent_key);
   const cats: Cat[] = top.map((c) => ({ key: c.key, ru: c.name_ru, en: c.name_en, noteRu: c.description_ru, noteEn: c.description_en, children: data.categories.filter((s) => s.parent_key === c.key).map((s) => ({ key: s.key, ru: s.name_ru, en: s.name_en })) }));
-  const works: Work[] = data.works.map((w) => ({ id: w.id, image: mediaUrl(w.image), category: w.category_key, project: w.project_key ?? undefined, cover: w.cover, hero: w.hero, ru: w.title_ru, en: w.title_en || w.title_ru, year: w.year, size: w.size }));
+  const works: Work[] = data.works.map((w) => ({ id: w.id, image: mediaUrl(w.image), category: w.category_key, project: w.project_key ?? undefined, cover: w.cover, hero: w.hero, ru: w.title_ru, en: w.title_en || w.title_ru, year: w.year, size: w.size, technique: w.technique ?? "", status: w.status ?? "" }));
   return { cats, works };
 }
 const copy = {
