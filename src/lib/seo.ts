@@ -1,7 +1,17 @@
+import { mediaUrl } from "./media";
+
 export const SITE_URL = "https://dikunova.headquaters.space";
 
 export function pageUrl(path: string) {
   return new URL(path, `${SITE_URL}/`).href;
+}
+
+/** Stored media ref -> absolute https URL suitable for og:image, or undefined if unresolvable. */
+export function absoluteImage(ref: string | null | undefined): string | undefined {
+  if (!ref) return undefined;
+  const url = mediaUrl(ref);
+  if (!url) return undefined;
+  return /^https?:/.test(url) ? url : pageUrl(url);
 }
 
 export function articleDate(value: string): string | undefined {
@@ -25,15 +35,29 @@ export function breadcrumbs(items: { name: string; path: string }[]) {
   };
 }
 
-export function articleSchema(post: { title: string; desc: string; slug: string; date: string }) {
+export function articleSchema(post: { title: string; desc: string; slug: string; date: string; image?: string | undefined }) {
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
     description: post.desc,
+    ...(post.image ? { image: post.image } : {}),
     url: pageUrl(`/blog/${encodeURIComponent(post.slug)}`),
     mainEntityOfPage: pageUrl(`/blog/${encodeURIComponent(post.slug)}`),
     datePublished: articleDate(post.date),
     author: { "@type": "Person", name: "Наталья Дикунова", url: pageUrl("/") },
+  };
+}
+
+export function visualArtwork(work: { name: string; image?: string | undefined; technique?: string | undefined; year?: string | undefined }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "VisualArtwork",
+    name: work.name,
+    ...(work.image ? { image: work.image } : {}),
+    ...(work.technique ? { artMedium: work.technique } : {}),
+    ...(work.year ? { dateCreated: work.year } : {}),
+    creator: { "@type": "Person", name: "Наталья Дикунова", url: pageUrl("/") },
+    url: pageUrl("/"),
   };
 }
