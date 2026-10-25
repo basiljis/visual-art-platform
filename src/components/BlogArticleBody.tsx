@@ -7,17 +7,21 @@ import { useLanguage } from "@/lib/language";
 
 type Photo = { src: string; alt: string; caption: string };
 
+function isElement(node: unknown): node is Element {
+  return Boolean(node && typeof node === "object" && "name" in node && "attribs" in node && "children" in node);
+}
+
 function textOf(node: DOMNode): string {
   if (node.type === "text") return node.data;
-  return node instanceof Element ? node.children.map((child) => textOf(child as DOMNode)).join("") : "";
+  return isElement(node) ? node.children.map((child) => textOf(child as DOMNode)).join("") : "";
 }
 
 function photosIn(node: DOMNode): Photo[] {
-  if (!(node instanceof Element)) return [];
+  if (!isElement(node)) return [];
   const src = node.attribs["src"];
   if (node.name === "img" && src) {
-    const figure = node.parent instanceof Element && node.parent.name === "figure" ? node.parent : null;
-    const caption = figure?.children.find((child) => child instanceof Element && child.name === "figcaption");
+    const figure = isElement(node.parent) && node.parent.name === "figure" ? node.parent : null;
+    const caption = figure?.children.find((child) => isElement(child) && child.name === "figcaption");
     return [{ src, alt: node.attribs["alt"] || "", caption: caption ? textOf(caption as DOMNode).trim() : "" }];
   }
   return node.children.flatMap((child) => photosIn(child as DOMNode));
@@ -25,7 +29,7 @@ function photosIn(node: DOMNode): Photo[] {
 
 function isPhotoBlock(node: DOMNode): boolean {
   if (node.type === "text") return !node.data.trim();
-  if (!(node instanceof Element)) return false;
+  if (!isElement(node)) return false;
   if (node.name === "img" || node.name === "br" || node.name === "figcaption") return true;
   return ["p", "div", "figure", "a", "span", "picture"].includes(node.name)
     && node.children.every((child) => isPhotoBlock(child as DOMNode));
@@ -56,7 +60,7 @@ export function BlogArticleBody({ html }: { html: string }) {
   );
   const options: HTMLReactParserOptions = {
     replace: (node) => {
-      if (node instanceof Element && node.name === "img") return renderGallery(photosIn(node), node.attribs["src"] || "photo");
+      if (isElement(node) && node.name === "img") return renderGallery(photosIn(node), node.attribs["src"] || "photo");
       return undefined;
     },
   };
