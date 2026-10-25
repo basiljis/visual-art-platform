@@ -85,6 +85,13 @@
       "when": 1792807899475,
       "tag": "0011_add_work_technique_status",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1792933038311,
+      "tag": "0012_series_story_fields",
+      "breakpoints": true
     }
   ]
 }

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
 import type { AboutContent } from "@/lib/about";
 import portraitAsset from "@/assets/artist-portrait.png.asset.json";
+import { ZoomImage, InteriorView, parseSize } from "@/components/ViewerStage";
 import { absoluteImage, breadcrumbs, pageUrl, visualArtwork } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
@@ -130,13 +131,16 @@ function Index() {
   const t = copy[lang];
   const filtered = category === "all" ? works : works.filter((work) => work.category === category && (!hasSub(category) || (project === "all" ? work.cover : work.project === project)));
   const q = query.trim().toLowerCase();
-  const visible = q ? works.filter((w) => `${w.ru} ${w.en}`.toLowerCase().includes(q)) : category === "all" ? works.filter((w) => !hasSub(w.category) || w.cover) : filtered;
+  const featured = [...works.filter((w) => w.hero), ...works.filter((w) => !w.hero && (!hasSub(w.category) || w.cover))].slice(0, 12);
+  const rowOf = (key: string) => gallery.categories.find((r) => r.key === key);
+  const L = (r: CategoryRow | undefined, f: "curator" | "exhibited") => (r ? (lang === "ru" ? r[`${f}_ru`] : r[`${f}_en`]) ?? "" : "");
+  const visible = q ? works.filter((w) => `${w.ru} ${w.en}`.toLowerCase().includes(q)) : category === "all" ? featured : filtered;
   const openProject = (parent: string, key: string) => { setCategory(parent); setProject(key); document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); };
   const relatedPosts = category !== "all" && !q ? posts.filter((p) => (p.topic_keys ?? []).includes(category)) : [];
 
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
-      <div className="pointer-events-none fixed inset-0 z-[100] flex animate-preloader flex-col items-center justify-center overflow-hidden bg-ink text-paper" aria-hidden="true">
+      <div className="site-preloader pointer-events-none fixed inset-0 z-[100] flex animate-preloader flex-col items-center justify-center overflow-hidden bg-ink text-paper" aria-hidden="true">
         <div className="paper-grain absolute inset-0" />
         {/* Signature drawn stroke by stroke: an animated pen path reveals the original ink image */}
         <svg viewBox="0 0 400 800" className="relative h-56 w-56 md:h-72 md:w-72">
@@ -224,6 +228,44 @@ function Index() {
             <button type="button" onClick={()=>setQuery("")} className="mt-6 inline-flex items-center gap-2 border-b border-current pb-1 text-xs uppercase tracking-[.18em] transition-colors hover:text-red-accent"><X className="size-3.5"/>{lang==="ru"?"Очистить поиск":"Clear search"}</button>
           </div>
         )}
+        {category === "all" && !q && (
+          <div className="mb-28">
+            <p className="mb-8 text-[11px] uppercase tracking-[.18em] text-muted-foreground"><span className="text-red-accent">/ </span>{lang === "ru" ? "Серии" : "Series"}</p>
+            <div className="grid gap-x-6 gap-y-16 md:grid-cols-2">
+              {cats.map((c, i) => {
+                const cw = works.filter((w) => w.category === c.key);
+                const cov = cw.find((w) => w.hero) ?? cw.find((w) => w.cover) ?? cw[0];
+                if (!cov) return null;
+                const phrase = ((lang === "ru" ? c.noteRu : c.noteEn) || "").replace(/^[^—]*—\s*/, "").split(/(?<=[.!?])\s/)[0];
+                return (
+                  <button key={c.key} type="button" onClick={() => { setCategory(c.key); setProject("all"); document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); }} className={`group text-left ${i % 2 === 1 ? "md:mt-24" : ""}`}>
+                    <div className="aspect-[4/3] overflow-hidden bg-muted"><img src={cov.image} alt={c[lang]} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" /></div>
+                    <div data-font-block="captions" className="mt-5 flex items-baseline justify-between gap-4 border-t border-border pt-4"><h2 className="font-display text-3xl transition-colors group-hover:text-red-accent md:text-4xl">{c[lang]}</h2><span className="text-xs tabular-nums text-muted-foreground">{String(cw.length).padStart(2, "0")}</span></div>
+                    {phrase && <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">{phrase}</p>}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mb-10 mt-28 text-[11px] uppercase tracking-[.18em] text-muted-foreground"><span className="text-red-accent">/ </span>{lang === "ru" ? "Избранные работы" : "Selected works"}</p>
+          </div>
+        )}
+        {category !== "all" && !q && (() => {
+          const own = rowOf(project !== "all" ? project : category);
+          const src = L(own, "curator") ? own : rowOf(category);
+          const text = L(src, "curator");
+          const shows = L(src, "exhibited").split("\n").map((x) => x.trim()).filter(Boolean);
+          const photos = src?.process_images ?? [];
+          if (!text && !shows.length && !photos.length) return null;
+          return (
+            <div className="mb-20 grid gap-10 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:gap-16">
+              {text && <div><p className="mb-4 text-[11px] uppercase tracking-[.18em] text-muted-foreground">{lang === "ru" ? "Текст куратора" : "Curator’s note"}</p><p data-font-block="about" className="font-display text-2xl leading-snug md:text-3xl">{text}</p></div>}
+              <div className="space-y-8">
+                {shows.length > 0 && <div><p className="mb-3 text-[11px] uppercase tracking-[.18em] text-muted-foreground">{lang === "ru" ? "Где выставлялась" : "Exhibited"}</p><ul className="space-y-2 text-sm">{shows.map((x, i) => <li key={i} className="border-b border-border pb-2">{x}</li>)}</ul></div>}
+                {photos.length > 0 && <div><p className="mb-3 text-[11px] uppercase tracking-[.18em] text-muted-foreground">{lang === "ru" ? "Процесс" : "Process"}</p><div className="grid grid-cols-3 gap-2">{photos.map((ref) => <img key={ref} src={mediaUrl(ref)} alt="" loading="lazy" className="aspect-square w-full object-cover" />)}</div></div>}
+              </div>
+            </div>
+          );
+        })()}
         <div className="grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((work,i)=><article key={`${work.image}-${i}`} className={i%3===1?"lg:pt-24":""}>
             <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"/></button><button type="button" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 place-items-center bg-background/90 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-red-accent hover:text-background" aria-label={t.buy} data-tip={t.buy}><ArrowUpRight className="size-5"/></button></div>
@@ -248,8 +290,24 @@ function Index() {
         )}
       </section>
 
-      <section id="about" className="grid border-t border-border px-5 py-24 md:grid-cols-2 md:px-8 md:py-36">
-        <h2 className="font-display text-5xl md:text-7xl">{t.about}</h2><div data-font-block="about" className="mt-10 md:mt-0"><p className="max-w-xl whitespace-pre-line text-xl leading-relaxed md:text-3xl">{gallery.about[lang].note}</p><p className="mt-10 text-xs uppercase leading-7 tracking-[.12em] text-muted-foreground">{gallery.about[lang].highlights.map((h, i) => <span key={i} className="block">{h}</span>)}</p><button onClick={() => setAboutOpen(true)} className="mt-10 flex w-fit items-center gap-2 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.more}<ArrowUpRight className="size-4"/></button></div>
+      <section id="about" className="border-t border-border px-5 py-24 md:px-8 md:py-36">
+        <div className="grid gap-12 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:gap-20">
+          <img src={gallery.about.portrait ? mediaUrl(gallery.about.portrait) : portraitAsset.url} alt={t.artist} loading="lazy" className="aspect-[4/5] w-full max-w-md object-cover" />
+          <div data-font-block="about">
+            <h2 className="font-display text-5xl md:text-7xl">{t.about}</h2>
+            <p className="mt-8 max-w-xl whitespace-pre-line text-xl leading-relaxed md:text-2xl">{gallery.about[lang].note}</p>
+            <p className="mt-14 text-[11px] uppercase tracking-[.18em] text-muted-foreground"><span className="text-red-accent">/ </span>{lang === "ru" ? "Выставки, награды, коллекции" : "Exhibitions, awards, collections"}</p>
+            <div className="mt-6 space-y-8">
+              {gallery.about[lang].sections.slice(0, 3).map((sec, si) => (
+                <div key={si}>
+                  <h3 className="mb-2 text-xs uppercase tracking-[.16em]">{sec.title}</h3>
+                  <ul>{sec.items.slice(0, 4).map((item, i) => { const m = item.match(/^([\d–-]{4,9})\s*—\s*(.*)$/); return <li key={i} className="grid grid-cols-[5.5rem_1fr] gap-3 border-b border-border py-2 text-sm leading-relaxed"><span className="tabular-nums text-muted-foreground">{m ? m[1] : ""}</span><span>{m ? m[2] : item}</span></li>; })}</ul>
+                </div>
+              ))}
+            </div>
+            <button onClick={() => setAboutOpen(true)} className="mt-10 flex w-fit items-center gap-2 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em] transition-colors hover:text-red-accent">{lang === "ru" ? "Полная биография" : "Full CV"}<ArrowUpRight className="size-4"/></button>
+          </div>
+        </div>
       </section>
 
       <footer id="contact" data-font-block="footer" className="relative overflow-hidden bg-ink px-5 pb-5 pt-20 text-paper md:px-8 md:pt-28">
@@ -292,8 +350,10 @@ function slowScroll(target: number) {
 
 function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: Work[]; index: number; lang: Lang; onChange: (i: number) => void; onClose: () => void; onEnquire: (w: string) => void }) {
   const [bg, setBg] = useState(0);
+  const [interior, setInterior] = useState(false);
   const w: Work = works[index] ?? works[0]!;
   const c = viewerCopy[lang];
+  const dims = parseSize(w.size);
   const go = (d: number) => onChange((index + d + works.length) % works.length);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -309,11 +369,12 @@ function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: W
     <div role="dialog" aria-modal="true" aria-label={w[lang]} className={`fixed inset-0 z-[90] flex flex-col transition-colors duration-500 ${backgrounds[bg]?.cls ?? ""}`}>
       <div className="flex h-16 items-center justify-between px-5 md:px-8">
         <div className="flex items-center gap-2 text-[10px] uppercase tracking-[.18em]"><span className="mr-2 opacity-60">{c.bg}</span>{backgrounds.map((b, i) => <button key={b.key} onClick={() => setBg(i)} aria-label={`${c.bg} ${b.key}`} data-tip={`${c.bg} ${b.key}`} className={`size-5 rounded-full border border-current ${b.cls} ${bg === i ? "ring-2 ring-current ring-offset-2 ring-offset-transparent" : ""}`} />)}</div>
-        <button onClick={onClose} aria-label={c.close} data-tip={c.close}><X className="size-7" /></button>
+        <div className="flex items-center gap-5">{dims && <button type="button" onClick={() => setInterior((v) => !v)} aria-pressed={interior} className={`border-b pb-0.5 text-[11px] uppercase tracking-[.16em] transition-colors hover:text-red-accent ${interior ? "border-red-accent text-red-accent" : "border-current"}`}>{lang === "ru" ? "В интерьере" : "In interior"}</button>}<button onClick={onClose} aria-label={c.close} data-tip={c.close}><X className="size-7" /></button></div>
       </div>
       <div className="relative flex min-h-0 flex-1 items-center justify-center px-2 md:px-24">
         <button onClick={() => go(-1)} aria-label={c.prev} data-tip={c.prev} className="absolute left-1 z-10 grid size-11 bg-current/0 place-items-center md:left-8"><ArrowLeft className="size-6" /></button>
-        <img key={w.image} src={w.image} alt={w[lang]} className="max-h-full max-w-full animate-reveal object-contain shadow-2xl" />
+        {interior && dims ? <InteriorView src={w.image} alt={w[lang]} size={dims} lang={lang} /> : <ZoomImage src={w.image} alt={w[lang]} resetKey={w.image} />}
+        {!(interior && dims) && <p className="pointer-events-none absolute bottom-2 left-1/2 hidden -translate-x-1/2 text-[10px] uppercase tracking-[.16em] opacity-50 md:block">{lang === "ru" ? "Колесо или щипок — масштаб · двойной клик — приблизить" : "Wheel or pinch to zoom · double-click to zoom in"}</p>}
         <button onClick={() => go(1)} aria-label={c.next} data-tip={c.next} className="absolute right-1 z-10 grid size-11 place-items-center md:right-8"><ArrowRight className="size-6" /></button>
       </div>
       <div className="grid gap-4 px-5 py-5 md:grid-cols-[1fr_auto] md:items-end md:px-8">
