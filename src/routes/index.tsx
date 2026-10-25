@@ -7,7 +7,7 @@ import { ArrowDown, ArrowUp, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Se
 import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
 import type { AboutContent } from "@/lib/about";
-import portraitAsset from "@/assets/artist-portrait.png.asset.json";
+import portraitAsset from "@/assets/artist-about-photo.png.asset.json";
 import { ZoomImage, InteriorView, parseSize } from "@/components/ViewerStage";
 import { absoluteImage, breadcrumbs, pageUrl, visualArtwork } from "@/lib/seo";
 
@@ -62,8 +62,8 @@ function buildGallery(data: { categories: CategoryRow[]; works: WorkRow[] }) {
   return { cats, works };
 }
 const copy = {
-  ru: { artist: "НАТАЛЬЯ ДИКУНОВА", subtitle: "Художник · Москва / Воронеж", works: "Работы", about: "Об авторе", contact: "Контакты", all: "Все работы", filters: "Направления", buy: "Узнать о покупке", breadcrumb: "Главная / Работы", more: "Подробнее", close: "Закрыть", intro: "Живопись, рисунок и печатная графика о памяти, мифе и человеческом присутствии.", note: "Работы находятся в частных коллекциях России, Европы, США, Индии и Китая, а также в музеях России и Китая.", achievements: "Royal Society of British Artists · 1-е место DEG Exlibris · Guanlan Printmaking Base 2025", categories: ["Все", "Миф артиста", "Китай", "Портреты", "Дети", "Ню", "Печатная графика", "Разное"] },
-  en: { artist: "NATALIA DIKUNOVA", subtitle: "Artist · Moscow / Voronezh", works: "Works", about: "About", contact: "Contact", all: "All works", filters: "Practices", buy: "Purchase enquiry", breadcrumb: "Home / Works", more: "More", close: "Close", intro: "Painting, drawing and printmaking exploring memory, myth and human presence.", note: "Works are held in private collections across Russia, Europe, the USA, India and China, as well as museums in Russia and China.", achievements: "Royal Society of British Artists · DEG Exlibris 1st prize · Guanlan Printmaking Base 2025", categories: ["All", "Artist’s myth", "China", "Portraits", "Children", "Nude", "Printmaking", "Other"] },
+  ru: { artist: "НАТАЛЬЯ ДИКУНОВА", subtitle: "Художник · Москва / Воронеж", works: "Работы", about: "Об авторе", contact: "Контакты", all: "Все работы", filters: "Направления", buy: "Узнать о покупке", breadcrumb: "Главная / Работы", more: "Подробнее", close: "Закрыть", intro: "Живопись, рисунок и печатная графика о мифе и реальности.", note: "Работы находятся в частных коллекциях России, Европы, США, Индии и Китая, а также в музеях России и Китая.", achievements: "Royal Society of British Artists · 1-е место DEG Exlibris · Guanlan Printmaking Base 2025", categories: ["Все", "Миф артиста", "Китай", "Портреты", "Дети", "Ню", "Печатная графика", "Разное"] },
+  en: { artist: "NATALIA DIKUNOVA", subtitle: "Artist · Moscow / Voronezh", works: "Works", about: "About", contact: "Contact", all: "All works", filters: "Practices", buy: "Purchase enquiry", breadcrumb: "Home / Works", more: "More", close: "Close", intro: "Painting, drawing and printmaking about myth and reality.", note: "Works are held in private collections across Russia, Europe, the USA, India and China, as well as museums in Russia and China.", achievements: "Royal Society of British Artists · DEG Exlibris 1st prize · Guanlan Printmaking Base 2025", categories: ["All", "Artist’s myth", "China", "Portraits", "Children", "Nude", "Printmaking", "Other"] },
 };
 
 
@@ -78,6 +78,7 @@ function Index() {
   const [ready, setReady] = useState(false);
   const [viewer, setViewer] = useState<number | null>(null);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [descOpen, setDescOpen] = useState(false);
   const [enquiry, setEnquiry] = useState<string | null>(null);
   const { data: gallery } = useSuspenseQuery(galleryQuery);
   const { data: posts } = useSuspenseQuery(postsQuery);
@@ -129,7 +130,7 @@ function Index() {
   }, [search.category]);
 
   const t = copy[lang];
-  const filtered = category === "all" ? works : works.filter((work) => work.category === category && (!hasSub(category) || (project === "all" ? work.cover : work.project === project)));
+  const filtered = category === "all" ? works : works.filter((work) => work.category === category && (!hasSub(category) || (project === "all" ? (work.cover || !works.some((x) => x.category === category && x.cover)) : work.project === project)));
   const q = query.trim().toLowerCase();
   const featured = [...works.filter((w) => w.hero), ...works.filter((w) => !w.hero && (!hasSub(w.category) || w.cover))].slice(0, 12);
   const rowOf = (key: string) => gallery.categories.find((r) => r.key === key);
@@ -238,7 +239,7 @@ function Index() {
                 if (!cov) return null;
                 const phrase = ((lang === "ru" ? c.noteRu : c.noteEn) || "").replace(/^[^—]*—\s*/, "").split(/(?<=[.!?])\s/)[0];
                 return (
-                  <button key={c.key} type="button" onClick={() => { setCategory(c.key); setProject("all"); document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); }} className={`group text-left ${i % 2 === 1 ? "md:mt-24" : ""}`}>
+                  <button key={c.key} type="button" onClick={() => { setCategory(c.key); setProject("all"); document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); }} className="group text-left">
                     <div className="aspect-[4/3] overflow-hidden bg-muted"><img src={cov.image} alt={c[lang]} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" /></div>
                     <div data-font-block="captions" className="mt-5 flex items-baseline justify-between gap-4 border-t border-border pt-4"><h2 className="font-display text-3xl transition-colors group-hover:text-red-accent md:text-4xl">{c[lang]}</h2><span className="text-xs tabular-nums text-muted-foreground">{String(cw.length).padStart(2, "0")}</span></div>
                     {phrase && <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">{phrase}</p>}
@@ -249,6 +250,17 @@ function Index() {
             <p className="mb-10 mt-28 text-[11px] uppercase tracking-[.18em] text-muted-foreground"><span className="text-red-accent">/ </span>{lang === "ru" ? "Избранные работы" : "Selected works"}</p>
           </div>
         )}
+        {category !== "all" && !q && (() => {
+          const note = (lang === "ru" ? parentOf(category)?.noteRu : parentOf(category)?.noteEn) ?? "";
+          if (!note) return null;
+          const long = note.length > 220;
+          return (
+            <div className="mb-14 max-w-3xl">
+              <p data-font-block="body" className={`text-base leading-relaxed text-muted-foreground md:text-lg ${long && !descOpen ? "line-clamp-3" : ""}`}>{note}</p>
+              {long && <button type="button" onClick={() => setDescOpen((v) => !v)} className="mt-3 border-b border-current pb-0.5 text-[11px] uppercase tracking-[.16em] transition-colors hover:text-red-accent">{descOpen ? (lang === "ru" ? "Свернуть" : "Less") : (lang === "ru" ? "Подробнее" : "More")}</button>}
+            </div>
+          );
+        })()}
         {category !== "all" && !q && (() => {
           const own = rowOf(project !== "all" ? project : category);
           const src = L(own, "curator") ? own : rowOf(category);
@@ -267,7 +279,7 @@ function Index() {
           );
         })()}
         <div className="grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 lg:grid-cols-3">
-          {visible.map((work,i)=><article key={`${work.image}-${i}`} className={i%3===1?"lg:pt-24":""}>
+          {visible.map((work,i)=><article key={`${work.image}-${i}`} >
             <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"/></button><button type="button" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 place-items-center bg-background/90 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-red-accent hover:text-background" aria-label={t.buy} data-tip={t.buy}><ArrowUpRight className="size-5"/></button></div>
             <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div><h2 className="text-base font-medium">{work[lang]}</h2>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}{work.status && <p className={`mt-1 text-[11px] uppercase tracking-[.14em] ${(work.status === "for-sale" || work.status === "available") ? "text-red-accent" : "text-muted-foreground"}`}>{statusLabel(work.status, lang)}</p>}{work.cover && project === "all" && work.project && <button onClick={()=>openProject(work.category, work.project!)} className="mt-3 flex items-center gap-1 text-[11px] uppercase tracking-[.16em] transition-colors hover:text-red-accent">{t.more} · {parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}<ArrowUpRight className="size-3"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
@@ -284,9 +296,6 @@ function Index() {
               ))}
             </div>
           </div>
-        )}
-        {category !== "all" && (
-          <p className="mx-auto mt-20 max-w-2xl border-t border-border pt-6 text-center text-sm leading-relaxed text-muted-foreground">{lang === "ru" ? parentOf(category)?.noteRu : parentOf(category)?.noteEn}</p>
         )}
       </section>
 
@@ -408,7 +417,7 @@ function AboutModal({ about, lang, onClose }: { about: AboutContent; lang: Lang;
               <p data-font-block="about" className="mt-3 font-sans text-sm lowercase italic tracking-[.24em] text-muted-foreground">{bio.role}</p>
               <p data-font-block="about" className="mt-1 text-xs uppercase tracking-[.18em] text-muted-foreground">{bio.academy}</p>
             </div>
-            <img src={about.portrait ? mediaUrl(about.portrait) : portraitAsset.url} alt={t.artist} className="aspect-[4/5] w-full max-w-[16rem] object-cover shadow-2xl md:justify-self-end" />
+            <img src={about.portrait ? mediaUrl(about.portrait) : portraitAsset.url} alt={t.artist} className="aspect-[4/5] w-full max-w-[16rem] object-cover md:justify-self-end" />
           </div>
           <div data-font-block="about" className="mt-14 space-y-10 md:mt-20">
             {bio.sections.map((section, si) => (

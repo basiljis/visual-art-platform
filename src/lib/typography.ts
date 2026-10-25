@@ -15,7 +15,7 @@ export const typographyBlocks = [
   { key: "header", label: "Шапка — имя художника", sample: "НАТАЛЬЯ ДИКУНОВА / artist", defaultFont: "prata" },
   { key: "headings", label: "Заголовки разделов и окон", sample: "Работы · Об авторе · Блог", defaultFont: "prata" },
   { key: "body", label: "Основной текст и кнопки", sample: "Живопись, рисунок и печатная графика", defaultFont: "manrope" },
-  { key: "intro", label: "Текст рядом с подписью", sample: "О памяти, мифе и человеческом присутствии.", defaultFont: "manrope" },
+  { key: "intro", label: "Текст рядом с подписью", sample: "О мифе и реальности.", defaultFont: "manrope" },
   { key: "about", label: "Об авторе — текст биографии", sample: "Работы находятся в частных коллекциях", defaultFont: "manrope" },
   { key: "navigation", label: "Полноэкранное меню", sample: "Работы · Об авторе · Контакты", defaultFont: "prata" },
   { key: "filters", label: "Направления — фильтры работ", sample: "Все · Портреты · Печатная графика", defaultFont: "manrope" },
