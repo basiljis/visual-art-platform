@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import type { MenuPlacement } from "@/lib/gallery-layout";
 
 type Item = { key: string; ru: string; en: string };
@@ -21,7 +21,7 @@ export function GalleryNavigation({ placement, lang, categories, category, proje
   return <nav aria-label={label} data-font-block="filters" className={side ? `mb-10 min-w-0 border-y border-border py-5 md:sticky md:top-24 md:mb-0 md:max-h-[calc(100dvh-7rem)] md:overflow-y-auto md:border-y-0 ${collapsed ? "md:py-0" : "md:border-r md:pr-6"}` : "mb-16 border-y border-border py-5"}>
     <div className={`flex items-center justify-between gap-2 ${side && collapsed ? "" : "mb-4"}`}>
       {(!side || !collapsed) && <p className="text-[11px] uppercase tracking-[.18em] text-muted-foreground">{label}</p>}
-      {side && <Button variant="ghost" size="icon" onClick={onToggle} aria-label={toggleLabel} title={toggleLabel} aria-expanded={!collapsed} aria-controls="gallery-navigation-controls" className="size-10 shrink-0 rounded-none text-muted-foreground hover:bg-transparent hover:text-red-accent">{collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}</Button>}
+      {side && <Button variant="ghost" size="icon" onClick={onToggle} aria-label={toggleLabel} title={toggleLabel} aria-expanded={!collapsed} aria-controls="gallery-navigation-controls" className="size-8 shrink-0 rounded-none text-muted-foreground hover:bg-transparent hover:text-red-accent">{collapsed ? <ChevronRight strokeWidth={1} /> : <ChevronLeft strokeWidth={1} />}</Button>}
       {side && collapsed && <span className="text-[11px] uppercase text-muted-foreground md:hidden">{label}</span>}
     </div>
     <div id="gallery-navigation-controls" hidden={side && collapsed}>
