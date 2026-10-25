@@ -28,3 +28,4 @@
 - Admin hover/focus hints are delegated through AdminHints around the admin shell; portal rendering keeps hints visible outside clipped editors and lists.
 - Blog article HTML is rendered through BlogArticleBody: consecutive photo blocks become galleries with a shared article-wide lightbox, preserving prose, captions, media resolution and videos without rewriting stored content.
 - The blog calendar filters loaded public posts client-side by local calendar day via blog-dates, combined with text search; no database date conversion is required.
+- Gallery menu placement lives in site_content as gallery_layout, read through a public publishable-client function and saved in the categories admin panel under existing admin-only RLS; one navigation component serves both layouts, with the side layout stacking above artworks on narrow screens.
