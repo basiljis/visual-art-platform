@@ -179,11 +179,11 @@ function Index() {
         </nav>
       </div>
 
-      <section id="top" className="relative pt-20">
+      <section id="top" className="relative bg-portrait-paper pt-20 text-ink">
         <div className="relative grid min-h-[min(740px,calc(85svh-5rem))] grid-cols-[30%_70%] md:grid-cols-[28%_72%]">
           <div className="relative overflow-hidden">
             {heroWork && <a href="#works" onClick={(e) => { e.preventDefault(); setViewer(heroIndex); }} aria-label={heroWork[lang]} className="absolute inset-0 block">
-              <img src={heroWork.image} alt={heroWork[lang]} className="h-full w-full object-cover object-[65%_center]" />
+              <img src={heroWork.image} alt={heroWork[lang]} className="intro-portrait h-full w-full object-cover object-[65%_center]" />
             </a>}
           </div>
           <div className="relative flex min-w-0 flex-col justify-center px-5 py-10 md:px-16 md:py-12 lg:px-24">
@@ -192,7 +192,7 @@ function Index() {
               <h1 data-font-block="header" className="mb-5 font-sans text-3xl font-light leading-tight md:text-6xl">{lang === "ru" ? <>Наташа<br />Дикунова</> : <>Natasha<br />Dikunova</>}</h1>
               <p data-font-block="intro" className="max-w-lg text-base leading-relaxed md:text-2xl">{t.intro}</p>
             </div>
-            <a href="#works" data-font-block="body" onClick={(e) => { const el = document.getElementById("works"); if (!el) return; e.preventDefault(); const y = el.getBoundingClientRect().top + window.scrollY - 64; if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) window.scrollTo(0, y); else slowScroll(y); }} className="flex w-fit items-center gap-3 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.all}<ArrowDown className="size-4"/></a>
+            <a href="#works" data-font-block="body" onClick={(e) => { const el = document.getElementById("works"); if (!el) return; e.preventDefault(); const y = el.getBoundingClientRect().top + window.scrollY - 64; if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) window.scrollTo(0, y); else slowScroll(y); }} className="flex w-fit items-center gap-3 border-b border-current pb-1 text-xs uppercase tracking-[.18em] hover:text-red-accent">{t.all}<ArrowDown className="size-4"/></a>
           </div>
         </div>
       </section>
