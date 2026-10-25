@@ -93,14 +93,10 @@ function Index() {
     if (at > 0) heroWorks.splice(at, 1);
     if (at !== 0) heroWorks.unshift(selfIdx);
   }
-  const [heroIndex, setHeroIndex] = useState<number>(heroWorks[0] ?? 0);
+  const heroIndex = heroWorks[0] ?? 0;
   const heroWork: Work | undefined = works[heroIndex] ?? works[0];
   const parentOf = (key: string) => cats.find((c) => c.key === key);
   const hasSub = (key: string) => (parentOf(key)?.children.length ?? 0) > 0;
-  useEffect(() => {
-    const id = window.setInterval(() => setHeroIndex((cur) => heroWorks[(heroWorks.indexOf(cur) + 1) % heroWorks.length] ?? heroWorks[0] ?? 0), 6000);
-    return () => window.clearInterval(id);
-  }, [heroWorks.join(",")]);
   const [markInView, setMarkInView] = useState(false);
   useEffect(() => {
     const el = document.getElementById("footer-mark");
@@ -179,25 +175,25 @@ function Index() {
         </nav>
       </div>
 
-      <section id="top" className="relative min-h-[92vh] pt-20">
-        <div className="relative grid min-h-[calc(92vh-5rem)] grid-cols-1 md:grid-cols-[42%_58%]">
-          <div className="relative flex flex-col justify-end px-5 pb-12 pt-8 md:pb-16 md:pl-36 md:pr-8 md:pt-16">
-            <div className="mb-6 grid grid-cols-[auto_minmax(0,1fr)] items-end gap-4 md:mb-5 md:block">
-              <span aria-hidden className="mb-4 block h-44 w-36 bg-sanguine sm:h-72 sm:w-72 md:mb-10 md:h-80 md:w-80" style={{ WebkitMaskImage: `url(${signatureAsset.url})`, WebkitMaskSize: "contain", WebkitMaskRepeat: "no-repeat", WebkitMaskPosition: "center", maskImage: `url(${signatureAsset.url})`, maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center" }} />
-              <p data-font-block="intro" className="max-w-md animate-reveal border-l border-border pb-1 pl-4 text-[15px] leading-snug md:border-0 md:pb-0 md:pl-0 md:text-2xl md:leading-relaxed"><span className="mb-2 block text-[10px] uppercase tracking-[.2em] text-red-accent md:hidden">/ artist</span>{t.intro}</p>
+      <section id="top" className="relative pt-20">
+        <div className="relative grid min-h-[min(740px,calc(85svh-5rem))] grid-cols-[30%_70%] md:grid-cols-[28%_72%]">
+          <div className="relative overflow-hidden">
+            {heroWork && <a href="#works" onClick={(e) => { e.preventDefault(); setViewer(heroIndex); }} aria-label={heroWork[lang]} className="absolute inset-0 block">
+              <img src={heroWork.image} alt={heroWork[lang]} className="h-full w-full object-cover object-[65%_center]" />
+            </a>}
+          </div>
+          <div className="relative flex min-w-0 flex-col justify-center px-5 py-10 md:px-16 md:py-12 lg:px-24">
+            <div className="mb-6">
+              <span aria-hidden className="mb-5 block h-40 w-24 bg-sanguine md:h-56 md:w-36" style={{ WebkitMaskImage: `url(${signatureAsset.url})`, WebkitMaskSize: "contain", WebkitMaskRepeat: "no-repeat", WebkitMaskPosition: "center", maskImage: `url(${signatureAsset.url})`, maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center" }} />
+              <h1 data-font-block="header" className="mb-5 font-sans text-3xl font-light leading-tight md:text-6xl">{lang === "ru" ? <>Наташа<br />Дикунова</> : <>Natasha<br />Dikunova</>}</h1>
+              <p data-font-block="intro" className="max-w-lg text-base leading-relaxed md:text-2xl">{t.intro}</p>
             </div>
             <a href="#works" data-font-block="body" onClick={(e) => { const el = document.getElementById("works"); if (!el) return; e.preventDefault(); const y = el.getBoundingClientRect().top + window.scrollY - 64; if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) window.scrollTo(0, y); else slowScroll(y); }} className="flex w-fit items-center gap-3 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em]">{t.all}<ArrowDown className="size-4"/></a>
-          </div>
-          <div className="order-first flex min-h-[58vh] flex-col items-center justify-center gap-3 px-5 pb-4 pt-10 md:order-none md:px-12 md:py-10">
-            <button onClick={() => setViewer(heroIndex)} className="relative aspect-[4/5] w-[min(80vw,30rem)] overflow-hidden bg-muted" aria-label={heroWork?.[lang]}>
-              {heroWorks.map((idx) => <img key={idx} src={works[idx]!.image} alt={works[idx]![lang]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${idx === heroIndex ? "opacity-100" : "opacity-0"}`} />)}
-            </button>
-            <span data-font-block="captions" className="text-center text-[11px] uppercase tracking-[.16em] text-muted-foreground">{heroWork?.[lang]} · {heroWork?.year}</span>
           </div>
         </div>
       </section>
 
-      <section id="works" className="border-t border-border px-5 py-20 md:px-8 md:py-28">
+      <section id="works" className="border-t border-border px-5 pb-20 pt-8 md:px-8 md:pb-28 md:pt-10">
         <div className="mb-14 flex items-end justify-between gap-6"><div><p data-font-block="body" className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.breadcrumb}</p><h1 className="font-display text-5xl md:text-8xl">{t.works}</h1></div><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
         <div data-font-block="filters" className="mb-16 border-y border-border py-5">
           <p className="mb-4 text-[11px] uppercase tracking-[.18em] text-muted-foreground">{t.filters}</p>
