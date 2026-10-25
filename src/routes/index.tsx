@@ -190,7 +190,7 @@ function Index() {
         <div className="relative grid min-h-[calc(100dvh-5rem)] grid-cols-[30%_70%] md:grid-cols-[28%_72%]">
           <div className="relative overflow-hidden">
             {heroWork && <a href="#works" onClick={(e) => { e.preventDefault(); setViewer(heroIndex); }} aria-label={heroWork[lang]} className="absolute inset-0 block">
-              <img src={heroWork.image} alt={heroWork[lang]} className="intro-portrait h-full w-full object-cover object-[65%_center]" />
+              <img src={heroWork.image} alt={heroWork[lang]} className="intro-portrait h-full w-full origin-[65%_35%] scale-125 object-cover object-[65%_center]" />
             </a>}
           </div>
           <div className="relative flex min-w-0 flex-col justify-center px-5 py-10 md:px-16 md:py-12 lg:px-24">
