@@ -78,6 +78,7 @@ function Index() {
   const { lang, setLang } = useLanguage();
   const [dark, setDark] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [galleryMenuCollapsed, setGalleryMenuCollapsed] = useState(false);
   const [headerNameVisible, setHeaderNameVisible] = useState(false);
   const search = Route.useSearch();
   const [category, setCategory] = useState<Category>(search.category ?? "all");
@@ -209,8 +210,8 @@ function Index() {
 
       <section id="works" className="border-t border-border px-5 pb-20 pt-8 md:px-8 md:pb-28 md:pt-10">
         <div className="mb-14 flex items-end justify-between gap-6"><div><p data-font-block="body" className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.breadcrumb}</p><h1 className="font-display text-5xl md:text-8xl">{t.works}</h1></div><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
-        <div data-gallery-menu={galleryLayout.menuPlacement} className={sideMenu ? "grid items-start gap-x-8 md:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-10" : ""}>
-          <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} onCategory={(key) => { setCategory(key); setProject("all"); }} onProject={openProject} onQuery={setQuery} />
+        <div data-gallery-menu={galleryLayout.menuPlacement} className={sideMenu ? `grid items-start ${galleryMenuCollapsed ? "gap-x-4 md:grid-cols-[2.5rem_minmax(0,1fr)]" : "gap-x-8 md:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-10"}` : ""}>
+          <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} collapsed={galleryMenuCollapsed} onToggle={() => setGalleryMenuCollapsed(value => !value)} onCategory={(key) => { setCategory(key); setProject("all"); }} onProject={openProject} onQuery={setQuery} />
           <div className="min-w-0">
         {q && visible.length === 0 && (
           <div className="mx-auto max-w-md border-y border-border py-14 text-center">
@@ -268,7 +269,7 @@ function Index() {
             </div>
           );
         })()}
-        <div className={`grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 ${sideMenu ? "xl:grid-cols-3" : "lg:grid-cols-3"}`}>
+        <div className={`grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 ${sideMenu && !galleryMenuCollapsed ? "xl:grid-cols-3" : "lg:grid-cols-3"}`}>
           {visible.map((work,i)=><article key={`${work.image}-${i}`} >
             <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]"/></button><TooltipProvider delayDuration={200}><Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 place-items-center rounded-none bg-background/90 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-red-accent hover:text-background" aria-label={t.buy}><ArrowUpRight className="size-5"/></Button></TooltipTrigger><TooltipContent side="top" sideOffset={8}>{t.buy}</TooltipContent></Tooltip></TooltipProvider></div>
             <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div>{work.cover && project === "all" && work.project && <p className="mb-1 text-[11px] uppercase tracking-[.16em] text-muted-foreground"><span className="text-red-accent">/ </span>{parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}</p>}<h2 className="text-base font-medium">{work[lang]}</h2>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}{work.status && <p className={`mt-1 text-[11px] uppercase tracking-[.14em] ${(work.status === "for-sale" || work.status === "available") ? "text-red-accent" : "text-muted-foreground"}`}>{statusLabel(work.status, lang)}</p>}{work.cover && project === "all" && work.project && <button onClick={()=>openProject(work.category, work.project!)} className="mt-4 inline-flex items-center gap-2 border border-foreground px-3 py-2 text-left text-[11px] font-medium uppercase tracking-[.14em] transition-colors hover:border-red-accent hover:bg-red-accent hover:text-background"><span className="text-red-accent">/</span>{t.more}<ArrowUpRight className="size-3.5 shrink-0"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
