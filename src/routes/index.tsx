@@ -74,6 +74,7 @@ function Index() {
   const [lang, setLang] = useState<Lang>("ru");
   const [dark, setDark] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [headerNameVisible, setHeaderNameVisible] = useState(false);
   const search = Route.useSearch();
   const [category, setCategory] = useState<Category>(search.category ?? "all");
   const [query, setQuery] = useState("");
@@ -102,6 +103,12 @@ function Index() {
   const parentOf = (key: string) => cats.find((c) => c.key === key);
   const hasSub = (key: string) => (parentOf(key)?.children.length ?? 0) > 0;
   const [markInView, setMarkInView] = useState(false);
+  useEffect(() => {
+    const updateHeaderName = () => setHeaderNameVisible(window.scrollY > 20);
+    updateHeaderName();
+    window.addEventListener("scroll", updateHeaderName, { passive: true });
+    return () => window.removeEventListener("scroll", updateHeaderName);
+  }, []);
   useEffect(() => {
     const el = document.getElementById("footer-mark");
     if (!el) return;
@@ -161,7 +168,7 @@ function Index() {
 
       <header className="fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center border-b border-border/60 bg-background/80 px-4 backdrop-blur-md md:px-8">
         <div className="flex items-center gap-4"><button aria-label={lang==="ru"?"Меню":"Menu"} data-tip={lang==="ru"?"Меню":"Menu"} onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">Menu</span></button></div>
-        <a href="#top" data-font-block="header" className="whitespace-nowrap text-center font-display [-webkit-text-stroke:0.4px_currentColor] sm:[-webkit-text-stroke:0] text-[15px] tracking-[.1em] sm:text-lg sm:tracking-[.18em]">{t.artist}<span className="hidden sm:inline"> <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.2em] opacity-60">artist</span></span></a>
+        <a href="#top" data-font-block="header" aria-hidden={!headerNameVisible} tabIndex={headerNameVisible ? 0 : -1} className={`whitespace-nowrap text-center font-display [-webkit-text-stroke:0.4px_currentColor] sm:[-webkit-text-stroke:0] text-[15px] tracking-[.1em] sm:text-lg sm:tracking-[.18em] transition-opacity duration-300 motion-reduce:transition-none ${headerNameVisible ? "visible opacity-100" : "invisible pointer-events-none opacity-0"}`}>{t.artist}<span className="hidden sm:inline"> <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.2em] opacity-60">artist</span></span></a>
         <div className="flex justify-end gap-1">
           <button onClick={() => setLang(lang === "ru" ? "en" : "ru")} className="h-9 w-10 text-xs font-semibold uppercase" aria-label={lang==="ru"?"Switch to English":"Переключить на русский"} data-tip={lang==="ru"?"Switch to English":"Переключить на русский"}>{lang}</button>
           <button onClick={() => setDark(!dark)} className="grid size-9 place-items-center" aria-label={lang==="ru"?(dark?"Светлая тема":"Тёмная тема"):(dark?"Light theme":"Dark theme")} data-tip={lang==="ru"?(dark?"Светлая тема":"Тёмная тема"):(dark?"Light theme":"Dark theme")}>{dark ? <Sun className="size-4"/> : <Moon className="size-4"/>}</button>
