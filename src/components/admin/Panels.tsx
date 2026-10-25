@@ -123,7 +123,7 @@ export function WorksPanel() {
   const save = async () => {
     if (!edit?.image) { alert("Загрузите изображение"); return; }
     if (!edit.category_key) { alert("Выберите направление"); return; }
-    const payload = { category_key: edit.category_key, project_key: edit.project_key || null, title_ru: edit.title_ru ?? "", title_en: edit.title_en ?? "", year: edit.year ?? "", size: edit.size ?? "", image: edit.image, cover: !!edit.cover, hero: !!edit.hero, sort: Number(edit.sort ?? 0) };
+    const payload = { category_key: edit.category_key, project_key: edit.project_key || null, title_ru: edit.title_ru ?? "", title_en: edit.title_en ?? "", year: edit.year ?? "", size: edit.size ?? "", technique: edit.technique ?? "", status: edit.status ?? "", image: edit.image, cover: !!edit.cover, hero: !!edit.hero, sort: Number(edit.sort ?? 0) };
     const { error } = edit.id ? await supabase.from("works").update(payload).eq("id", edit.id) : await supabase.from("works").insert(payload);
     if (error) { alert(error.message); return; }
     setEdit(null); reload(); inv();
@@ -164,7 +164,9 @@ export function WorksPanel() {
             <F l="Название (RU)"><input className={field} value={edit.title_ru ?? ""} onChange={(e) => setEdit({ ...edit, title_ru: e.target.value })} /></F>
             <F l="Название (EN)"><input className={field} value={edit.title_en ?? ""} onChange={(e) => setEdit({ ...edit, title_en: e.target.value })} /></F>
             <F l="Год"><input className={field} value={edit.year ?? ""} onChange={(e) => setEdit({ ...edit, year: e.target.value })} /></F>
-            <F l="Техника и размер"><input className={field} placeholder="Бумага/уголь, 100 × 70 см" value={edit.size ?? ""} onChange={(e) => setEdit({ ...edit, size: e.target.value })} /></F>
+            <F l="Техника"><input className={field} placeholder="Холст, масло" value={edit.technique ?? ""} onChange={(e) => setEdit({ ...edit, technique: e.target.value })} /></F>
+            <F l="Размер"><input className={field} placeholder="100 × 70 см" value={edit.size ?? ""} onChange={(e) => setEdit({ ...edit, size: e.target.value })} /></F>
+            <F l="Статус"><select className={field} value={edit.status ?? ""} onChange={(e) => setEdit({ ...edit, status: e.target.value })}><option value="">—</option><option value="for-sale">В продаже</option><option value="sold">Продана</option><option value="private">В частной коллекции</option><option value="on-request">По запросу</option></select></F>
             <F l="Направление"><select className={field} value={edit.category_key ?? ""} onChange={(e) => setEdit({ ...edit, category_key: e.target.value, project_key: null })}>{top.map((c) => <option key={c.key} value={c.key}>{c.name_ru}</option>)}</select></F>
             {subs(edit.category_key).length > 0 && <F l="Подраздел"><select className={field} value={edit.project_key ?? ""} onChange={(e) => setEdit({ ...edit, project_key: e.target.value || null })}><option value="">—</option>{subs(edit.category_key).map((c) => <option key={c.key} value={c.key}>{c.name_ru}</option>)}</select></F>}
             <F l="Порядок"><input type="number" className={field} value={edit.sort ?? 0} onChange={(e) => setEdit({ ...edit, sort: Number(e.target.value) })} /></F>
