@@ -8,10 +8,10 @@ import { useEffect, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
 import type { AboutContent } from "@/lib/about";
 import portraitAsset from "@/assets/artist-portrait.png.asset.json";
-import { breadcrumbs, pageUrl } from "@/lib/seo";
+import { absoluteImage, breadcrumbs, pageUrl, visualArtwork } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
-  head: () => ({ meta: [
+  head: ({ loaderData }: { loaderData?: { ogImage?: string | undefined; artwork?: { name: string; image?: string | undefined; technique?: string | undefined; year?: string | undefined } | undefined } | undefined }) => ({ meta: [
     { title: "Наталья Дикунова — живопись и графика" },
     { name: "description", content: "Галерея живописи и печатной графики художника Натальи Дикуновой." },
     { property: "og:title", content: "Наталья Дикунова — живопись и графика" },
@@ -19,15 +19,27 @@ export const Route = createFileRoute("/")({
     { property: "og:type", content: "website" },
     { property: "og:url", content: pageUrl("/") },
     { name: "twitter:card", content: "summary_large_image" },
+    ...(loaderData?.ogImage ? [{ property: "og:image", content: loaderData.ogImage }, { name: "twitter:image", content: loaderData.ogImage }] : []),
   ],
     links: [{ rel: "canonical", href: pageUrl("/") }],
-    scripts: [{ type: "application/ld+json", children: JSON.stringify(breadcrumbs([
-      { name: "Главная", path: "/" }, { name: "Работы", path: "/#works" },
-    ])) }],
+    scripts: [
+      { type: "application/ld+json", children: JSON.stringify(breadcrumbs([
+        { name: "Главная", path: "/" }, { name: "Работы", path: "/#works" },
+      ])) },
+      ...(loaderData?.artwork ? [{ type: "application/ld+json", children: JSON.stringify(visualArtwork(loaderData.artwork)) }] : []),
+    ],
   }),
   validateSearch: (s: Record<string, unknown>): { category?: string | undefined } => ({ category: typeof s["category"] === "string" && s["category"] ? s["category"] : undefined }),
   loader: async ({ context }) => {
-    await Promise.all([context.queryClient.ensureQueryData(galleryQuery), context.queryClient.ensureQueryData(postsQuery)]);
+    const [gallery] = await Promise.all([context.queryClient.ensureQueryData(galleryQuery), context.queryClient.ensureQueryData(postsQuery)]);
+    const g = gallery as { works: WorkRow[] };
+    // Превью для соцсетей: автопортрет тушью (первая картина карусели), иначе главная работа, иначе первая
+    const best = g.works.find((w) => /АВТОПОРТРЕТ|SELF-PORTRAIT/i.test(w.title_ru)) ?? g.works.find((w) => w.hero) ?? g.works[0];
+    const ogImage = absoluteImage(best?.image);
+    return {
+      ogImage,
+      artwork: best ? { name: best.title_ru, image: ogImage, technique: best.technique || undefined, year: best.year || undefined } : undefined,
+    };
   },
   errorComponent: () => <div className="grid min-h-screen place-items-center p-8 text-sm">Не удалось загрузить галерею. Обновите страницу.</div>,
   component: Index,
@@ -35,12 +47,17 @@ export const Route = createFileRoute("/")({
 
 type Lang = "ru" | "en";
 type Category = string;
-type Work = { id: string; image: string; category: string; project: string | undefined; cover: boolean; hero: boolean; ru: string; en: string; year: string; size: string };
+type Work = { id: string; image: string; category: string; project: string | undefined; cover: boolean; hero: boolean; ru: string; en: string; year: string; size: string; technique: string; status: string };
 type Cat = { key: string; ru: string; en: string; noteRu: string; noteEn: string; children: { key: string; ru: string; en: string }[] };
+const statusLabels: Record<Lang, Record<string, string>> = {
+  ru: { "for-sale": "В продаже", sold: "Продана", private: "В частной коллекции", "on-request": "По запросу" },
+  en: { "for-sale": "For sale", sold: "Sold", private: "Private collection", "on-request": "On request" },
+};
+const statusLabel = (status: string, lang: Lang) => statusLabels[lang][status] ?? status;
 function buildGallery(data: { categories: CategoryRow[]; works: WorkRow[] }) {
   const top = data.categories.filter((c) => !c.parent_key);
   const cats: Cat[] = top.map((c) => ({ key: c.key, ru: c.name_ru, en: c.name_en, noteRu: c.description_ru, noteEn: c.description_en, children: data.categories.filter((s) => s.parent_key === c.key).map((s) => ({ key: s.key, ru: s.name_ru, en: s.name_en })) }));
-  const works: Work[] = data.works.map((w) => ({ id: w.id, image: mediaUrl(w.image), category: w.category_key, project: w.project_key ?? undefined, cover: w.cover, hero: w.hero, ru: w.title_ru, en: w.title_en || w.title_ru, year: w.year, size: w.size }));
+  const works: Work[] = data.works.map((w) => ({ id: w.id, image: mediaUrl(w.image), category: w.category_key, project: w.project_key ?? undefined, cover: w.cover, hero: w.hero, ru: w.title_ru, en: w.title_en || w.title_ru, year: w.year, size: w.size, technique: w.technique ?? "", status: w.status ?? "" }));
   return { cats, works };
 }
 const copy = {
@@ -169,7 +186,7 @@ function Index() {
             <button onClick={() => setViewer(heroIndex)} className="relative aspect-[4/5] w-[min(80vw,30rem)] overflow-hidden bg-muted" aria-label={heroWork?.[lang]}>
               {heroWorks.map((idx) => <img key={idx} src={works[idx]!.image} alt={works[idx]![lang]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${idx === heroIndex ? "opacity-100" : "opacity-0"}`} />)}
             </button>
-            <span data-font-block="captions" className="text-center text-[10px] uppercase tracking-[.16em] text-muted-foreground">{heroWork?.[lang]} · {heroWork?.year}</span>
+            <span data-font-block="captions" className="text-center text-[11px] uppercase tracking-[.16em] text-muted-foreground">{heroWork?.[lang]} · {heroWork?.year}</span>
           </div>
         </div>
       </section>
@@ -177,9 +194,9 @@ function Index() {
       <section id="works" className="border-t border-border px-5 py-20 md:px-8 md:py-28">
         <div className="mb-14 flex items-end justify-between gap-6"><div><p data-font-block="body" className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.breadcrumb}</p><h1 className="font-display text-5xl md:text-8xl">{t.works}</h1></div><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
         <div data-font-block="filters" className="mb-16 border-y border-border py-5">
-          <p className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.filters}</p>
+          <p className="mb-4 text-[11px] uppercase tracking-[.18em] text-muted-foreground">{t.filters}</p>
           <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap gap-x-6 gap-y-3">{[{ key: "all", ru: "Все", en: "All", children: [] as Cat["children"] }, ...cats].map((cat)=>{const key=cat.key; const btn=<button key={key} onClick={()=>{setCategory(key); setProject("all");}} className={`text-sm transition-opacity ${category===key?"opacity-100 underline underline-offset-8":"opacity-45 hover:opacity-100"}`}>{cat[lang]}</button>; return !cat.children.length?btn:(
+          <div className="flex flex-wrap gap-x-6 gap-y-3">{[{ key: "all", ru: "Все", en: "All", children: [] as Cat["children"] }, ...cats].map((cat)=>{const key=cat.key; const btn=<button key={key} onClick={()=>{setCategory(key); setProject("all");}} className={`text-sm transition-opacity ${category===key?"opacity-100 underline underline-offset-8":"opacity-70 hover:opacity-100"}`}>{cat[lang]}</button>; return !cat.children.length?btn:(
             <div key={key} className="group/sub relative">{btn}
               <div className="invisible absolute left-0 top-full z-30 pt-3 [@media(hover:none)]:hidden opacity-0 transition-opacity duration-200 group-hover/sub:visible group-hover/sub:opacity-100 group-focus-within/sub:visible group-focus-within/sub:opacity-100">
                 <div className="flex w-max flex-col gap-1 border border-border bg-background p-3 shadow-sm">{cat.children.map((p)=><button key={p.key} onClick={()=>openProject(key, p.key)} className="text-left text-xs uppercase tracking-[.12em] opacity-70 transition-colors hover:text-red-accent hover:opacity-100"><span className="text-red-accent">/ </span>{p[lang]}</button>)}</div>
@@ -195,7 +212,7 @@ function Index() {
             <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-border pt-4">
               <span className="text-[10px] uppercase tracking-[.18em] text-red-accent">/</span>
               {[{ key: "all", ru: "Все проекты", en: "All projects" }, ...(parentOf(category)?.children ?? [])].map((p) => (
-                <button key={p.key} onClick={() => setProject(p.key)} className={`text-xs uppercase tracking-[.12em] transition-opacity ${project === p.key ? "opacity-100 underline underline-offset-8" : "opacity-45 hover:opacity-100"}`}>{p[lang]}</button>
+                <button key={p.key} onClick={() => setProject(p.key)} className={`text-xs uppercase tracking-[.12em] transition-opacity ${project === p.key ? "opacity-100 underline underline-offset-8" : "opacity-70 hover:opacity-100"}`}>{p[lang]}</button>
               ))}
             </div>
           )}
@@ -209,8 +226,8 @@ function Index() {
         )}
         <div className="grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((work,i)=><article key={`${work.image}-${i}`} className={i%3===1?"lg:pt-24":""}>
-            <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"/></button><button type="button" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 translate-y-16 place-items-center bg-background text-foreground transition-transform duration-300 group-hover:translate-y-0" aria-label={t.buy} data-tip={t.buy}><ArrowUpRight className="size-5"/></button></div>
-            <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div><h2 className="text-base font-medium">{work[lang]}</h2><p className="mt-1 text-xs text-muted-foreground">{work.size}</p>{work.cover && project === "all" && work.project && <button onClick={()=>openProject(work.category, work.project!)} className="mt-3 flex items-center gap-1 text-[11px] uppercase tracking-[.16em] transition-colors hover:text-red-accent">{t.more} · {parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}<ArrowUpRight className="size-3"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
+            <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"/></button><button type="button" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 place-items-center bg-background/90 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-red-accent hover:text-background" aria-label={t.buy} data-tip={t.buy}><ArrowUpRight className="size-5"/></button></div>
+            <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div><h2 className="text-base font-medium">{work[lang]}</h2>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}{work.status && <p className={`mt-1 text-[11px] uppercase tracking-[.14em] ${work.status === "for-sale" ? "text-red-accent" : "text-muted-foreground"}`}>{statusLabel(work.status, lang)}</p>}{work.cover && project === "all" && work.project && <button onClick={()=>openProject(work.category, work.project!)} className="mt-3 flex items-center gap-1 text-[11px] uppercase tracking-[.16em] transition-colors hover:text-red-accent">{t.more} · {parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}<ArrowUpRight className="size-3"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
         </div>
         {relatedPosts.length > 0 && (
@@ -300,7 +317,7 @@ function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: W
         <button onClick={() => go(1)} aria-label={c.next} data-tip={c.next} className="absolute right-1 z-10 grid size-11 place-items-center md:right-8"><ArrowRight className="size-6" /></button>
       </div>
       <div className="grid gap-4 px-5 py-5 md:grid-cols-[1fr_auto] md:items-end md:px-8">
-        <div data-font-block="captions"><h2 className="text-base font-medium md:text-lg">{w[lang]}</h2><p className="mt-1 max-w-xl text-xs opacity-70">{c.desc(w)}</p></div>
+        <div data-font-block="captions"><h2 className="text-base font-medium md:text-lg">{w[lang]}</h2><p className="mt-1 max-w-xl text-xs opacity-70">{c.desc(w)}</p>{w.technique && <p className="mt-1 text-xs opacity-70">{w.technique}</p>}{w.status && <p className={`mt-1 text-[11px] uppercase tracking-[.14em] ${w.status === "for-sale" ? "text-red-accent" : "opacity-70"}`}>{statusLabel(w.status, lang)}</p>}</div>
         <button type="button" onClick={() => onEnquire(w[lang])} className="flex w-fit items-center gap-2 border-b border-current pb-1 text-xs uppercase tracking-[.18em]">{c.buy}<ArrowUpRight className="size-4" /></button>
       </div>
     </div>

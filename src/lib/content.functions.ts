@@ -18,7 +18,7 @@ async function publicClient() {
 }
 
 export type CategoryRow = { id: string; key: string; parent_key: string | null; name_ru: string; name_en: string; description_ru: string; description_en: string; sort: number };
-export type WorkRow = { id: string; category_key: string; project_key: string | null; title_ru: string; title_en: string; year: string; size: string; image: string; cover: boolean; hero: boolean; hidden?: boolean; sort: number };
+export type WorkRow = { id: string; category_key: string; project_key: string | null; title_ru: string; title_en: string; year: string; size: string; technique: string; status: string; image: string; cover: boolean; hero: boolean; hidden?: boolean; sort: number };
 export type PostRow = { id: string; slug: string; title: string; excerpt: string; date: string; cover: string | null; content_html: string; published: boolean; sort: number; topic_keys?: string[]; work_ids?: string[] };
 export type RelatedWork = { id: string; category_key: string; title_ru: string; title_en: string; year: string; image: string };
 
