@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "@tanstack/react-router";
 import { CalendarDays, MapPin, X } from "lucide-react";
 import { getNews, NEWS_TYPES, type NewsRow } from "@/lib/news.functions";
+import { useLanguage, localizedDate } from "@/lib/language";
 import { mediaUrl } from "@/lib/media";
 
 const SEEN_KEY = "dikunova-news-seen";
@@ -11,7 +12,7 @@ export function NewsPopup() {
   const { pathname } = useLocation();
   const [news, setNews] = useState<NewsRow[] | null>(null);
   const [open, setOpen] = useState(false);
-  const [lang, setLang] = useState<"ru" | "en">("ru");
+  const { lang } = useLanguage();
   const skip = pathname.startsWith("/admin") || pathname.startsWith("/reset-password");
 
   useEffect(() => {
@@ -22,7 +23,6 @@ export function NewsPopup() {
       if (cancelled || !settings.enabled || news.length === 0) return;
       setNews(news);
       timer = setTimeout(() => {
-        setLang(localStorage.getItem("dikunova-lang") === "en" ? "en" : "ru");
         setOpen(true);
         sessionStorage.setItem(SEEN_KEY, "1");
       }, Math.max(0, settings.delay) * 1000);
@@ -55,7 +55,7 @@ export function NewsPopup() {
                 {n.image && <img src={mediaUrl(n.image)} alt="" className="mb-5 mt-3 max-h-64 w-full bg-muted object-contain" />}
                 <h2 className="font-display text-3xl leading-tight">{title}</h2>
                 <div data-font-block="news" className="mt-4 space-y-2 text-sm">
-                  {n.event_date && <p className="flex items-start gap-2"><CalendarDays className="mt-0.5 size-4 shrink-0 text-red-accent" />{n.event_date}</p>}
+                  {n.event_date && <p className="flex items-start gap-2"><CalendarDays className="mt-0.5 size-4 shrink-0 text-red-accent" />{localizedDate(n.event_date, lang)}</p>}
                   {addr && <p className="flex items-start gap-2"><MapPin className="mt-0.5 size-4 shrink-0 text-red-accent" />{addr}</p>}
                 </div>
                 {body && <p data-font-block="news" className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{body}</p>}
