@@ -17,43 +17,52 @@ export type Database = {
       blog_posts: {
         Row: {
           content_html: string
+          content_html_en: string
           cover: string | null
           created_at: string
           date: string
           excerpt: string
+          excerpt_en: string
           id: string
           published: boolean
           slug: string
           sort: number
           title: string
+          title_en: string
           topic_keys: string[]
           work_ids: string[]
         }
         Insert: {
           content_html?: string
+          content_html_en?: string
           cover?: string | null
           created_at?: string
           date?: string
           excerpt?: string
+          excerpt_en?: string
           id?: string
           published?: boolean
           slug: string
           sort?: number
           title?: string
+          title_en?: string
           topic_keys?: string[]
           work_ids?: string[]
         }
         Update: {
           content_html?: string
+          content_html_en?: string
           cover?: string | null
           created_at?: string
           date?: string
           excerpt?: string
+          excerpt_en?: string
           id?: string
           published?: boolean
           slug?: string
           sort?: number
           title?: string
+          title_en?: string
           topic_keys?: string[]
           work_ids?: string[]
         }
@@ -136,6 +145,7 @@ export type Database = {
           body_ru: string
           created_at: string
           event_date: string
+          event_date_en: string
           id: string
           image: string | null
           link: string | null
@@ -152,6 +162,7 @@ export type Database = {
           body_ru?: string
           created_at?: string
           event_date?: string
+          event_date_en?: string
           id?: string
           image?: string | null
           link?: string | null
@@ -168,6 +179,7 @@ export type Database = {
           body_ru?: string
           created_at?: string
           event_date?: string
+          event_date_en?: string
           id?: string
           image?: string | null
           link?: string | null
@@ -259,6 +271,7 @@ export type Database = {
           sort: number
           status: string
           technique: string
+          technique_en: string
           title_en: string
           title_ru: string
           year: string
@@ -276,6 +289,7 @@ export type Database = {
           sort?: number
           status?: string
           technique?: string
+          technique_en?: string
           title_en?: string
           title_ru?: string
           year?: string
@@ -293,6 +307,7 @@ export type Database = {
           sort?: number
           status?: string
           technique?: string
+          technique_en?: string
           title_en?: string
           title_ru?: string
           year?: string
