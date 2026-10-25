@@ -62,7 +62,7 @@ export function CategoriesPanel() {
   const top = rows.filter((r) => !r.parent_key);
   const save = async () => {
     if (!edit?.name_ru) { alert("Укажите название"); return; }
-    const payload = { key: edit.key || slugify(edit.name_en || edit.name_ru), parent_key: edit.parent_key || null, name_ru: edit.name_ru, name_en: edit.name_en || edit.name_ru, description_ru: edit.description_ru ?? "", description_en: edit.description_en ?? "", sort: Number(edit.sort ?? rows.length + 1) };
+    const payload = { key: edit.key || slugify(edit.name_en || edit.name_ru), parent_key: edit.parent_key || null, name_ru: edit.name_ru, name_en: edit.name_en || edit.name_ru, description_ru: edit.description_ru ?? "", description_en: edit.description_en ?? "", curator_ru: edit.curator_ru ?? "", curator_en: edit.curator_en ?? "", exhibited_ru: edit.exhibited_ru ?? "", exhibited_en: edit.exhibited_en ?? "", process_images: edit.process_images ?? [], sort: Number(edit.sort ?? rows.length + 1) };
     const { error } = edit.id ? await supabase.from("categories").update(payload).eq("id", edit.id) : await supabase.from("categories").insert(payload);
     if (error) { alert(error.message); return; }
     setEdit(null); reload(); inv();
@@ -98,6 +98,16 @@ export function CategoriesPanel() {
             <F l="Название (EN)"><input className={field} value={edit.name_en ?? ""} onChange={(e) => setEdit({ ...edit, name_en: e.target.value })} /></F>
             <F l="Описание (RU)" className="md:col-span-2"><textarea rows={3} className={field} value={edit.description_ru ?? ""} onChange={(e) => setEdit({ ...edit, description_ru: e.target.value })} /></F>
             <F l="Описание (EN)" className="md:col-span-2"><textarea rows={3} className={field} value={edit.description_en ?? ""} onChange={(e) => setEdit({ ...edit, description_en: e.target.value })} /></F>
+            <F l="Текст куратора (RU)" className="md:col-span-2"><textarea rows={4} className={field} value={edit.curator_ru ?? ""} onChange={(e) => setEdit({ ...edit, curator_ru: e.target.value })} /></F>
+            <F l="Текст куратора (EN)" className="md:col-span-2"><textarea rows={4} className={field} value={edit.curator_en ?? ""} onChange={(e) => setEdit({ ...edit, curator_en: e.target.value })} /></F>
+            <F l="Где выставлялась (RU) — по строке" className="md:col-span-2"><textarea rows={3} className={field} placeholder="2024 — МСХ, Москва" value={edit.exhibited_ru ?? ""} onChange={(e) => setEdit({ ...edit, exhibited_ru: e.target.value })} /></F>
+            <F l="Где выставлялась (EN) — по строке" className="md:col-span-2"><textarea rows={3} className={field} value={edit.exhibited_en ?? ""} onChange={(e) => setEdit({ ...edit, exhibited_en: e.target.value })} /></F>
+            <F l="Фото процесса" className="md:col-span-2">
+              <div className="mt-3 flex flex-wrap items-end gap-4">
+                {(edit.process_images ?? []).map((ref, i) => <div key={ref + i} className="relative"><img src={mediaUrl(ref)} alt="" className="aspect-[4/5] w-24 object-cover" /><button type="button" onClick={() => setEdit({ ...edit, process_images: (edit.process_images ?? []).filter((_, j) => j !== i) })} aria-label="Убрать" className="absolute right-1 top-1 bg-background p-0.5 hover:text-red-accent"><X className="size-3" /></button></div>)}
+                <ImagePick value={null} onChange={(ref) => setEdit((cur) => cur ? { ...cur, process_images: [...(cur.process_images ?? []), ref] } : cur)} />
+              </div>
+            </F>
             <F l="Входит в направление"><select className={field} value={edit.parent_key ?? ""} onChange={(e) => setEdit({ ...edit, parent_key: e.target.value || null })}><option value="">— самостоятельное —</option>{top.filter((t) => t.key !== edit.key).map((t) => <option key={t.key} value={t.key}>{t.name_ru}</option>)}</select></F>
             <F l="Порядок"><input type="number" className={field} value={edit.sort ?? 0} onChange={(e) => setEdit({ ...edit, sort: Number(e.target.value) })} /></F>
           </div>
