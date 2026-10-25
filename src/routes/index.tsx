@@ -50,10 +50,10 @@ type Category = string;
 type Work = { id: string; image: string; category: string; project: string | undefined; cover: boolean; hero: boolean; ru: string; en: string; year: string; size: string; technique: string; status: string };
 type Cat = { key: string; ru: string; en: string; noteRu: string; noteEn: string; children: { key: string; ru: string; en: string }[] };
 const statusLabels: Record<Lang, Record<string, string>> = {
-  ru: { "for-sale": "В продаже", sold: "Продана", private: "В частной коллекции", "on-request": "По запросу" },
-  en: { "for-sale": "For sale", sold: "Sold", private: "Private collection", "on-request": "On request" },
+  ru: { available: "В продаже", "for-sale": "В продаже", sold: "Продана", private: "В частной коллекции", "on-request": "По запросу" },
+  en: { available: "For sale", "for-sale": "For sale", sold: "Sold", private: "Private collection", "on-request": "On request" },
 };
-const statusLabel = (status: string, lang: Lang) => statusLabels[lang][status] ?? status;
+const statusLabel = (status: string, lang: Lang) => statusLabels[lang][status] ?? "";
 function buildGallery(data: { categories: CategoryRow[]; works: WorkRow[] }) {
   const top = data.categories.filter((c) => !c.parent_key);
   const cats: Cat[] = top.map((c) => ({ key: c.key, ru: c.name_ru, en: c.name_en, noteRu: c.description_ru, noteEn: c.description_en, children: data.categories.filter((s) => s.parent_key === c.key).map((s) => ({ key: s.key, ru: s.name_ru, en: s.name_en })) }));
@@ -227,7 +227,7 @@ function Index() {
         <div className="grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((work,i)=><article key={`${work.image}-${i}`} className={i%3===1?"lg:pt-24":""}>
             <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"/></button><button type="button" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 place-items-center bg-background/90 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-red-accent hover:text-background" aria-label={t.buy} data-tip={t.buy}><ArrowUpRight className="size-5"/></button></div>
-            <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div><h2 className="text-base font-medium">{work[lang]}</h2>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}{work.status && <p className={`mt-1 text-[11px] uppercase tracking-[.14em] ${work.status === "for-sale" ? "text-red-accent" : "text-muted-foreground"}`}>{statusLabel(work.status, lang)}</p>}{work.cover && project === "all" && work.project && <button onClick={()=>openProject(work.category, work.project!)} className="mt-3 flex items-center gap-1 text-[11px] uppercase tracking-[.16em] transition-colors hover:text-red-accent">{t.more} · {parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}<ArrowUpRight className="size-3"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
+            <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div><h2 className="text-base font-medium">{work[lang]}</h2>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}{work.status && <p className={`mt-1 text-[11px] uppercase tracking-[.14em] ${(work.status === "for-sale" || work.status === "available") ? "text-red-accent" : "text-muted-foreground"}`}>{statusLabel(work.status, lang)}</p>}{work.cover && project === "all" && work.project && <button onClick={()=>openProject(work.category, work.project!)} className="mt-3 flex items-center gap-1 text-[11px] uppercase tracking-[.16em] transition-colors hover:text-red-accent">{t.more} · {parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}<ArrowUpRight className="size-3"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
         </div>
         {relatedPosts.length > 0 && (
@@ -317,7 +317,7 @@ function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: W
         <button onClick={() => go(1)} aria-label={c.next} data-tip={c.next} className="absolute right-1 z-10 grid size-11 place-items-center md:right-8"><ArrowRight className="size-6" /></button>
       </div>
       <div className="grid gap-4 px-5 py-5 md:grid-cols-[1fr_auto] md:items-end md:px-8">
-        <div data-font-block="captions"><h2 className="text-base font-medium md:text-lg">{w[lang]}</h2><p className="mt-1 max-w-xl text-xs opacity-70">{c.desc(w)}</p>{w.technique && <p className="mt-1 text-xs opacity-70">{w.technique}</p>}{w.status && <p className={`mt-1 text-[11px] uppercase tracking-[.14em] ${w.status === "for-sale" ? "text-red-accent" : "opacity-70"}`}>{statusLabel(w.status, lang)}</p>}</div>
+        <div data-font-block="captions"><h2 className="text-base font-medium md:text-lg">{w[lang]}</h2><p className="mt-1 max-w-xl text-xs opacity-70">{c.desc(w)}</p>{w.technique && <p className="mt-1 text-xs opacity-70">{w.technique}</p>}{w.status && <p className={`mt-1 text-[11px] uppercase tracking-[.14em] ${(w.status === "for-sale" || w.status === "available") ? "text-red-accent" : "opacity-70"}`}>{statusLabel(w.status, lang)}</p>}</div>
         <button type="button" onClick={() => onEnquire(w[lang])} className="flex w-fit items-center gap-2 border-b border-current pb-1 text-xs uppercase tracking-[.18em]">{c.buy}<ArrowUpRight className="size-4" /></button>
       </div>
     </div>
