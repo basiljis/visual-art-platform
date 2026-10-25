@@ -119,7 +119,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: "try{if(sessionStorage.getItem('dikunova-preloader'))document.documentElement.classList.add('no-preloader');else sessionStorage.setItem('dikunova-preloader','1')}catch(e){}" }} />
       </head>
       <body>
-        <LanguageProvider>{children}</LanguageProvider>
+        {children}
         <Scripts />
       </body>
     </html>
@@ -132,7 +132,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <TypographySite />
+      <LanguageProvider><TypographySite /></LanguageProvider>
     </QueryClientProvider>
   );
 }
