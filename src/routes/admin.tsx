@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Suspense, useEffect, useState, type ReactNode } from "react";
 import { TypographyPanel } from "@/components/admin/TypographyPanel";
+import { GalleryLayoutPanel } from "@/components/admin/GalleryLayoutPanel";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
 import { ArrowLeft, LogOut } from "lucide-react";
@@ -68,7 +69,7 @@ function AdminPage() {
       <nav className="mb-10 flex flex-wrap gap-x-6 gap-y-1 border-b border-border">
         {tabs.map(([k, l]) => <button key={k} onClick={() => setTab(k)} className={`-mb-px border-b pb-2 font-display text-lg transition-opacity md:text-2xl ${tab === k ? "border-red-accent opacity-100" : "border-transparent opacity-40 hover:opacity-100"}`}>{l}</button>)}
       </nav>
-      {tab === "categories" && <CategoriesPanel />}
+      {tab === "categories" && <><Suspense fallback={<p className="text-sm text-muted-foreground">Загрузка…</p>}><GalleryLayoutPanel /></Suspense><CategoriesPanel /></>}
       {tab === "works" && <WorksPanel />}
       {tab === "blog" && <BlogPanel />}
       {tab === "about" && <AboutPanel />}
