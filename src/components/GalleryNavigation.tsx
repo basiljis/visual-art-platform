@@ -18,8 +18,8 @@ export function GalleryNavigation({ placement, lang, categories, category, proje
   const items: Category[] = [{ key: "all", ru: "Все", en: "All", children: [] }, ...categories];
   const control = "h-auto min-h-8 whitespace-normal rounded-none p-0 text-left font-normal leading-relaxed hover:bg-transparent hover:text-red-accent";
   const toggleLabel = lang === "ru" ? (collapsed ? "Развернуть меню направлений" : "Свернуть меню направлений") : (collapsed ? "Expand practices menu" : "Collapse practices menu");
-  return <nav aria-label={label} data-font-block="filters" className={side ? `mb-10 min-w-0 border-y border-border py-5 md:sticky md:top-24 md:mb-0 md:max-h-[calc(100dvh-7rem)] md:overflow-y-auto md:border-y-0 ${collapsed ? "md:py-0" : "md:border-r md:pr-6"}` : "mb-16 border-y border-border py-5"}>
-    <div className={`flex items-center justify-between gap-2 ${side && collapsed ? "" : "mb-4"}`}>
+  return <nav aria-label={label} data-font-block="filters" className={side ? `mb-10 min-w-0 border-y border-border py-5 md:sticky md:top-24 md:mb-0 md:max-h-[calc(100dvh-7rem)] md:overflow-y-auto md:border-y-0 md:py-0 ${collapsed ? "" : "md:border-r md:pr-6"}` : "mb-16 border-y border-border py-5"}>
+    <div className={`flex items-center justify-between gap-2 ${side ? "md:h-4" : ""} ${side && collapsed ? "" : "mb-4"}`}>
       {(!side || !collapsed) && <p className="text-[11px] uppercase tracking-[.18em] text-muted-foreground">{label}</p>}
       {side && <Button variant="ghost" size="icon" onClick={onToggle} aria-label={toggleLabel} title={toggleLabel} aria-expanded={!collapsed} aria-controls="gallery-navigation-controls" className="size-8 shrink-0 rounded-none text-muted-foreground hover:bg-transparent hover:text-red-accent">{collapsed ? <ChevronRight strokeWidth={1} /> : <ChevronLeft strokeWidth={1} />}</Button>}
       {side && collapsed && <span className="text-[11px] uppercase text-muted-foreground md:hidden">{label}</span>}
