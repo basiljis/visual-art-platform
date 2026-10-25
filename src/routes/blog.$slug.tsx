@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { BlogShell } from "@/components/BlogShell";
+import { BlogArticleBody } from "@/components/BlogArticleBody";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { postQuery } from "@/lib/content.functions";
 import { htmlForDisplay, mediaUrl } from "@/lib/media";
@@ -63,7 +64,7 @@ function PostPage() {
       <article className="mx-auto max-w-3xl">
         <p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">{en ? "Blog" : "Блог"} / {localizedDate(post.date, lang)}</p>
         <h1 className="mt-4 font-display text-4xl leading-tight md:text-6xl">{localized(post.title, post.title_en, lang)}</h1>
-        <div className="post-body mt-10" dangerouslySetInnerHTML={{ __html: htmlForDisplay(localized(post.content_html, post.content_html_en, lang)) }} />
+        <BlogArticleBody key={`${slug}-${lang}`} html={htmlForDisplay(localized(post.content_html, post.content_html_en, lang))} />
         {(relatedTopics.length > 0 || relatedWorks.length > 0) && (
           <section className="mt-16 border-t border-border pt-10">
             {relatedTopics.length > 0 && (
