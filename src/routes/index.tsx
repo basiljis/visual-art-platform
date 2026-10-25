@@ -136,7 +136,7 @@ function Index() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
-      <div className="pointer-events-none fixed inset-0 z-[100] flex animate-preloader flex-col items-center justify-center overflow-hidden bg-ink text-paper" aria-hidden="true">
+      <div className="site-preloader pointer-events-none fixed inset-0 z-[100] flex animate-preloader flex-col items-center justify-center overflow-hidden bg-ink text-paper" aria-hidden="true">
         <div className="paper-grain absolute inset-0" />
         {/* Signature drawn stroke by stroke: an animated pen path reveals the original ink image */}
         <svg viewBox="0 0 400 800" className="relative h-56 w-56 md:h-72 md:w-72">

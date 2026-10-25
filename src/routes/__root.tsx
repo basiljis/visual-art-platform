@@ -110,9 +110,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: "try{if(sessionStorage.getItem('dikunova-preloader'))document.documentElement.classList.add('no-preloader');else sessionStorage.setItem('dikunova-preloader','1')}catch(e){}" }} />
       </head>
       <body>
         {children}
