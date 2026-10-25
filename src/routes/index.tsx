@@ -187,7 +187,7 @@ function Index() {
       </div>
 
       <section id="top" className="relative bg-portrait-paper pt-20 text-ink">
-        <div className="relative grid min-h-[min(740px,calc(85svh-5rem))] grid-cols-[30%_70%] md:grid-cols-[28%_72%]">
+        <div className="relative grid min-h-[calc(100dvh-5rem)] grid-cols-[30%_70%] md:grid-cols-[28%_72%]">
           <div className="relative overflow-hidden">
             {heroWork && <a href="#works" onClick={(e) => { e.preventDefault(); setViewer(heroIndex); }} aria-label={heroWork[lang]} className="absolute inset-0 block">
               <img src={heroWork.image} alt={heroWork[lang]} className="intro-portrait h-full w-full object-cover object-[65%_center]" />
