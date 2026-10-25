@@ -14,6 +14,7 @@ import type { AboutContent } from "@/lib/about";
 import portraitAsset from "@/assets/artist-about-photo.png.asset.json";
 import { ZoomImage, InteriorView, parseSize } from "@/components/ViewerStage";
 import { absoluteImage, breadcrumbs, pageUrl, visualArtwork } from "@/lib/seo";
+import { useLanguage, localized, localizedSize } from "@/lib/language";
 
 export const Route = createFileRoute("/")({
   head: ({ loaderData }: { loaderData?: { ogImage?: string | undefined; artwork?: { name: string; image?: string | undefined; technique?: string | undefined; year?: string | undefined } | undefined } | undefined }) => ({ meta: [
@@ -59,10 +60,10 @@ const statusLabels: Record<Lang, Record<string, string>> = {
   en: { available: "For sale", "for-sale": "For sale", sold: "Sold", private: "Private collection", "on-request": "On request" },
 };
 const statusLabel = (status: string, lang: Lang) => statusLabels[lang][status] ?? "";
-function buildGallery(data: { categories: CategoryRow[]; works: WorkRow[] }) {
+function buildGallery(data: { categories: CategoryRow[]; works: WorkRow[] }, lang: Lang) {
   const top = data.categories.filter((c) => !c.parent_key);
   const cats: Cat[] = top.map((c) => ({ key: c.key, ru: c.name_ru, en: c.name_en, noteRu: c.description_ru, noteEn: c.description_en, children: data.categories.filter((s) => s.parent_key === c.key).map((s) => ({ key: s.key, ru: s.name_ru, en: s.name_en })) }));
-  const works: Work[] = data.works.map((w) => ({ id: w.id, image: mediaUrl(w.image), category: w.category_key, project: w.project_key ?? undefined, cover: w.cover, hero: w.hero, ru: w.title_ru, en: w.title_en || w.title_ru, year: w.year, size: w.size, technique: w.technique ?? "", status: w.status ?? "" }));
+  const works: Work[] = data.works.map((w) => ({ id: w.id, image: mediaUrl(w.image), category: w.category_key, project: w.project_key ?? undefined, cover: w.cover, hero: w.hero, ru: w.title_ru, en: w.title_en || w.title_ru, year: w.year, size: localizedSize(w.size, lang), technique: localized(w.technique ?? "", w.technique_en, lang), status: w.status ?? "" }));
   return { cats, works };
 }
 const copy = {
@@ -72,7 +73,7 @@ const copy = {
 
 
 function Index() {
-  const [lang, setLang] = useState<Lang>("ru");
+  const { lang, setLang } = useLanguage();
   const [dark, setDark] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerNameVisible, setHeaderNameVisible] = useState(false);
@@ -89,7 +90,7 @@ function Index() {
   const [enquiry, setEnquiry] = useState<string | null>(null);
   const { data: gallery } = useSuspenseQuery(galleryQuery);
   const { data: posts } = useSuspenseQuery(postsQuery);
-  const { cats, works } = buildGallery(gallery);
+  const { cats, works } = buildGallery(gallery, lang);
   const heroWorks = works.map((w, i) => (w.hero ? i : -1)).filter((i) => i >= 0);
   if (!heroWorks.length && works.length) heroWorks.push(0);
   // Автопортрет тушью всегда первый в сменяющихся картинах
@@ -119,9 +120,7 @@ function Index() {
   }, []);
 
   useEffect(() => {
-    const savedLang = window.localStorage.getItem("dikunova-lang");
     const savedTheme = window.localStorage.getItem("dikunova-theme");
-    if (savedLang === "ru" || savedLang === "en") setLang(savedLang);
     setDark(savedTheme === "dark");
     setReady(true);
   }, []);
@@ -129,7 +128,6 @@ function Index() {
     document.documentElement.classList.toggle("dark", dark);
     if (ready) window.localStorage.setItem("dikunova-theme", dark ? "dark" : "light");
   }, [dark, ready]);
-  useEffect(() => { if (ready) window.localStorage.setItem("dikunova-lang", lang); }, [lang, ready]);
   // Переход из блога по тематике: /?category=key
   useEffect(() => {
     if (!search.category) return;
@@ -168,7 +166,7 @@ function Index() {
       </div>
 
       <header className={`fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center px-4 text-ink transition-colors duration-300 motion-reduce:transition-none md:px-8 ${headerNameVisible ? "bg-header-surface" : "bg-transparent"}`}>
-        <div className="flex items-center gap-4"><button aria-label={lang==="ru"?"Меню":"Menu"} data-tip={lang==="ru"?"Меню":"Menu"} onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">Menu</span></button></div>
+        <div className="flex items-center gap-4"><button aria-label={lang==="ru"?"Меню":"Menu"} data-tip={lang==="ru"?"Меню":"Menu"} onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">{lang === "ru" ? "Меню" : "Menu"}</span></button></div>
         <a href="#top" data-font-block="header" aria-hidden={!headerNameVisible} tabIndex={headerNameVisible ? 0 : -1} className={`whitespace-nowrap text-center font-display [-webkit-text-stroke:0.4px_currentColor] sm:[-webkit-text-stroke:0] text-[15px] tracking-[.1em] sm:text-lg sm:tracking-[.18em] transition-opacity duration-300 motion-reduce:transition-none ${headerNameVisible ? "visible opacity-100" : "invisible pointer-events-none opacity-0"}`}>{t.artist}<span className="hidden sm:inline"> <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.2em] opacity-60">artist</span></span></a>
         <div className="flex justify-end gap-1">
           <button onClick={() => setLang(lang === "ru" ? "en" : "ru")} className="h-9 w-10 text-xs font-semibold uppercase" aria-label={lang==="ru"?"Switch to English":"Переключить на русский"} data-tip={lang==="ru"?"Switch to English":"Переключить на русский"}>{lang}</button>
@@ -177,7 +175,7 @@ function Index() {
       </header>
 
       <div className={`fixed inset-0 z-[80] bg-ink text-paper transition-transform duration-700 ease-[cubic-bezier(.76,0,.24,1)] ${menuOpen ? "translate-y-0" : "-translate-y-full"}`}>
-        <div className="flex h-20 items-center justify-between border-b border-paper/20 px-5 md:px-8"><span className="text-xs uppercase tracking-[.2em]">Navigation</span><button onClick={() => setMenuOpen(false)} aria-label={lang==="ru"?"Закрыть меню":"Close menu"} data-tip={lang==="ru"?"Закрыть меню":"Close menu"} className="transition-colors duration-300 hover:text-red-accent"><X className="size-7"/></button></div>
+        <div className="flex h-20 items-center justify-between border-b border-paper/20 px-5 md:px-8"><span className="text-xs uppercase tracking-[.2em]">{lang === "ru" ? "Навигация" : "Navigation"}</span><button onClick={() => setMenuOpen(false)} aria-label={lang==="ru"?"Закрыть меню":"Close menu"} data-tip={lang==="ru"?"Закрыть меню":"Close menu"} className="transition-colors duration-300 hover:text-red-accent"><X className="size-7"/></button></div>
         <nav className="flex h-[calc(100%-5rem)] flex-col justify-between px-5 py-8 md:px-10">
           <div data-font-block="navigation" className="flex flex-col">
             {[t.works,t.about,t.contact].map((item, i) => <a key={item} href={i===0?"#works":i===1?"#about":"#contact"} onClick={() => setMenuOpen(false)} className="group flex items-center justify-between border-b border-paper/25 py-3 font-display text-[clamp(2.5rem,8vw,7.5rem)] leading-none transition-colors duration-300 hover:border-red-accent hover:text-red-accent"><span>{item}</span><ArrowUpRight className="size-8 text-red-accent opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:size-14"/></a>)}
@@ -294,13 +292,13 @@ function Index() {
           </article>)}
         </div>
         {relatedPosts.length > 0 && (
-          <div className="mx-auto mt-20 max-w-2xl">
-            <p className="text-[10px] uppercase tracking-[.18em] text-muted-foreground">{lang === "ru" ? "Статьи по теме" : "Related articles"}</p>
+          <div className="mt-20 border-t border-red-accent pt-8">
+            <div className="flex flex-wrap items-center justify-between gap-4"><h2 className="font-display text-3xl text-red-accent md:text-4xl">{lang === "ru" ? "Блог · Статьи по теме" : "Blog · Related articles"}</h2><Button asChild variant="outline" className="border-red-accent text-red-accent hover:bg-red-accent hover:text-background"><Link to="/blog">{lang === "ru" ? "Весь блог" : "All posts"}<ArrowUpRight className="size-4" /></Link></Button></div>
             <div className="mt-5 flex flex-col gap-3">
               {relatedPosts.map((p) => (
                 <Link key={p.slug} to="/blog/$slug" params={{ slug: p.slug }} className="group flex items-center justify-between gap-4 border-b border-border pb-3 transition-colors hover:border-red-accent hover:text-red-accent">
-                  <span className="font-display text-xl md:text-2xl">{p.title}</span>
-                  <ArrowUpRight className="size-4 shrink-0 opacity-40 transition-opacity group-hover:opacity-100" />
+                  <span className="font-display text-2xl md:text-3xl">{localized(p.title, p.title_en, lang)}</span>
+                  <ArrowUpRight className="size-6 shrink-0 text-red-accent transition-transform group-hover:translate-x-1" />
                 </Link>
               ))}
             </div>

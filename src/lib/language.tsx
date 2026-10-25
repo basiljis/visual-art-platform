@@ -10,7 +10,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 }
 export const useLanguage = () => useContext(LanguageContext);
 export const localized = (ru: string, en: string | undefined, lang: Language) => lang === "en" ? en || ru : ru;
-export const localizedSize = (value: string, lang: Language) => lang === "en" ? value.replace(/см/gi, "cm").replace(/мм/gi, "mm") : value;
+export const localizedSize = (value: string, lang: Language) => {
+  if (lang === "ru") return value;
+  const media: Record<string, string> = { "цветная литография": "Colour lithograph", "цв.литография": "Colour lithograph", "цв.ксилография": "Colour woodcut", литография: "Lithograph", бумага: "Paper", акварель: "Watercolour", пастель: "Pastel", сангина: "Sanguine", уголь: "Charcoal", сепия: "Sepia", холст: "Canvas", масло: "Oil", тушь: "Ink", см: "cm", мм: "mm" };
+  return value.replace(/цветная литография|цв\.литография|цв\.ксилография|литография|бумага|акварель|пастель|сангина|уголь|сепия|холст|масло|тушь|см|мм/gi, (word) => media[word.toLowerCase()] ?? word);
+};
 export function localizedDate(value: string, lang: Language) {
   if (lang === "ru") return value;
   const months: Record<string, string> = { января: "January", февраля: "February", марта: "March", апреля: "April", мая: "May", июня: "June", июля: "July", августа: "August", сентября: "September", октября: "October", ноября: "November", декабря: "December" };
