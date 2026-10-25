@@ -228,6 +228,12 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 .post-body blockquote { border-left: 1px solid var(--red-accent, currentColor); padding-left: 1.25rem; font-style: italic; color: var(--muted-foreground); }
 .post-body .ProseMirror-selectednode { outline: 2px solid var(--red-accent, currentColor); }
 
+/* Calendar publication markers remain visible in either site theme. */
+.blog-publication-day button { position: relative; color: var(--red-accent); font-weight: 700; }
+.blog-publication-day button::after { content: ""; position: absolute; bottom: 3px; width: 4px; height: 4px; border-radius: 50%; background: var(--red-accent); }
+.blog-selected-day button[data-selected-single="true"] { background: var(--red-accent); color: var(--color-paper); }
+.blog-selected-day button::after { background: var(--color-paper); }
+
 /* Rough paper texture for the preloader */
 .paper-grain {
   background-image:
