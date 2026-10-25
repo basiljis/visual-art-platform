@@ -193,7 +193,7 @@ function Index() {
               <img src={heroWork.image} alt={heroWork[lang]} className="intro-portrait h-full w-full -translate-x-[35%] translate-y-[14%] origin-[65%_35%] scale-[1.35] object-cover object-[65%_center] md:scale-[1.65]" />
             </a>}
           </div>
-          <div className="relative flex min-w-0 flex-col justify-center px-5 py-10 md:px-16 md:py-12 lg:px-24">
+          <div className="relative flex min-w-0 flex-col justify-center px-5 py-10 md:px-6 md:py-12 lg:px-8">
             <div className="mb-6">
               <span aria-hidden className="mb-5 block h-40 w-24 bg-sanguine md:h-56 md:w-36" style={{ WebkitMaskImage: `url(${signatureAsset.url})`, WebkitMaskSize: "contain", WebkitMaskRepeat: "no-repeat", WebkitMaskPosition: "center", maskImage: `url(${signatureAsset.url})`, maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center" }} />
               <h1 data-font-block="header" className="mb-5 font-sans text-3xl font-light leading-tight md:text-6xl">{lang === "ru" ? <>Наташа<br />Дикунова</> : <>Natasha<br />Dikunova</>}</h1>
