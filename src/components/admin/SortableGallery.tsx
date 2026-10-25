@@ -14,7 +14,7 @@ export function SortableGallery({ ids, disabled, onMove, children }: { ids: stri
 }
 
 export function SortableGalleryItem({ id, name, disabled, children, className = "" }: { id: string; name: string; disabled?: boolean; children: ReactNode; className?: string }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id, disabled });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id, disabled: disabled ?? false });
   return <div ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition }} className={`relative min-w-0 ${isDragging ? "z-20 opacity-60" : ""} ${className}`}>
     {!disabled && <Button type="button" variant="ghost" size="icon" {...attributes} {...listeners} aria-label={`Изменить порядок: ${name}`} title={`Переместить: ${name}`} className="absolute left-1 top-1 z-10 size-8 touch-none cursor-grab rounded-none bg-background/90 text-muted-foreground hover:text-red-accent active:cursor-grabbing"><GripVertical className="size-4" /></Button>}
     {children}
