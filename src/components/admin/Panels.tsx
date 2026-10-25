@@ -112,13 +112,13 @@ export function CategoriesPanel() {
   };
   const Row = ({ c, sub }: { c: CategoryRow; sub?: boolean }) => (
     <div className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-b border-border py-4 pl-10 ${sub ? "ml-6" : ""}`}>
-      <button onClick={() => setEdit(c)} className="min-w-0 text-left">
+      <button disabled={order.dirty || order.busy} onClick={() => setEdit(c)} className="min-w-0 text-left">
         <p className={sub ? "text-sm" : "font-display text-2xl"}>{sub && <span className="text-red-accent">/ </span>}{c.name_ru} <span className="text-xs text-muted-foreground">· {c.name_en}</span></p>
         {c.description_ru && <p className="mt-1 truncate text-xs text-muted-foreground">{c.description_ru}</p>}
       </button>
       <div className="flex items-center gap-4">
-        {!sub && <button onClick={() => setEdit({ parent_key: c.key, sort: rows.filter((r) => r.parent_key === c.key).length + 1 })} className={ghostBtn}><Plus className="size-3" />Подраздел</button>}
-        <button onClick={() => remove(c)} aria-label="Удалить" className="hover:text-red-accent"><Trash2 className="size-4" /></button>
+        {!sub && <button disabled={order.dirty || order.busy} onClick={() => setEdit({ parent_key: c.key, sort: rows.filter((r) => r.parent_key === c.key).length + 1 })} className={ghostBtn}><Plus className="size-3" />Подраздел</button>}
+        <button disabled={order.dirty || order.busy} onClick={() => remove(c)} aria-label="Удалить" className="hover:text-red-accent"><Trash2 className="size-4" /></button>
       </div>
     </div>
   );
@@ -204,14 +204,14 @@ export function WorksPanel() {
       <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
         {list.map((w) => (
           <SortableGalleryItem key={w.id} id={w.id} name={w.title_ru || "Без названия"} disabled={order.busy || filter === "all" || !!q} className="group">
-            <button onClick={() => setEdit(w)} className="relative block aspect-[4/5] w-full overflow-hidden bg-muted">
+            <button disabled={order.dirty || order.busy} onClick={() => setEdit(w)} className="relative block aspect-[4/5] w-full overflow-hidden bg-muted">
               <img src={mediaUrl(w.image)} alt={w.title_ru} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
               <span className="absolute left-2 top-2 flex gap-1">{w.hidden && <span className="bg-red-accent px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-background">скрыта</span>}{w.hero && <span className="bg-background px-1.5 py-0.5 text-[9px] uppercase tracking-wider">главная</span>}{w.cover && <span className="bg-background px-1.5 py-0.5 text-[9px] uppercase tracking-wider">обложка</span>}</span>
             </button>
             <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
               <div className="min-w-0"><p className="truncate text-sm">{w.title_ru || "Без названия"}</p><p className="truncate text-[11px] text-muted-foreground">{[w.year, w.size].filter(Boolean).join(" · ")}</p></div>
-              <button onClick={async () => { const { error } = await supabase.from("works").update({ hidden: !w.hidden }).eq("id", w.id); if (error) alert(error.message); else { reload(); inv(); } }} aria-label={w.hidden ? "Показать" : "Скрыть"} title={w.hidden ? "Показать на сайте" : "Скрыть с сайта"} className="opacity-40 hover:opacity-100">{w.hidden ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}</button>
-              <button onClick={() => remove(w)} aria-label="Удалить" className="opacity-40 hover:text-red-accent hover:opacity-100"><Trash2 className="size-3.5" /></button>
+              <button disabled={order.dirty || order.busy} onClick={async () => { const { error } = await supabase.from("works").update({ hidden: !w.hidden }).eq("id", w.id); if (error) alert(error.message); else { reload(); inv(); } }} aria-label={w.hidden ? "Показать" : "Скрыть"} title={w.hidden ? "Показать на сайте" : "Скрыть с сайта"} className="opacity-40 hover:opacity-100">{w.hidden ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}</button>
+              <button disabled={order.dirty || order.busy} onClick={() => remove(w)} aria-label="Удалить" className="opacity-40 hover:text-red-accent hover:opacity-100"><Trash2 className="size-3.5" /></button>
             </div>
           </SortableGalleryItem>
         ))}
