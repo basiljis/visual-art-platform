@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import type { MenuPlacement } from "@/lib/gallery-layout";
 
 type Item = { key: string; ru: string; en: string };
@@ -7,17 +7,24 @@ type Category = Item & { children: Item[] };
 type Props = {
   placement: MenuPlacement; lang: "ru" | "en"; categories: Category[];
   category: string; project: string; query: string;
+  collapsed: boolean; onToggle: () => void;
   onCategory: (key: string) => void; onProject: (parent: string, key: string) => void; onQuery: (value: string) => void;
 };
 
-export function GalleryNavigation({ placement, lang, categories, category, project, query, onCategory, onProject, onQuery }: Props) {
+export function GalleryNavigation({ placement, lang, categories, category, project, query, collapsed, onToggle, onCategory, onProject, onQuery }: Props) {
   const side = placement === "side";
   const current = categories.find(c => c.key === category);
   const label = lang === "ru" ? "Направления" : "Practices";
   const items: Category[] = [{ key: "all", ru: "Все", en: "All", children: [] }, ...categories];
   const control = "h-auto min-h-8 whitespace-normal rounded-none p-0 text-left font-normal leading-relaxed hover:bg-transparent hover:text-red-accent";
-  return <nav aria-label={label} data-font-block="filters" className={side ? "mb-10 min-w-0 border-y border-border py-5 md:sticky md:top-24 md:mb-0 md:max-h-[calc(100dvh-7rem)] md:overflow-y-auto md:border-y-0 md:border-r md:pr-6" : "mb-16 border-y border-border py-5"}>
-    <p className="mb-4 text-[11px] uppercase tracking-[.18em] text-muted-foreground">{label}</p>
+  const toggleLabel = lang === "ru" ? (collapsed ? "Развернуть меню направлений" : "Свернуть меню направлений") : (collapsed ? "Expand practices menu" : "Collapse practices menu");
+  return <nav aria-label={label} data-font-block="filters" className={side ? `mb-10 min-w-0 border-y border-border py-5 md:sticky md:top-24 md:mb-0 md:max-h-[calc(100dvh-7rem)] md:overflow-y-auto md:border-y-0 md:py-0 ${collapsed ? "" : "md:border-r md:pr-6"}` : "mb-16 border-y border-border py-5"}>
+    <div className={`flex items-center justify-between gap-2 ${side ? "md:h-4" : ""} ${side && collapsed ? "" : "mb-4"}`}>
+      {(!side || !collapsed) && <p className="text-[11px] uppercase tracking-[.18em] text-muted-foreground">{label}</p>}
+      {side && <Button variant="ghost" size="icon" onClick={onToggle} aria-label={toggleLabel} title={toggleLabel} aria-expanded={!collapsed} aria-controls="gallery-navigation-controls" className="size-8 shrink-0 rounded-none text-muted-foreground hover:bg-transparent hover:text-red-accent">{collapsed ? <ChevronRight strokeWidth={1} /> : <ChevronLeft strokeWidth={1} />}</Button>}
+      {side && collapsed && <span className="text-[11px] uppercase text-muted-foreground md:hidden">{label}</span>}
+    </div>
+    <div id="gallery-navigation-controls" hidden={side && collapsed}>
     <div className={side ? "flex flex-col gap-6" : "flex flex-wrap items-center justify-between gap-4"}>
       <div className={side ? "flex flex-wrap gap-x-6 gap-y-2 md:flex-col md:items-stretch md:gap-1" : "flex flex-wrap gap-x-6 gap-y-3"}>
         {items.map(cat => <div key={cat.key} className={side ? "group/sub relative min-w-0" : "group/sub relative"}>
@@ -32,5 +39,6 @@ export function GalleryNavigation({ placement, lang, categories, category, proje
       </label>
     </div>
     {!!current?.children.length && <div className={`mt-5 flex flex-wrap gap-x-5 gap-y-3 border-t border-border pt-4 ${side ? "md:hidden" : ""}`}>{[{ key: "all", ru: "Все проекты", en: "All projects" }, ...current.children].map(p => <Button key={p.key} variant="ghost" aria-pressed={project === p.key} onClick={() => onProject(category, p.key)} className={`${control} text-xs ${project === p.key ? "text-red-accent" : "text-muted-foreground"}`}>{p[lang]}</Button>)}</div>}
+    </div>
   </nav>;
 }

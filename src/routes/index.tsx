@@ -1,4 +1,5 @@
 import { GalleryNavigation } from "@/components/GalleryNavigation";
+import { HomeCarousel } from "@/components/HomeCarousel";
 import { galleryLayoutQuery } from "@/lib/gallery-layout.functions";
 import { EnquiryModal } from "@/components/EnquiryModal";
 import { LegalModal } from "@/components/LegalModal";
@@ -78,6 +79,7 @@ function Index() {
   const { lang, setLang } = useLanguage();
   const [dark, setDark] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [galleryMenuCollapsed, setGalleryMenuCollapsed] = useState(false);
   const [headerNameVisible, setHeaderNameVisible] = useState(false);
   const search = Route.useSearch();
   const [category, setCategory] = useState<Category>(search.category ?? "all");
@@ -94,6 +96,8 @@ function Index() {
   const { data: posts } = useSuspenseQuery(postsQuery);
   const { data: galleryLayout } = useSuspenseQuery(galleryLayoutQuery);
   const sideMenu = galleryLayout.menuPlacement === "side";
+  const carouselHome = galleryLayout.homeDesign === "carousel";
+  const showHeaderName = headerNameVisible || carouselHome;
   const { cats, works } = buildGallery(gallery, lang);
   const heroWorks = works.map((w, i) => (w.hero ? i : -1)).filter((i) => i >= 0);
   if (!heroWorks.length && works.length) heroWorks.push(0);
@@ -169,9 +173,9 @@ function Index() {
         <p data-font-block="preloader" className="relative mt-6 font-display text-lg tracking-[.18em]">{t.artist} <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.24em] opacity-60">artist</span></p>
       </div>
 
-      <header className={`fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center px-4 text-ink transition-colors duration-300 motion-reduce:transition-none md:px-8 ${headerNameVisible ? "bg-header-surface" : "bg-transparent"}`}>
+      <header className={`fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center px-4 text-ink transition-colors duration-300 motion-reduce:transition-none md:px-8 ${showHeaderName ? "bg-header-surface" : "bg-transparent"}`}>
         <div className="flex items-center gap-4"><button aria-label={lang==="ru"?"Меню":"Menu"} data-tip={lang==="ru"?"Меню":"Menu"} onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">{lang === "ru" ? "Меню" : "Menu"}</span></button></div>
-        <a href="#top" data-font-block="header" aria-hidden={!headerNameVisible} tabIndex={headerNameVisible ? 0 : -1} className={`whitespace-nowrap text-center font-display [-webkit-text-stroke:0.4px_currentColor] sm:[-webkit-text-stroke:0] text-[15px] tracking-[.1em] sm:text-lg sm:tracking-[.18em] transition-opacity duration-300 motion-reduce:transition-none ${headerNameVisible ? "visible opacity-100" : "invisible pointer-events-none opacity-0"}`}>{t.artist}<span className="hidden sm:inline"> <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.2em] opacity-60">artist</span></span></a>
+        <a href="#top" data-font-block="header" aria-hidden={!showHeaderName} tabIndex={showHeaderName ? 0 : -1} className={`whitespace-nowrap text-center font-display [-webkit-text-stroke:0.4px_currentColor] sm:[-webkit-text-stroke:0] text-[15px] tracking-[.1em] sm:text-lg sm:tracking-[.18em] transition-opacity duration-300 motion-reduce:transition-none ${showHeaderName ? "visible opacity-100" : "invisible pointer-events-none opacity-0"}`}>{t.artist}<span className="hidden sm:inline"> <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.2em] opacity-60">artist</span></span></a>
         <div className="flex justify-end gap-1">
           <button onClick={() => setLang(lang === "ru" ? "en" : "ru")} className="h-9 w-10 text-xs font-semibold uppercase" aria-label={lang==="ru"?"Switch to English":"Переключить на русский"} data-tip={lang==="ru"?"Switch to English":"Переключить на русский"}>{lang}</button>
           <button onClick={() => setDark(!dark)} className="grid size-9 place-items-center" aria-label={lang==="ru"?(dark?"Светлая тема":"Тёмная тема"):(dark?"Light theme":"Dark theme")} data-tip={lang==="ru"?(dark?"Светлая тема":"Тёмная тема"):(dark?"Light theme":"Dark theme")}>{dark ? <Sun className="size-4"/> : <Moon className="size-4"/>}</button>
@@ -189,7 +193,7 @@ function Index() {
         </nav>
       </div>
 
-      <section id="top" className="relative bg-portrait-paper text-ink">
+      {carouselHome ? <HomeCarousel slides={heroWorks.flatMap(index => { const work = works[index]; return work ? [{ image: work.image, title: work[lang], year: work.year, index }] : []; })} lang={lang} onOpen={setViewer} /> : <section id="top" data-home-design="portrait" className="relative bg-portrait-paper text-ink">
         <div className="relative grid min-h-dvh grid-cols-[30%_70%] md:grid-cols-[38%_62%]">
           <div className="relative overflow-hidden">
             {heroWork && <a href="#works" onClick={(e) => { e.preventDefault(); setViewer(heroIndex); }} aria-label={heroWork[lang]} className="absolute inset-x-0 bottom-0 top-20 block overflow-hidden">
@@ -205,12 +209,12 @@ function Index() {
             <a href="#works" data-font-block="body" onClick={(e) => { const el = document.getElementById("works"); if (!el) return; e.preventDefault(); const y = el.getBoundingClientRect().top + window.scrollY - 64; if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) window.scrollTo(0, y); else slowScroll(y); }} className="flex w-fit items-center gap-3 border-b border-current pb-1 text-xs uppercase tracking-[.18em] hover:text-red-accent">{t.all}<ArrowDown className="size-4"/></a>
           </div>
         </div>
-      </section>
+      </section>}
 
       <section id="works" className="border-t border-border px-5 pb-20 pt-8 md:px-8 md:pb-28 md:pt-10">
         <div className="mb-14 flex items-end justify-between gap-6"><div><p data-font-block="body" className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.breadcrumb}</p><h1 className="font-display text-5xl md:text-8xl">{t.works}</h1></div><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
-        <div data-gallery-menu={galleryLayout.menuPlacement} className={sideMenu ? "grid items-start gap-x-8 md:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-10" : ""}>
-          <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} onCategory={(key) => { setCategory(key); setProject("all"); }} onProject={openProject} onQuery={setQuery} />
+        <div data-gallery-menu={galleryLayout.menuPlacement} className={sideMenu ? `grid items-start ${galleryMenuCollapsed ? "gap-x-4 md:grid-cols-[2.5rem_minmax(0,1fr)]" : "gap-x-8 md:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-10"}` : ""}>
+          <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} collapsed={galleryMenuCollapsed} onToggle={() => setGalleryMenuCollapsed(value => !value)} onCategory={(key) => { setCategory(key); setProject("all"); }} onProject={openProject} onQuery={setQuery} />
           <div className="min-w-0">
         {q && visible.length === 0 && (
           <div className="mx-auto max-w-md border-y border-border py-14 text-center">
@@ -268,7 +272,7 @@ function Index() {
             </div>
           );
         })()}
-        <div className={`grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 ${sideMenu ? "xl:grid-cols-3" : "lg:grid-cols-3"}`}>
+        <div className={`grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 ${sideMenu && !galleryMenuCollapsed ? "xl:grid-cols-3" : "lg:grid-cols-3"}`}>
           {visible.map((work,i)=><article key={`${work.image}-${i}`} >
             <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]"/></button><TooltipProvider delayDuration={200}><Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 place-items-center rounded-none bg-background/90 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-red-accent hover:text-background" aria-label={t.buy}><ArrowUpRight className="size-5"/></Button></TooltipTrigger><TooltipContent side="top" sideOffset={8}>{t.buy}</TooltipContent></Tooltip></TooltipProvider></div>
             <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div>{work.cover && project === "all" && work.project && <p className="mb-1 text-[11px] uppercase tracking-[.16em] text-muted-foreground"><span className="text-red-accent">/ </span>{parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}</p>}<h2 className="text-base font-medium">{work[lang]}</h2>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}{work.status && <p className={`mt-1 text-[11px] uppercase tracking-[.14em] ${(work.status === "for-sale" || work.status === "available") ? "text-red-accent" : "text-muted-foreground"}`}>{statusLabel(work.status, lang)}</p>}{work.cover && project === "all" && work.project && <button onClick={()=>openProject(work.category, work.project!)} className="mt-4 inline-flex items-center gap-2 border border-foreground px-3 py-2 text-left text-[11px] font-medium uppercase tracking-[.14em] transition-colors hover:border-red-accent hover:bg-red-accent hover:text-background"><span className="text-red-accent">/</span>{t.more}<ArrowUpRight className="size-3.5 shrink-0"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
