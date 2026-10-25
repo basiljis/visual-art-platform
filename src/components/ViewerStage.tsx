@@ -1,4 +1,8 @@
 import roomImg from "@/assets/interior-room.jpg";
+import diningImg from "@/assets/interior-dining.jpg";
+import consoleImg from "@/assets/interior-console.jpg";
+import { Button } from "@/components/ui/button";
+import { interiorGeometry, placeArtwork } from "@/lib/interior-layout";
 import { useEffect, useRef, useState } from "react";
 
 const MIN = 1, MAX = 5;
@@ -65,20 +69,42 @@ export function ZoomImage({ src, alt, resetKey }: { src: string; alt: string; re
   );
 }
 
-/** The work hung over a 260 cm sofa in a real room photo, to scale. */
-const IMG_W = 1600, IMG_H = 1008, PX_PER_CM = 1275 / 260, SOFA_TOP = 585, SOFA_CX = 832;
+const scenes = [
+  { key: "sofa", image: roomImg, ru: "Гостиная", en: "Living room" },
+  { key: "dining", image: diningImg, ru: "Столовая", en: "Dining room" },
+  { key: "console", image: consoleImg, ru: "Консоль", en: "Console" },
+] as const;
 export function InteriorView({ src, alt, size, lang }: { src: string; alt: string; size: { w: number; h: number }; lang: "ru" | "en" }) {
-  const w = size.w * PX_PER_CM, h = size.h * PX_PER_CM;
-  const bottom = Math.max(SOFA_TOP - 20 * PX_PER_CM, Math.min(SOFA_TOP + 40, h + 30));
-  const top = bottom - h;
+  const [selected, setSelected] = useState(0);
+  const [natural, setNatural] = useState<{ src: string; aspect: number } | null>(null);
+  const host = useRef<HTMLDivElement>(null);
+  const [bounds, setBounds] = useState({ width: 0, height: 0 });
+  useEffect(() => {
+    const el = host.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry) setBounds({ width: entry.contentRect.width, height: entry.contentRect.height });
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  const scene = scenes[selected] ?? scenes[0];
+  const geometry = interiorGeometry[scene.key];
+  const box = placeArtwork(geometry, size, natural?.src === src ? natural.aspect : size.w / size.h);
+  const sceneWidth = Math.min(bounds.width, bounds.height * geometry.width / geometry.height);
   const pct = (v: number, of: number) => `${(v / of) * 100}%`;
   return (
-    <div className="flex h-full w-full items-center justify-center p-2">
-      <div className="relative w-[min(100%,calc((100vh-14rem)*1600/1008))] overflow-hidden shadow-2xl" style={{ aspectRatio: `${IMG_W}/${IMG_H}` }}>
-        <img src={roomImg} alt="" width={IMG_W} height={IMG_H} className="absolute inset-0 h-full w-full object-cover" />
-        <img src={src} alt={alt} className="absolute object-cover shadow-[4px_10px_18px_-6px_color-mix(in_oklab,var(--color-ink)_55%,transparent)]"
-          style={{ width: pct(w, IMG_W), height: pct(h, IMG_H), left: pct(SOFA_CX - w / 2, IMG_W), top: pct(top, IMG_H) }} />
-        <p className="absolute left-3 top-3 bg-paper/80 px-2 py-1 text-[11px] uppercase tracking-[.16em] text-ink">{size.h} × {size.w} {lang === "ru" ? "см · диван 260 см" : "cm · sofa 260 cm"}</p>
+    <div className="flex h-full min-h-0 w-full flex-col gap-3 p-2">
+      <div role="group" aria-label={lang === "ru" ? "Интерьер" : "Interior"} className="flex shrink-0 flex-wrap justify-center gap-2">
+        {scenes.map((item, index) => <Button key={item.key} variant="ghost" size="sm" aria-pressed={selected === index} onClick={() => setSelected(index)} className={`h-9 rounded-none border-b px-3 text-xs hover:text-red-accent ${selected === index ? "border-red-accent text-red-accent" : "border-transparent text-current"}`}>{item[lang]}</Button>)}
+      </div>
+      <div ref={host} className="flex min-h-0 flex-1 items-center justify-center">
+      <div data-interior-scene={scene.key} className="relative max-w-full overflow-hidden" style={{ width: sceneWidth || "100%", aspectRatio: `${geometry.width}/${geometry.height}` }}>
+        <img src={scene.image} alt="" loading="lazy" width={1600} height={1008} className="absolute inset-0 h-full w-full object-contain" />
+        <img src={src} alt={alt} data-interior-artwork onLoad={(e) => { const img = e.currentTarget; if (img.naturalHeight) setNatural({ src, aspect: img.naturalWidth / img.naturalHeight }); }} className="absolute object-contain shadow-interior-art"
+          style={{ width: pct(box.width, geometry.width), height: pct(box.height, geometry.height), left: pct(box.left, geometry.width), top: pct(box.top, geometry.height) }} />
+        <p className="absolute bottom-2 left-2 max-w-[calc(100%-1rem)] bg-paper/80 px-2 py-1 text-[10px] text-ink">{size.h} × {size.w} {lang === "ru" ? "см" : "cm"}{box.scale < 0.999 ? (lang === "ru" ? " · уменьшенный масштаб" : " · reduced scale") : ""}</p>
+      </div>
       </div>
     </div>
   );
