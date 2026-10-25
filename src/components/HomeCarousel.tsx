@@ -22,9 +22,9 @@ export function HomeCarousel({ slides, lang, onOpen }: { slides: Slide[]; lang: 
           </Button>
         </CarouselItem>)}
       </CarouselContent>
-      <div className="grid min-h-28 grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-t border-border px-5 py-5 md:px-8">
+      <div className="grid min-h-28 grid-cols-1 items-center gap-3 sm:grid-cols-[minmax(0,1fr)_auto] border-t border-border px-5 py-5 md:px-8">
         <div data-font-block="captions" className="min-w-0"><h1 className="text-base font-medium md:text-xl">{slides[selected]?.title}</h1><p className="mt-1 text-xs text-muted-foreground">{slides[selected]?.year}</p></div>
-        <div className="flex shrink-0 items-center gap-2"><Button variant="ghost" size="icon" disabled={slides.length < 2} onClick={() => api?.scrollPrev()} aria-label={lang === "ru" ? "Предыдущая картина" : "Previous painting"} className="rounded-none hover:bg-transparent hover:text-red-accent"><ArrowLeft strokeWidth={1} /></Button><span className="text-xs tabular-nums text-muted-foreground">{selected + 1} / {slides.length}</span><Button variant="ghost" size="icon" disabled={slides.length < 2} onClick={() => api?.scrollNext()} aria-label={lang === "ru" ? "Следующая картина" : "Next painting"} className="rounded-none hover:bg-transparent hover:text-red-accent"><ArrowRight strokeWidth={1} /></Button></div>
+        <div className="flex shrink-0 items-center gap-2 pr-12"><Button variant="ghost" size="icon" disabled={slides.length < 2} onClick={() => api?.scrollPrev()} aria-label={lang === "ru" ? "Предыдущая картина" : "Previous painting"} className="rounded-none hover:bg-transparent hover:text-red-accent"><ArrowLeft strokeWidth={1} /></Button><span className="text-xs tabular-nums text-muted-foreground">{selected + 1} / {slides.length}</span><Button variant="ghost" size="icon" disabled={slides.length < 2} onClick={() => api?.scrollNext()} aria-label={lang === "ru" ? "Следующая картина" : "Next painting"} className="rounded-none hover:bg-transparent hover:text-red-accent"><ArrowRight strokeWidth={1} /></Button></div>
       </div>
     </Carousel>
     <a href="#works" className="mx-5 mb-6 inline-flex items-center gap-3 border-b border-current pb-1 text-xs uppercase hover:text-red-accent md:mx-8">{lang === "ru" ? "Все работы" : "All works"}<ArrowDown className="size-4" /></a>
