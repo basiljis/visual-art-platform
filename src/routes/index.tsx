@@ -191,13 +191,13 @@ function Index() {
         <div className="relative grid min-h-dvh grid-cols-[30%_70%] md:grid-cols-[38%_62%]">
           <div className="relative overflow-hidden">
             {heroWork && <a href="#works" onClick={(e) => { e.preventDefault(); setViewer(heroIndex); }} aria-label={heroWork[lang]} className="absolute inset-x-0 bottom-0 top-20 block overflow-hidden">
-              <img src={heroWork.image} alt={heroWork[lang]} className="intro-portrait h-full w-full -translate-x-[35%] translate-y-[14%] origin-[65%_35%] scale-[1.35] object-cover object-[65%_center] md:scale-[1.65]" />
+              <img src={heroWork.image} alt={heroWork[lang]} className="intro-portrait h-full w-full -translate-x-[35%] translate-y-[18%] origin-[65%_35%] scale-[1.35] object-cover object-[65%_center] md:scale-[1.65]" />
             </a>}
           </div>
-          <div className="relative flex min-w-0 flex-col justify-center px-5 py-10 md:px-6 md:py-12 lg:px-8">
+          <div className="relative flex min-w-0 flex-col justify-center px-5 py-10 md:-ml-8 md:px-6 md:py-12 lg:px-8">
             <div className="mb-6">
               <span aria-hidden className="mb-5 block h-40 w-24 bg-sanguine md:h-56 md:w-36" style={{ WebkitMaskImage: `url(${signatureAsset.url})`, WebkitMaskSize: "contain", WebkitMaskRepeat: "no-repeat", WebkitMaskPosition: "center", maskImage: `url(${signatureAsset.url})`, maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center" }} />
-              <h1 data-font-block="header" className="mb-5 font-sans text-3xl font-light leading-tight md:text-6xl">{lang === "ru" ? <>Наташа<br />Дикунова</> : <>Natasha<br />Dikunova</>}</h1>
+              <h1 data-font-block="header" className="mb-5 font-sans text-3xl font-light leading-tight md:text-6xl">{lang === "ru" ? "Наташа" : "Natasha"}<br /><span className="flex flex-wrap items-baseline gap-x-4 gap-y-2"><span>{lang === "ru" ? "Дикунова" : "Dikunova"}</span><span className="whitespace-nowrap text-sm font-normal md:text-lg"><span className="text-red-accent">/</span> artist</span></span></h1>
               <p data-font-block="intro" className="max-w-lg text-base leading-relaxed md:text-2xl">{t.intro}</p>
             </div>
             <a href="#works" data-font-block="body" onClick={(e) => { const el = document.getElementById("works"); if (!el) return; e.preventDefault(); const y = el.getBoundingClientRect().top + window.scrollY - 64; if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) window.scrollTo(0, y); else slowScroll(y); }} className="flex w-fit items-center gap-3 border-b border-current pb-1 text-xs uppercase tracking-[.18em] hover:text-red-accent">{t.all}<ArrowDown className="size-4"/></a>
