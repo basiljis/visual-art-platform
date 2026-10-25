@@ -1,0 +1,3 @@
+ALTER TABLE public.blog_posts ADD COLUMN IF NOT EXISTS title_en text NOT NULL DEFAULT '', ADD COLUMN IF NOT EXISTS excerpt_en text NOT NULL DEFAULT '', ADD COLUMN IF NOT EXISTS content_html_en text NOT NULL DEFAULT '';
+ALTER TABLE public.works ADD COLUMN IF NOT EXISTS technique_en text NOT NULL DEFAULT '';
+ALTER TABLE public.news ADD COLUMN IF NOT EXISTS event_date_en text NOT NULL DEFAULT '';

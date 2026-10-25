@@ -1,9 +1,12 @@
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { useLanguage } from "@/lib/language";
 import { subscribeToBlog } from "@/lib/subscribe.functions";
 
 export function SubscribeForm() {
+  const { lang } = useLanguage();
+  const en = lang === "en";
   const subscribe = useServerFn(subscribeToBlog);
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
@@ -22,19 +25,19 @@ export function SubscribeForm() {
 
   return (
     <section className="mt-20 border-t border-border pt-10">
-      <p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">Подписка</p>
-      <h2 className="mt-3 font-display text-3xl md:text-4xl">Подписаться на блог</h2>
-      <p className="mt-2 max-w-md text-sm text-muted-foreground">Оставьте почту, чтобы узнавать о новых публикациях, выставках и проектах.</p>
+      <p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">{en ? "Newsletter" : "Подписка"}</p>
+      <h2 className="mt-3 font-display text-3xl md:text-4xl">{en ? "Subscribe to the blog" : "Подписаться на блог"}</h2>
+      <p className="mt-2 max-w-md text-sm text-muted-foreground">{en ? "Leave your email to hear about new posts, exhibitions and projects." : "Оставьте почту, чтобы узнавать о новых публикациях, выставках и проектах."}</p>
       {state === "done" ? (
-        <p className="mt-6 text-base">Спасибо! Вы подписаны.</p>
+        <p className="mt-6 text-base">{en ? "Thank you! You are subscribed." : "Спасибо! Вы подписаны."}</p>
       ) : (
         <form onSubmit={onSubmit} className="mt-6 flex max-w-lg items-end gap-3 border-b border-foreground">
           <label className="sr-only" htmlFor="subscribe-email">E-mail</label>
           <input id="subscribe-email" type="email" required maxLength={254} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="min-w-0 flex-1 bg-transparent py-3 text-base outline-none placeholder:text-muted-foreground" />
-          <button type="submit" disabled={state === "sending"} aria-label="Подписаться" className="flex shrink-0 items-center gap-2 py-3 text-xs uppercase tracking-[.18em] transition-colors hover:text-red-accent disabled:opacity-50">{state === "sending" ? "…" : "Подписаться"}<ArrowRight className="size-4" /></button>
+          <button type="submit" disabled={state === "sending"} aria-label={en ? "Subscribe" : "Подписаться"} className="flex shrink-0 items-center gap-2 py-3 text-xs uppercase tracking-[.18em] transition-colors hover:text-red-accent disabled:opacity-50">{state === "sending" ? "…" : en ? "Subscribe" : "Подписаться"}<ArrowRight className="size-4" /></button>
         </form>
       )}
-      {state === "error" && <p className="mt-3 text-sm text-red-accent">Не удалось подписаться. Проверьте адрес и попробуйте ещё раз.</p>}
+      {state === "error" && <p className="mt-3 text-sm text-red-accent">{en ? "Could not subscribe. Check your email address and try again." : "Не удалось подписаться. Проверьте адрес и попробуйте ещё раз."}</p>}
     </section>
   );
 }

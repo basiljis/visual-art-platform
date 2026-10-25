@@ -6,6 +6,7 @@ import { mediaUrl } from "@/lib/media";
 import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { SubscribeForm } from "@/components/SubscribeForm";
+import { useLanguage, localized, localizedDate } from "@/lib/language";
 import { breadcrumbs, pageUrl } from "@/lib/seo";
 
 export const Route = createFileRoute("/blog/")({
@@ -25,37 +26,44 @@ export const Route = createFileRoute("/blog/")({
     ])) }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),
-  errorComponent: () => <BlogShell back={{ to: "/", label: "Главная" }}><p>Не удалось загрузить блог.</p></BlogShell>,
+  errorComponent: BlogError,
   component: BlogIndex,
 });
 
+function BlogError() {
+  const { lang } = useLanguage();
+  return <BlogShell back={{ to: "/", label: "Главная" }}><p>{lang === "en" ? "Could not load the blog." : "Не удалось загрузить блог."}</p></BlogShell>;
+}
+
 function BlogIndex() {
+  const { lang } = useLanguage();
+  const en = lang === "en";
   const { data: allPosts } = useSuspenseQuery(postsQuery);
   const [q, setQ] = useState("");
   const needle = q.trim().toLowerCase();
-  const blogPosts = needle ? allPosts.filter((p) => `${p.title} ${p.excerpt} ${p.date}`.toLowerCase().includes(needle)) : allPosts;
+  const blogPosts = needle ? allPosts.filter((p) => `${localized(p.title, p.title_en, lang)} ${localized(p.excerpt, p.excerpt_en, lang)} ${localizedDate(p.date, lang)}`.toLowerCase().includes(needle)) : allPosts;
   return (
     <BlogShell back={{ to: "/", label: "Главная" }}>
-      <p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">Главная / Блог</p>
+      <p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">{en ? "Home / Blog" : "Главная / Блог"}</p>
       <div className="mt-4 flex items-end justify-between border-b border-border pb-8">
-        <h1 className="font-display text-5xl md:text-8xl">Блог</h1>
+        <h1 className="font-display text-5xl md:text-8xl">{en ? "Blog" : "Блог"}</h1>
         <span className="text-sm text-muted-foreground">{blogPosts.length}</span>
       </div>
       <label className="mt-8 flex max-w-sm items-center gap-3 border-b border-border pb-2 focus-within:border-foreground">
         <Search className="size-4 shrink-0 text-muted-foreground" />
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Поиск по блогу" aria-label="Поиск по блогу" className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
-        {q && <button onClick={() => setQ("")} aria-label="Очистить поиск"><X className="size-4" /></button>}
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={en ? "Search the blog" : "Поиск по блогу"} aria-label={en ? "Search the blog" : "Поиск по блогу"} className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
+        {q && <button onClick={() => setQ("")} aria-label={en ? "Clear search" : "Очистить поиск"}><X className="size-4" /></button>}
       </label>
-      {!blogPosts.length && <div className="py-16 text-center"><p className="text-sm text-muted-foreground">Ничего не найдено</p><button onClick={() => setQ("")} className="mt-4 border-b border-foreground pb-0.5 text-xs uppercase tracking-[.18em]">Сбросить поиск</button></div>}
+      {!blogPosts.length && <div className="py-16 text-center"><p className="text-sm text-muted-foreground">{en ? "Nothing found" : "Ничего не найдено"}</p><button onClick={() => setQ("")} className="mt-4 border-b border-foreground pb-0.5 text-xs uppercase tracking-[.18em]">{en ? "Reset search" : "Сбросить поиск"}</button></div>}
       <div className="mt-12 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
         {blogPosts.map((p) => (
           <Link key={p.slug} to="/blog/$slug" params={{ slug: p.slug }} className="group block">
             <div className="aspect-[4/3] overflow-hidden bg-muted">
-              {p.cover ? <img src={mediaUrl(p.cover)} alt={p.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" /> : <div className="grid h-full place-items-center font-display text-3xl text-muted-foreground">ДН</div>}
+              {p.cover ? <img src={mediaUrl(p.cover)} alt={localized(p.title, p.title_en, lang)} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" /> : <div className="grid h-full place-items-center font-display text-3xl text-muted-foreground">{en ? "ND" : "ДН"}</div>}
             </div>
-            <p className="mt-4 text-[10px] uppercase tracking-[.2em] text-muted-foreground">{p.date}</p>
-            <h2 className="mt-2 text-base font-medium md:text-lg">{p.title}</h2>
-            {p.excerpt && <p className="mt-1 text-sm text-muted-foreground">{p.excerpt}</p>}
+            <p className="mt-4 text-[10px] uppercase tracking-[.2em] text-muted-foreground">{localizedDate(p.date, lang)}</p>
+            <h2 className="mt-2 text-base font-medium md:text-lg">{localized(p.title, p.title_en, lang)}</h2>
+            {p.excerpt && <p className="mt-1 text-sm text-muted-foreground">{localized(p.excerpt, p.excerpt_en, lang)}</p>}
           </Link>
         ))}
       </div>

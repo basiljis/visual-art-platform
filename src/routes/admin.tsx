@@ -6,6 +6,7 @@ import type { Session } from "@supabase/supabase-js";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { NewsPanel } from "@/components/admin/NewsPanel";
+import { AdminHints } from "@/components/admin/AdminHints";
 import { CategoriesPanel, WorksPanel, BlogPanel, EnquiriesPanel, SubscribersPanel, AboutPanel, field, label, primaryBtn } from "@/components/admin/Panels";
 
 export const Route = createFileRoute("/admin")({
@@ -25,14 +26,14 @@ export const Route = createFileRoute("/admin")({
 
 function Shell({ children, right }: { children: ReactNode; right?: ReactNode }) {
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <AdminHints><main className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur md:px-8">
         <Link to="/" className="flex items-center gap-2 text-xs uppercase tracking-[.18em] hover:text-red-accent"><ArrowLeft className="size-4" />Сайт</Link>
         <p className="font-display text-sm tracking-[.16em] sm:text-base">ДИКУНОВА <span className="font-sans text-red-accent">/</span> <span className="font-sans text-xs tracking-[.2em] text-muted-foreground">admin</span></p>
         <div className="flex min-w-16 justify-end">{right}</div>
       </header>
       <div className="mx-auto max-w-6xl px-4 py-10 md:px-8">{children}</div>
-    </main>
+    </main></AdminHints>
   );
 }
 
