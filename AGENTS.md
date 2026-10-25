@@ -21,4 +21,5 @@
 - Site typography is stored in site_content under typography, publicly loaded at the root and applied through scoped CSS tokens and block attributes; admin edits use existing admin-only RLS so choices persist for all visitors without changing admin fonts.
 - Public SEO URLs and structured data use src/lib/seo.ts, not request origins; sitemap reads paginate with public access and fail explicitly to avoid proxy-host URLs and incomplete successful responses.
 - The introductory artwork uses a static gallery self-portrait selected through the shared media resolver rather than an independent carousel, keeping the first-screen composition stable and the full work available in the viewer.
+- Interior scenes define calibrated free-wall rectangles in the shared interior-layout module; fit artwork with original image proportions inside these rectangles and label reduced-scale previews so furniture is never overlapped.
 - Legal document copy is shared in src/lib/legal.ts and displayed through an accessible Radix modal; keep legal text separate from gallery layout and never substitute a document for required consent collection.

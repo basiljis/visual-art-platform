@@ -19,6 +19,7 @@
  */
 
 @theme inline {
+  --shadow-interior-art: 4px 8px 14px -6px color-mix(in oklab, var(--color-ink) 45%, transparent);
   --font-sans: "Manrope", sans-serif;
   --font-display: "Prata", serif;
   --radius-sm: calc(var(--radius) - 4px);
