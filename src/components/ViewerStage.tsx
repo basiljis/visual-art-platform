@@ -1,3 +1,4 @@
+import roomImg from "@/assets/interior-room.jpg";
 import { useEffect, useRef, useState } from "react";
 
 const MIN = 1, MAX = 5;
@@ -64,22 +65,20 @@ export function ZoomImage({ src, alt, resetKey }: { src: string; alt: string; re
   );
 }
 
-/** The work hung over a 220 cm sofa on a 420 cm wall, to scale. */
+/** The work hung over a 260 cm sofa in a real room photo, to scale. */
+const IMG_W = 1600, IMG_H = 1008, PX_PER_CM = 1275 / 260, SOFA_TOP = 585, SOFA_CX = 832;
 export function InteriorView({ src, alt, size, lang }: { src: string; alt: string; size: { w: number; h: number }; lang: "ru" | "en" }) {
-  const WALL_W = 420, WALL_H = 270, SOFA_W = 220, SOFA_H = 85, GAP = 25;
-  const pct = (cm: number, of: number) => `${(cm / of) * 100}%`;
+  const w = size.w * PX_PER_CM, h = size.h * PX_PER_CM;
+  const bottom = Math.max(SOFA_TOP - 20 * PX_PER_CM, Math.min(SOFA_TOP + 40, h + 30));
+  const top = bottom - h;
+  const pct = (v: number, of: number) => `${(v / of) * 100}%`;
   return (
     <div className="flex h-full w-full items-center justify-center p-2">
-      <div className="relative w-[min(100%,calc((100vh-14rem)*420/270))] overflow-hidden bg-wall shadow-2xl" style={{ aspectRatio: `${WALL_W}/${WALL_H}` }}>
-        <div className="absolute inset-x-0 bottom-0 bg-floor" style={{ height: "6%" }} />
-        <img src={src} alt={alt} className="absolute object-cover shadow-[0_8px_18px_-6px_color-mix(in_oklab,var(--color-ink)_45%,transparent)]"
-          style={{ width: pct(size.w, WALL_W), height: pct(size.h, WALL_H), left: `calc(50% - ${pct(size.w / 2, WALL_W)})`, bottom: pct(Math.min(SOFA_H + GAP, WALL_H - size.h - 5) + WALL_H * 0.06, WALL_H) }} />
-        <div className="absolute" style={{ width: pct(SOFA_W, WALL_W), height: pct(SOFA_H, WALL_H), left: pct((WALL_W - SOFA_W) / 2, WALL_W), bottom: "6%" }}>
-          <div className="absolute inset-x-[4%] top-0 h-[55%] rounded-t-md bg-sofa" />
-          <div className="absolute inset-x-0 bottom-[12%] h-[45%] rounded-md bg-sofa brightness-90" />
-          <div className="absolute bottom-0 left-[8%] h-[12%] w-[2%] bg-ink" /><div className="absolute bottom-0 right-[8%] h-[12%] w-[2%] bg-ink" />
-        </div>
-        <p className="absolute left-3 top-3 text-[11px] uppercase tracking-[.16em] text-ink/70">{size.h} × {size.w} {lang === "ru" ? "см · диван 220 см" : "cm · sofa 220 cm"}</p>
+      <div className="relative w-[min(100%,calc((100vh-14rem)*1600/1008))] overflow-hidden shadow-2xl" style={{ aspectRatio: `${IMG_W}/${IMG_H}` }}>
+        <img src={roomImg} alt="" width={IMG_W} height={IMG_H} className="absolute inset-0 h-full w-full object-cover" />
+        <img src={src} alt={alt} className="absolute object-cover shadow-[4px_10px_18px_-6px_color-mix(in_oklab,var(--color-ink)_55%,transparent)]"
+          style={{ width: pct(w, IMG_W), height: pct(h, IMG_H), left: pct(SOFA_CX - w / 2, IMG_W), top: pct(top, IMG_H) }} />
+        <p className="absolute left-3 top-3 bg-paper/80 px-2 py-1 text-[11px] uppercase tracking-[.16em] text-ink">{size.h} × {size.w} {lang === "ru" ? "см · диван 260 см" : "cm · sofa 260 cm"}</p>
       </div>
     </div>
   );
