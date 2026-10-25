@@ -6,8 +6,8 @@ export function placeArtwork(scene: WallScene, size: { w: number; h: number }, a
   const wantedWidth = Math.max(1, size.w) * scene.pixelsPerCm;
   const wantedHeight = wantedWidth / ratio;
   const scale = Math.min(1, scene.wall.width / wantedWidth, scene.wall.height / wantedHeight);
-  const width = wantedWidth * scale;
-  const height = wantedHeight * scale;
+  const width = Math.min(scene.wall.width, wantedWidth * scale);
+  const height = Math.min(scene.wall.height, wantedHeight * scale);
   return { width, height, left: scene.wall.x + (scene.wall.width - width) / 2, top: scene.wall.y + (scene.wall.height - height) / 2, scale };
 }
 
