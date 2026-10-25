@@ -79,6 +79,7 @@ function Index() {
   const [viewer, setViewer] = useState<number | null>(null);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [descOpen, setDescOpen] = useState(false);
+  const [curatorOpen, setCuratorOpen] = useState(false);
   const [enquiry, setEnquiry] = useState<string | null>(null);
   const { data: gallery } = useSuspenseQuery(galleryQuery);
   const { data: posts } = useSuspenseQuery(postsQuery);
@@ -269,8 +270,8 @@ function Index() {
           const photos = src?.process_images ?? [];
           if (!text && !shows.length && !photos.length) return null;
           return (
-            <div className="mb-20 grid gap-10 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:gap-16">
-              {text && <div><p className="mb-4 text-[11px] uppercase tracking-[.18em] text-muted-foreground">{lang === "ru" ? "Текст куратора" : "Curator’s note"}</p><p data-font-block="about" className="font-display text-2xl leading-snug md:text-3xl">{text}</p></div>}
+            <div className="mb-14 grid gap-8 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:gap-16">
+              {text && <div><button type="button" onClick={() => setCuratorOpen((v) => !v)} aria-expanded={curatorOpen} className="flex items-center gap-2 border-b border-current pb-0.5 text-[11px] uppercase tracking-[.18em] transition-colors hover:text-red-accent"><span className="text-red-accent">/</span>{lang === "ru" ? "Текст куратора" : "Curator’s note"}<span>{curatorOpen ? "−" : "+"}</span></button>{curatorOpen && <p data-font-block="about" className="mt-5 animate-reveal text-lg leading-relaxed md:text-xl">{text}</p>}</div>}
               <div className="space-y-8">
                 {shows.length > 0 && <div><p className="mb-3 text-[11px] uppercase tracking-[.18em] text-muted-foreground">{lang === "ru" ? "Где выставлялась" : "Exhibited"}</p><ul className="space-y-2 text-sm">{shows.map((x, i) => <li key={i} className="border-b border-border pb-2">{x}</li>)}</ul></div>}
                 {photos.length > 0 && <div><p className="mb-3 text-[11px] uppercase tracking-[.18em] text-muted-foreground">{lang === "ru" ? "Процесс" : "Process"}</p><div className="grid grid-cols-3 gap-2">{photos.map((ref) => <img key={ref} src={mediaUrl(ref)} alt="" loading="lazy" className="aspect-square w-full object-cover" />)}</div></div>}
