@@ -8,6 +8,9 @@ import { Search, X } from "lucide-react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage, localized, localizedDate } from "@/lib/language";
 import { breadcrumbs, pageUrl } from "@/lib/seo";
+import { BlogCalendar } from "@/components/BlogCalendar";
+import { Button } from "@/components/ui/button";
+import { samePublicationDay } from "@/lib/blog-dates";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
@@ -40,8 +43,10 @@ function BlogIndex() {
   const en = lang === "en";
   const { data: allPosts } = useSuspenseQuery(postsQuery);
   const [q, setQ] = useState("");
+  const [day, setDay] = useState<Date | undefined>();
   const needle = q.trim().toLowerCase();
-  const blogPosts = needle ? allPosts.filter((p) => `${localized(p.title, p.title_en, lang)} ${localized(p.excerpt, p.excerpt_en, lang)} ${localizedDate(p.date, lang)}`.toLowerCase().includes(needle)) : allPosts;
+  const searchedPosts = needle ? allPosts.filter((p) => `${localized(p.title, p.title_en, lang)} ${localized(p.excerpt, p.excerpt_en, lang)} ${localizedDate(p.date, lang)}`.toLowerCase().includes(needle)) : allPosts;
+  const blogPosts = day ? searchedPosts.filter((post) => samePublicationDay(post.date, day)) : searchedPosts;
   return (
     <BlogShell back={{ to: "/", label: "Главная" }}>
       <p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">{en ? "Home / Blog" : "Главная / Блог"}</p>
@@ -52,10 +57,12 @@ function BlogIndex() {
       <label className="mt-8 flex max-w-sm items-center gap-3 border-b border-border pb-2 focus-within:border-foreground">
         <Search className="size-4 shrink-0 text-muted-foreground" />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={en ? "Search the blog" : "Поиск по блогу"} aria-label={en ? "Search the blog" : "Поиск по блогу"} className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
-        {q && <button onClick={() => setQ("")} aria-label={en ? "Clear search" : "Очистить поиск"}><X className="size-4" /></button>}
+        {q && <Button variant="ghost" size="icon" onClick={() => setQ("")} aria-label={en ? "Clear search" : "Очистить поиск"} className="size-7 shrink-0 hover:bg-transparent hover:text-red-accent"><X className="size-4" /></Button>}
       </label>
-      {!blogPosts.length && <div className="py-16 text-center"><p className="text-sm text-muted-foreground">{en ? "Nothing found" : "Ничего не найдено"}</p><button onClick={() => setQ("")} className="mt-4 border-b border-foreground pb-0.5 text-xs uppercase tracking-[.18em]">{en ? "Reset search" : "Сбросить поиск"}</button></div>}
-      <div className="mt-12 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="order-2 min-w-0 lg:order-1">
+      {!blogPosts.length && <div className="py-16 text-center"><p className="text-sm text-muted-foreground">{en ? "Nothing found" : "Ничего не найдено"}</p><Button variant="link" onClick={() => { setQ(""); setDay(undefined); }} className="mt-4 text-red-accent">{en ? "Reset filters" : "Сбросить фильтры"}</Button></div>}
+      <div className="grid gap-x-8 gap-y-14 sm:grid-cols-2">
         {blogPosts.map((p) => (
           <Link key={p.slug} to="/blog/$slug" params={{ slug: p.slug }} className="group block">
             <div className="aspect-[4/3] overflow-hidden bg-muted">
@@ -66,6 +73,9 @@ function BlogIndex() {
             {p.excerpt && <p className="mt-1 text-sm text-muted-foreground">{localized(p.excerpt, p.excerpt_en, lang)}</p>}
           </Link>
         ))}
+      </div>
+      </div>
+      <div className="order-1 min-w-0 lg:order-2"><BlogCalendar dates={searchedPosts.map((post) => post.date)} selected={day} onSelect={setDay} /></div>
       </div>
       <div className="mx-auto max-w-3xl"><SubscribeForm /></div>
     </BlogShell>

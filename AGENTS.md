@@ -27,3 +27,4 @@
 - Visitor language is shared through LanguageProvider with browser persistence; translated database fields are editable in the existing admin panels, so navigation and content use one locale without changing admin language.
 - Admin hover/focus hints are delegated through AdminHints around the admin shell; portal rendering keeps hints visible outside clipped editors and lists.
 - Blog article HTML is rendered through BlogArticleBody: consecutive photo blocks become galleries with a shared article-wide lightbox, preserving prose, captions, media resolution and videos without rewriting stored content.
+- The blog calendar filters loaded public posts client-side by local calendar day via blog-dates, combined with text search; no database date conversion is required.
