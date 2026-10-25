@@ -384,7 +384,6 @@ function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: W
       <div className="relative flex min-h-0 flex-1 items-center justify-center px-2 md:px-24">
         <button onClick={() => go(-1)} aria-label={c.prev} data-tip={c.prev} className="absolute left-1 z-10 grid size-11 bg-current/0 place-items-center md:left-8"><ArrowLeft className="size-6" /></button>
         {interior && dims ? <InteriorView src={w.image} alt={w[lang]} size={dims} lang={lang} /> : <ZoomImage src={w.image} alt={w[lang]} resetKey={w.image} />}
-        {!(interior && dims) && <p className="pointer-events-none absolute bottom-2 left-1/2 hidden -translate-x-1/2 text-[10px] uppercase tracking-[.16em] opacity-50 md:block">{lang === "ru" ? "Колесо или щипок — масштаб · двойной клик — приблизить" : "Wheel or pinch to zoom · double-click to zoom in"}</p>}
         <button onClick={() => go(1)} aria-label={c.next} data-tip={c.next} className="absolute right-1 z-10 grid size-11 place-items-center md:right-8"><ArrowRight className="size-6" /></button>
       </div>
       <div className="grid gap-4 px-5 py-5 md:grid-cols-[1fr_auto] md:items-end md:px-8">
