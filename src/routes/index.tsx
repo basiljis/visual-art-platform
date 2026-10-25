@@ -1,4 +1,7 @@
 import { EnquiryModal } from "@/components/EnquiryModal";
+import { LegalModal } from "@/components/LegalModal";
+import { Button } from "@/components/ui/button";
+import { legalDocuments, type LegalKind } from "@/lib/legal";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { galleryQuery, postsQuery, type CategoryRow, type WorkRow } from "@/lib/content.functions";
@@ -78,6 +81,7 @@ function Index() {
   const [ready, setReady] = useState(false);
   const [viewer, setViewer] = useState<number | null>(null);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [legalOpen, setLegalOpen] = useState<LegalKind | null>(null);
   const [descOpen, setDescOpen] = useState(false);
   const [curatorOpen, setCuratorOpen] = useState(false);
   const [enquiry, setEnquiry] = useState<string | null>(null);
@@ -319,12 +323,16 @@ function Index() {
       <footer id="contact" data-font-block="footer" className="relative overflow-hidden bg-ink px-5 pb-5 pt-20 text-paper md:px-8 md:pt-28">
         <div className="grid gap-14 md:grid-cols-2"><div className="flex min-w-0 flex-wrap items-center gap-4 md:gap-6"><h2 className="font-display text-4xl sm:text-5xl md:text-6xl xl:text-7xl">{t.contact}</h2><img src={signatureAsset.url} alt="Наталья Дикунова" className="h-14 w-14 shrink-0 object-contain md:h-20 md:w-20 xl:h-28 xl:w-28" /></div><div className="space-y-3 text-lg"><a className="block border-b border-paper/30 pb-3" href="mailto:morrasdream@gmail.com">morrasdream@gmail.com</a><a className="block border-b border-paper/30 pb-3" href="tel:+79268215342">+7 926 821-53-42</a><div className="flex flex-wrap gap-x-6 gap-y-3 pt-3 text-xs uppercase tracking-[.18em]"><a href="https://www.instagram.com/natasha_dikunova_zipalova" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Instagram<ArrowUpRight className="size-3"/></a><a href="https://www.facebook.com/share/15dxi5pfo6/" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Facebook<ArrowUpRight className="size-3"/></a><a href="https://t.me/Natasha_Dikunova_Zipalova" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Telegram<ArrowUpRight className="size-3"/></a></div></div></div>
         <div className="mt-20 flex flex-col items-start gap-4 sm:flex-row sm:justify-between sm:gap-6"><p data-font-block="body" className="max-w-4xl text-[10px] uppercase leading-5 tracking-[.18em] opacity-60">{t.achievements}</p><Link to="/admin" aria-label={lang==="ru"?"Администрирование":"Admin"} data-tip={lang==="ru"?"Администрирование":"Admin"} className="shrink-0 opacity-30 transition-opacity hover:text-red-accent hover:opacity-100"><Settings className="size-3.5" /></Link></div>
+        <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 border-t border-paper/25 pt-5">
+          {(["privacy", "terms"] as const).map((kind) => <Button key={kind} variant="link" onClick={() => setLegalOpen(kind)} className="h-auto whitespace-normal p-0 text-left text-xs text-paper/80 hover:text-red-accent">{legalDocuments[lang][kind].title}</Button>)}
+        </div>
         <div id="footer-mark" className="-mx-5 mt-10 h-[8.2vw] overflow-hidden md:-mx-8"><button type="button" onClick={() => slowScroll(0)} aria-label={lang==="ru"?"В начало":"To top"} data-tip={lang==="ru"?"В начало":"To top"} data-tip-pos="left" className="block w-full cursor-pointer transition-colors hover:text-red-accent"><svg data-font-block="footerLogo" viewBox="0 0 1000 164" preserveAspectRatio="none" aria-hidden="true" focusable="false" className="block h-auto w-full font-display"><text x="500" y="154" textAnchor="middle" textLength="992" lengthAdjust="spacingAndGlyphs" fill="currentColor" style={{ fontSize: "200px" }}>DIKUNOVA</text></svg></button></div>
       </footer>
       <div className={`fixed bottom-4 right-3 z-40 flex flex-col gap-1.5 transition-opacity duration-300 md:bottom-5 md:right-5 md:gap-2 ${markInView ? "pointer-events-none opacity-0" : "opacity-100"}`}><button onClick={() => slowScroll(0)} aria-label={lang==="ru"?"В начало":"To top"} data-tip={lang==="ru"?"В начало":"To top"} data-tip-pos="left" className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowUp className="size-4"/></button><button onClick={() => slowScroll(document.documentElement.scrollHeight - window.innerHeight)} aria-label={lang==="ru"?"В конец":"To bottom"} data-tip={lang==="ru"?"В конец":"To bottom"} data-tip-pos="left" className="grid size-9 place-items-center border border-border bg-background/80 md:size-11 text-foreground backdrop-blur-md transition-colors hover:border-red-accent hover:text-red-accent"><ArrowDown className="size-4"/></button></div>
       {viewer !== null && <Viewer works={works} index={viewer} lang={lang} onChange={setViewer} onClose={() => setViewer(null)} onEnquire={setEnquiry} />}
       {enquiry !== null && <EnquiryModal artwork={enquiry} lang={lang} onClose={() => setEnquiry(null)} />}
       {aboutOpen && <AboutModal about={gallery.about} lang={lang} onClose={() => setAboutOpen(false)} />}
+      {legalOpen && <LegalModal kind={legalOpen} lang={lang} onClose={() => setLegalOpen(null)} />}
     </main>
   );
 }
