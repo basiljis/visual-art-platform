@@ -180,7 +180,7 @@ export function WorksPanel() {
   const save = async () => {
     if (!edit?.image) { alert("Загрузите изображение"); return; }
     if (!edit.category_key) { alert("Выберите направление"); return; }
-    const payload = { category_key: edit.category_key, project_key: edit.project_key || null, title_ru: edit.title_ru ?? "", title_en: edit.title_en ?? "", year: edit.year ?? "", size: edit.size ?? "", technique: edit.technique ?? "", status: edit.status ?? "", image: edit.image, cover: !!edit.cover, hero: !!edit.hero, sort: Number(edit.sort ?? 0) };
+    const payload = { category_key: edit.category_key, project_key: edit.project_key || null, title_ru: edit.title_ru ?? "", title_en: edit.title_en ?? "", year: edit.year ?? "", size: edit.size ?? "", technique: edit.technique ?? "", technique_en: edit.technique_en ?? "", status: edit.status ?? "", image: edit.image, cover: !!edit.cover, hero: !!edit.hero, sort: Number(edit.sort ?? 0) };
     const { error } = edit.id ? await supabase.from("works").update(payload).eq("id", edit.id) : await supabase.from("works").insert(payload);
     if (error) { alert(error.message); return; }
     setEdit(null); reload(); inv();
@@ -225,6 +225,7 @@ export function WorksPanel() {
             <F l="Название (EN)"><input className={field} value={edit.title_en ?? ""} onChange={(e) => setEdit({ ...edit, title_en: e.target.value })} /></F>
             <F l="Год"><input className={field} value={edit.year ?? ""} onChange={(e) => setEdit({ ...edit, year: e.target.value })} /></F>
             <F l="Техника"><input className={field} placeholder="Холст, масло" value={edit.technique ?? ""} onChange={(e) => setEdit({ ...edit, technique: e.target.value })} /></F>
+            <F l="Техника (EN)"><input className={field} placeholder="Oil on canvas" value={edit.technique_en ?? ""} onChange={(e) => setEdit({ ...edit, technique_en: e.target.value })} /></F>
             <F l="Размер"><input className={field} placeholder="100 × 70 см" value={edit.size ?? ""} onChange={(e) => setEdit({ ...edit, size: e.target.value })} /></F>
             <F l="Статус"><select className={field} value={edit.status ?? ""} onChange={(e) => setEdit({ ...edit, status: e.target.value })}><option value="">—</option><option value="for-sale">В продаже</option><option value="sold">Продана</option><option value="private">В частной коллекции</option><option value="on-request">По запросу</option></select></F>
             <F l="Направление"><select className={field} value={edit.category_key ?? ""} onChange={(e) => setEdit({ ...edit, category_key: e.target.value, project_key: null })}>{top.map((c) => <option key={c.key} value={c.key}>{c.name_ru}</option>)}</select></F>
@@ -256,7 +257,7 @@ export function BlogPanel() {
     if (!edit?.title) { alert("Укажите заголовок"); return; }
     const html = htmlForStorage(edit.content_html ?? "");
     const firstImg = html.match(/<img[^>]+src="([^"]+)"/)?.[1] ?? null;
-    const payload = { title: edit.title, slug: edit.slug || slugify(edit.title).slice(0, 80), excerpt: edit.excerpt ?? "", date: edit.date || today, cover: edit.cover || firstImg, content_html: html, published: edit.published ?? true, sort: Number(edit.sort ?? 0), topic_keys: edit.topic_keys ?? [], work_ids: edit.work_ids ?? [] };
+    const payload = { title: edit.title, title_en: edit.title_en ?? "", excerpt_en: edit.excerpt_en ?? "", content_html_en: htmlForStorage(edit.content_html_en ?? ""), slug: edit.slug || slugify(edit.title).slice(0, 80), excerpt: edit.excerpt ?? "", date: edit.date || today, cover: edit.cover || firstImg, content_html: html, published: edit.published ?? true, sort: Number(edit.sort ?? 0), topic_keys: edit.topic_keys ?? [], work_ids: edit.work_ids ?? [] };
     const { error } = edit.id ? await supabase.from("blog_posts").update(payload).eq("id", edit.id) : await supabase.from("blog_posts").insert(payload);
     if (error) { alert(error.message.includes("duplicate") ? "Такой адрес записи уже есть" : error.message); return; }
     setEdit(null); reload(); inv();
@@ -271,14 +272,17 @@ export function BlogPanel() {
     <div>
       <div className="mb-6 flex items-center justify-between"><button onClick={() => setEdit(null)} className={ghostBtn}>← Все записи</button><button onClick={save} className={primaryBtn}>Сохранить</button></div>
       <input placeholder="Заголовок" value={edit.title ?? ""} onChange={(e) => setEdit({ ...edit, title: e.target.value })} className="w-full border-b border-border bg-transparent pb-3 font-display text-3xl outline-none focus:border-red-accent md:text-5xl" />
+      <F l="Заголовок (EN)"><input className={field} value={edit.title_en ?? ""} onChange={(e) => setEdit({ ...edit, title_en: e.target.value })} /></F>
       <div className="mt-6 grid gap-6 md:grid-cols-4">
         <F l="Дата"><input className={field} value={edit.date ?? ""} placeholder={today} onChange={(e) => setEdit({ ...edit, date: e.target.value })} /></F>
         <F l="Адрес (slug)"><input className={field} value={edit.slug ?? ""} placeholder="авто" onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></F>
         <F l="Краткое описание" className="md:col-span-2"><input className={field} value={edit.excerpt ?? ""} onChange={(e) => setEdit({ ...edit, excerpt: e.target.value })} /></F>
+        <F l="Краткое описание (EN)" className="md:col-span-2"><input className={field} value={edit.excerpt_en ?? ""} onChange={(e) => setEdit({ ...edit, excerpt_en: e.target.value })} /></F>
         <F l="Обложка (иначе — первое фото)" className="md:col-span-2"><div className="mt-2"><ImagePick value={edit.cover ?? null} onChange={(cover) => setEdit({ ...edit, cover })} /></div></F>
         <div className="flex items-end md:col-span-2"><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.published ?? true} onChange={(e) => setEdit({ ...edit, published: e.target.checked })} className="accent-red-accent" />Опубликовано</label></div>
       </div>
       <div className="mt-8"><RichEditor value={htmlForDisplay(edit.content_html ?? "")} onChange={(content_html) => setEdit((cur) => cur && { ...cur, content_html })} /></div>
+      <div className="mt-8"><p className={`${label} mb-3`}>Текст статьи (EN)</p><RichEditor value={htmlForDisplay(edit.content_html_en ?? "")} onChange={(content_html_en) => setEdit((cur) => cur && { ...cur, content_html_en })} /></div>
       <div className="mt-12 border-t border-border pt-8">
         <p className={label}>Связь с галереей — тематики</p>
         <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">

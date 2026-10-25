@@ -41,7 +41,7 @@ export const defaultAbout: AboutContent = {
     note: "Works are held in private collections across Russia, Europe, the USA, India and China, as well as museums in Russia and China.",
     role: "artist",
     academy: "St. Petersburg academy of fine arts",
-    highlights: ["St. Petersburg Academy of Fine Arts", "2024 — «За три моря», МСХ, Москва", "2023 — Royal Society of British Artists, London", "2022 — DEG Exlibris, Germany — 1st prize"],
+    highlights: ["St. Petersburg Academy of Fine Arts", "2024 — Across Three Seas, Moscow Union of Artists, Moscow", "2023 — Royal Society of British Artists, London", "2022 — DEG Exlibris, Germany — 1st prize"],
     sections: [
       { title: "Solo exhibitions", items: [
         "2024 — «Across Three Seas», solo exhibition, Moscow Union of Artists, Moscow",

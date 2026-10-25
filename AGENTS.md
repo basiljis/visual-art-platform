@@ -24,3 +24,5 @@
 - Interior scenes define calibrated free-wall rectangles in the shared interior-layout module; fit artwork with original image proportions inside these rectangles and label reduced-scale previews so furniture is never overlapped.
 - Legal document copy is shared in src/lib/legal.ts and displayed through an accessible Radix modal; keep legal text separate from gallery layout and never substitute a document for required consent collection.
 - Admin drag ordering uses shared sortable handles and scope-slot reordering with explicit save to existing sort columns; this preserves other sections' positions and keeps database RLS authoritative.
+- Visitor language is shared through LanguageProvider with browser persistence; translated database fields are editable in the existing admin panels, so navigation and content use one locale without changing admin language.
+- Admin hover/focus hints are delegated through AdminHints around the admin shell; portal rendering keeps hints visible outside clipped editors and lists.
