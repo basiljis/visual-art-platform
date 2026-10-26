@@ -74,6 +74,8 @@
 }
 
 :root {
+  --admin-heading-font: "Jost", "Futura", sans-serif;
+  --admin-body-font: "Manrope", sans-serif;
   --radius: 0.25rem;
   --background: oklch(0.97 0.006 75);
   --foreground: oklch(0.16 0.01 70);
@@ -167,6 +169,12 @@
 @keyframes sign-draw { to { stroke-dashoffset: 0 } }
 
 @utility font-display { font-family: var(--font-display); }
+
+/* Admin fonts are independent of visitor typography; selected font samples keep their own styles. */
+.admin-typography { font-family: var(--admin-body-font); }
+.admin-typography :where(.font-display, .post-body h2, .post-body h3) { font-family: var(--admin-heading-font); }
+.admin-typography :where(.font-sans) { font-family: var(--admin-body-font); }
+
 @utility animate-preloader { animation: preload-out 3.2s cubic-bezier(.7,0,.2,1) forwards; }
 /* Preloader signature: pen-path reveal, each line drawn in writing order */
 .sign-stroke { stroke-dasharray: 1; stroke-dashoffset: 1; animation: sign-draw 1.9s cubic-bezier(.5,.1,.4,1) .2s forwards; }

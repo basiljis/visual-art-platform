@@ -145,6 +145,6 @@ function TypographySite() {
   return <>
     <style>{typographyCss(data)}</style>
     <VisitTracker />
-    <div className={admin ? "contents" : "site-typography contents"}><Outlet /><NewsPopup /></div>
+    <div className={admin ? "admin-typography contents" : "site-typography contents"}><Outlet /><NewsPopup /></div>
   </>;
 }
