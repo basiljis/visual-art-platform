@@ -186,7 +186,7 @@ function Index() {
           </div>
           <div className="relative flex min-w-0 flex-col justify-center px-5 pb-6 pt-14 md:-ml-16 md:px-6 md:pb-6 md:pt-24 lg:px-8">
             <div className="mb-6">
-              <span aria-hidden className="mb-4 mt-10 block h-44 w-28 bg-sanguine md:mt-16 md:h-64 md:w-44" style={{ WebkitMaskImage: `url(${signatureAsset.url})`, WebkitMaskSize: "contain", WebkitMaskRepeat: "no-repeat", WebkitMaskPosition: "center", maskImage: `url(${signatureAsset.url})`, maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center" }} />
+              <span aria-hidden className="mb-4 mt-10 block h-56 w-36 bg-sanguine md:mt-16 md:h-80 md:w-56" style={{ WebkitMaskImage: `url(${signatureAsset.url})`, WebkitMaskSize: "contain", WebkitMaskRepeat: "no-repeat", WebkitMaskPosition: "center", maskImage: `url(${signatureAsset.url})`, maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center" }} />
               <h1 data-font-block="heroName" className="mb-4 font-sans text-2xl font-light leading-tight md:text-5xl">{lang === "ru" ? "НАТАЛЬЯ" : "NATALIA"}<br /><span className="flex flex-wrap items-baseline gap-x-3 gap-y-2"><span>{lang === "ru" ? "ДИКУНОВА" : "DIKUNOVA"}</span><span data-font-block="heroArtist" className="whitespace-nowrap lowercase text-xs font-normal md:text-base"><span className="text-red-accent">/</span> artist</span></span></h1>
               <p data-font-block="intro" className="max-w-md text-base leading-relaxed md:text-xl">{t.intro}</p>
             </div>
