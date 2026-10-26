@@ -12,6 +12,6 @@ export function SitePreloader() {
       </g></mask></defs>
       <image href={signatureAsset.url} width="400" height="800" mask="url(#preloader-sign-mask)" />
     </svg>
-    <p data-font-block="preloader" className="relative mt-6 font-display text-lg">{lang === "ru" ? "НАТАЛЬЯ ДИКУНОВА" : "NATALIA DIKUNOVA"} <span className="font-sans text-red-accent">/</span> <span className="font-sans text-xs lowercase opacity-60">artist</span></p>
+    <p data-font-block="preloader" className="relative mt-6 font-display text-lg">{lang === "ru" ? "Наталья Дикунова" : "Natalia Dikunova"} <span className="font-sans text-red-accent">/</span> <span className="font-sans text-xs lowercase opacity-60">artist</span></p>
   </div>;
 }

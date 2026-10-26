@@ -16,7 +16,7 @@ export type FontId = typeof fontOptions[number]["id"];
 /** Per-block style: font family plus optional size (zoom scale), weight and line-height overrides. 0 means "keep default". */
 export type BlockStyle = { font: FontId; size: number; weight: number; lineHeight: number };
 export const typographyBlocks = [
-  { key: "header", label: "Шапка — имя художника", sample: "НАТАЛЬЯ ДИКУНОВА / artist", defaultFont: "futura-pt" },
+  { key: "header", label: "Шапка — имя художника", sample: "Наталья Дикунова / artist", defaultFont: "futura-pt" },
   { key: "headings", label: "Заголовки разделов и окон", sample: "Работы · Об авторе · Блог", defaultFont: "futura-pt" },
   { key: "body", label: "Основной текст и кнопки", sample: "Живопись, рисунок и печатная графика", defaultFont: "manrope" },
   { key: "intro", label: "Текст рядом с подписью", sample: "О мифе и реальности.", defaultFont: "manrope" },
@@ -26,7 +26,7 @@ export const typographyBlocks = [
   { key: "captions", label: "Подписи к работам", sample: "КИТАЙСКИЙ ЖЕМЧУГ · 2025 · 60 × 80 см", defaultFont: "manrope" },
   { key: "footer", label: "Подвал — контакты и ссылки", sample: "Контакты · Instagram · Telegram", defaultFont: "manrope" },
   { key: "footerLogo", label: "Подвал — надпись DIKUNOVA", sample: "DIKUNOVA", defaultFont: "prata" },
-  { key: "preloader", label: "Экран загрузки — имя", sample: "НАТАЛЬЯ ДИКУНОВА / artist", defaultFont: "futura-pt" },
+  { key: "preloader", label: "Экран загрузки — имя", sample: "Наталья Дикунова / artist", defaultFont: "futura-pt" },
   { key: "blog", label: "Блог — текст публикаций", sample: "Выставки, проекты и заметки художника", defaultFont: "manrope" },
   { key: "news", label: "Новости — текст выставок", sample: "Открытие выставки · Дата · Адрес", defaultFont: "manrope" },
 ] as const;
@@ -91,6 +91,6 @@ export function typographyCss(settings: TypographySettings) {
   const faces = `@font-face { font-family: "FuturaPT"; font-style: normal; font-weight: 100 300; font-display: swap; src: url("${futuraLight.url}") format("woff2"); }
     @font-face { font-family: "FuturaPT"; font-style: normal; font-weight: 400; font-display: swap; src: url("${futuraBook.url}") format("woff2"); }`;
   const nameStyle = `.site-typography [data-font-block="header"], .site-typography [data-font-block="preloader"], .site-typography .font-display { letter-spacing: 0; -webkit-text-stroke: 0; }
-    .site-typography [data-font-block="header"], .site-typography :is(h1,h2).font-display { text-transform: uppercase; }`;
+    .site-typography [data-font-block="header"], .site-typography [data-font-block="preloader"], .site-typography :is(h1,h2).font-display { text-transform: none; }`;
   return [faces, base, ...scopes, nameStyle, ...fontOptions.map(f => `[data-font-preview="${f.id}"] { font-family: ${f.family}; }`)].join("\n");
 }
