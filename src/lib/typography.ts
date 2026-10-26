@@ -1,8 +1,4 @@
-import futuraLight from "@/assets/futura-pt-light.woff2.asset.json";
-import futuraBook from "@/assets/futura-pt-book.woff2.asset.json";
-
 export const fontOptions = [
-  { id: "futura-pt", name: "Futura PT — старый сайт", family: '"FuturaPT", Arial, sans-serif', google: "" },
   { id: "prata", name: "Prata", family: '"Prata", serif', google: "Prata" },
   { id: "manrope", name: "Manrope", family: '"Manrope", sans-serif', google: "Manrope:wght@300;400;500;600;700;800" },
   { id: "lora", name: "Lora", family: '"Lora", serif', google: "Lora:wght@400;500;600;700" },
@@ -16,17 +12,17 @@ export type FontId = typeof fontOptions[number]["id"];
 /** Per-block style: font family plus optional size (zoom scale), weight and line-height overrides. 0 means "keep default". */
 export type BlockStyle = { font: FontId; size: number; weight: number; lineHeight: number };
 export const typographyBlocks = [
-  { key: "header", label: "Шапка — имя художника", sample: "Наталья Дикунова / artist", defaultFont: "futura-pt" },
-  { key: "headings", label: "Заголовки разделов и окон", sample: "Работы · Об авторе · Блог", defaultFont: "futura-pt" },
+  { key: "header", label: "Шапка — имя художника", sample: "Наталья Дикунова / artist", defaultFont: "prata" },
+  { key: "headings", label: "Заголовки разделов и окон", sample: "Работы · Об авторе · Блог", defaultFont: "prata" },
   { key: "body", label: "Основной текст и кнопки", sample: "Живопись, рисунок и печатная графика", defaultFont: "manrope" },
   { key: "intro", label: "Текст рядом с подписью", sample: "О мифе и реальности.", defaultFont: "manrope" },
   { key: "about", label: "Об авторе — текст биографии", sample: "Работы находятся в частных коллекциях", defaultFont: "manrope" },
-  { key: "navigation", label: "Полноэкранное меню", sample: "Работы · Об авторе · Контакты", defaultFont: "futura-pt" },
+  { key: "navigation", label: "Полноэкранное меню", sample: "Работы · Об авторе · Контакты", defaultFont: "prata" },
   { key: "filters", label: "Направления — фильтры работ", sample: "Все · Портреты · Печатная графика", defaultFont: "manrope" },
   { key: "captions", label: "Подписи к работам", sample: "КИТАЙСКИЙ ЖЕМЧУГ · 2025 · 60 × 80 см", defaultFont: "manrope" },
   { key: "footer", label: "Подвал — контакты и ссылки", sample: "Контакты · Instagram · Telegram", defaultFont: "manrope" },
   { key: "footerLogo", label: "Подвал — надпись DIKUNOVA", sample: "DIKUNOVA", defaultFont: "prata" },
-  { key: "preloader", label: "Экран загрузки — имя", sample: "Наталья Дикунова / artist", defaultFont: "futura-pt" },
+  { key: "preloader", label: "Экран загрузки — имя", sample: "Наталья Дикунова / artist", defaultFont: "prata" },
   { key: "blog", label: "Блог — текст публикаций", sample: "Выставки, проекты и заметки художника", defaultFont: "manrope" },
   { key: "news", label: "Новости — текст выставок", sample: "Открытие выставки · Дата · Адрес", defaultFont: "manrope" },
 ] as const;
@@ -34,7 +30,7 @@ export type TypographyBlock = typeof typographyBlocks[number]["key"];
 export type TypographySettings = Record<TypographyBlock, BlockStyle>;
 
 const SIZES = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.4, 1.5];
-const WEIGHTS = [0, 100, 300, 400, 500, 600, 700];
+const WEIGHTS = [0, 300, 400, 500, 600, 700];
 const LINE_HEIGHTS = [0, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2];
 
 function pick(value: unknown, allowed: readonly number[], fallback: number) {
@@ -42,7 +38,7 @@ function pick(value: unknown, allowed: readonly number[], fallback: number) {
 }
 
 export const defaultTypography = Object.fromEntries(
-  typographyBlocks.map(b => [b.key, { font: b.defaultFont, size: 1, weight: b.defaultFont === "futura-pt" ? 100 : 0, lineHeight: 0 }]),
+  typographyBlocks.map(b => [b.key, { font: b.defaultFont, size: 1, weight: 0, lineHeight: 0 }]),
 ) as TypographySettings;
 
 /** Accepts the current format ({ block: { font, size, weight, lineHeight } }) and the legacy flat format ({ block: fontId }). */
@@ -57,7 +53,7 @@ export function normalizeTypography(value: unknown): TypographySettings {
     return [b.key, {
       font: fontOptions.some(f => f.id === obj["font"]) ? obj["font"] as FontId : b.defaultFont,
       size: pick(obj["size"], SIZES, 1),
-      weight: pick(obj["weight"], WEIGHTS, defaultTypography[b.key].weight),
+      weight: pick(obj["weight"], WEIGHTS, 0),
       lineHeight: pick(obj["lineHeight"], LINE_HEIGHTS, 0),
     }];
   })) as TypographySettings;
@@ -88,9 +84,5 @@ export function typographyCss(settings: TypographySettings) {
       ? `${selector} .font-sans, ${selector} .font-display { font-family: inherit; }` : "";
     return `${selector} { ${decls.join("; ")}; } ${children}`;
   });
-  const faces = `@font-face { font-family: "FuturaPT"; font-style: normal; font-weight: 100 300; font-display: swap; src: url("${futuraLight.url}") format("woff2"); }
-    @font-face { font-family: "FuturaPT"; font-style: normal; font-weight: 400; font-display: swap; src: url("${futuraBook.url}") format("woff2"); }`;
-  const nameStyle = `.site-typography [data-font-block="header"], .site-typography [data-font-block="preloader"], .site-typography .font-display { letter-spacing: 0; -webkit-text-stroke: 0; }
-    .site-typography [data-font-block="header"], .site-typography [data-font-block="preloader"], .site-typography :is(h1,h2).font-display { text-transform: none; }`;
-  return [faces, base, ...scopes, nameStyle, ...fontOptions.map(f => `[data-font-preview="${f.id}"] { font-family: ${f.family}; }`)].join("\n");
+  return [base, ...scopes, ...fontOptions.map(f => `[data-font-preview="${f.id}"] { font-family: ${f.family}; }`)].join("\n");
 }
