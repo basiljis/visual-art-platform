@@ -99,6 +99,13 @@
       "when": 1792941121916,
       "tag": "0013_english_content",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1793005460357,
+      "tag": "0014_visitor_statistics",
+      "breakpoints": true
     }
   ]
 }

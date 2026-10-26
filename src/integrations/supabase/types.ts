@@ -239,6 +239,27 @@ export type Database = {
         }
         Relationships: []
       }
+      site_page_views: {
+        Row: {
+          id: string
+          path: string
+          session_id: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          path: string
+          session_id: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          path?: string
+          session_id?: string
+          viewed_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -319,6 +340,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_visit_statistics: { Args: { _days?: number }; Returns: Json }
+      blog_view_counts: {
+        Args: never
+        Returns: {
+          slug: string
+          views: number
+        }[]
+      }
       claim_admin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
@@ -326,6 +355,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      record_page_view: {
+        Args: { _path: string; _session_id: string }
+        Returns: undefined
       }
     }
     Enums: {
