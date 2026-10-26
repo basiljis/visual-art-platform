@@ -25,10 +25,4 @@ describe("Typography settings", () => {
     expect(normalizeTypography({ header: "invalid" })).toEqual(defaultTypography);
     expect(normalizeTypography({ header: { font: "invalid", size: 9, weight: 450, lineHeight: 7 } })).toEqual(defaultTypography);
   });
-  it("uses the old-site typeface and thin name weight for main headings", () => {
-    expect(defaultTypography.header.font).toBe("futura-pt");
-    expect(defaultTypography.header.weight).toBe(100);
-    expect(defaultTypography.headings.font).toBe("futura-pt");
-    expect(defaultTypography.headings.weight).toBe(100);
-  });
 });

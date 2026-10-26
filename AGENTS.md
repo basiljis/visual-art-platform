@@ -23,7 +23,6 @@
 - Homepage design is selected in gallery_layout: portrait preserves the static self-portrait composition, while HomeCarousel owns the signature/introduction and uncropped Embla artwork composition; both headers use the editable header typography block and both designs open original works in the viewer.
 - Mount SitePreloader once in the public root shell, without session flags, so full reloads replay it while internal navigation does not.
 - Use shared artwork-availability rules for gallery and viewer purchase controls and sold markers, so unavailable works cannot expose an enquiry action on one surface only.
-- Resolve original visitor font binaries through asset pointers in typographyCss; keep admin font tokens independent so matching the source site's wordmark never changes admin type.
 - Interior scenes define calibrated free-wall rectangles in the shared interior-layout module; fit artwork with original image proportions inside these rectangles and label reduced-scale previews so furniture is never overlapped.
 - Legal document copy is shared in src/lib/legal.ts and displayed through an accessible Radix modal; keep legal text separate from gallery layout and never substitute a document for required consent collection.
 - Admin drag ordering uses shared sortable handles and scope-slot reordering with explicit save to existing sort columns; this preserves other sections' positions and keeps database RLS authoritative.
