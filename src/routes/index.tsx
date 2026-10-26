@@ -187,7 +187,7 @@ function Index() {
           <div className="relative flex min-w-0 flex-col justify-center px-5 pb-6 pt-14 md:-ml-16 md:px-6 md:pb-6 md:pt-24 lg:px-8">
             <div className="mb-6">
               <span aria-hidden className="mb-4 block h-36 w-24 bg-sanguine md:h-48 md:w-32" style={{ WebkitMaskImage: `url(${signatureAsset.url})`, WebkitMaskSize: "contain", WebkitMaskRepeat: "no-repeat", WebkitMaskPosition: "center", maskImage: `url(${signatureAsset.url})`, maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center" }} />
-              <h1 data-font-block="header" className="mb-4 font-sans text-2xl font-light leading-tight md:text-5xl">{lang === "ru" ? "Наталья" : "Natalia"}<br /><span className="flex flex-wrap items-baseline gap-x-3 gap-y-2"><span>{lang === "ru" ? "Дикунова" : "Dikunova"}</span><span className="whitespace-nowrap text-xs font-normal md:text-base"><span className="text-red-accent">/</span> artist</span></span></h1>
+              <h1 data-font-block="header" className="mb-4 font-sans text-2xl font-light leading-tight md:text-5xl">{lang === "ru" ? "НАТАЛЬЯ" : "NATALIA"}<br /><span className="flex flex-wrap items-baseline gap-x-3 gap-y-2"><span>{lang === "ru" ? "ДИКУНОВА" : "DIKUNOVA"}</span><span className="whitespace-nowrap text-xs font-normal md:text-base"><span className="text-red-accent">/</span> artist</span></span></h1>
               <p data-font-block="intro" className="max-w-md text-base leading-relaxed md:text-xl">{t.intro}</p>
             </div>
             <a href="#works" data-font-block="body" onClick={(e) => { const el = document.getElementById("works"); if (!el) return; e.preventDefault(); const y = el.getBoundingClientRect().top + window.scrollY - 64; if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) window.scrollTo(0, y); else slowScroll(y); }} className="flex w-fit items-center gap-3 border-b border-current pb-1 text-xs uppercase tracking-[.18em] hover:text-red-accent">{t.all}<ArrowDown className="size-4"/></a>
@@ -318,8 +318,8 @@ function Index() {
 }
 
 const viewerCopy = {
-  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: Work) => `${[w.ru, w.year, w.size].filter(Boolean).join(", ")}` },
-  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: Work) => `${[w.en, w.year, w.size.replace("см", "cm")].filter(Boolean).join(", ")}` },
+  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: Work) => `${[w.ru, w.year, w.size].filter(Boolean).join(", ")}. Оригинальная работа Натальи Дикуновой.` },
+  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: Work) => `${[w.en, w.year, w.size.replace("см", "cm")].filter(Boolean).join(", ")}. Original work by Natalia Dikunova.` },
 };
 const backgrounds = [
   { key: "dark", cls: "bg-ink text-paper" },
