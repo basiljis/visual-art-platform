@@ -1,4 +1,8 @@
+import futuraLight from "@/assets/futura-pt-light.woff2.asset.json";
+import futuraBook from "@/assets/futura-pt-book.woff2.asset.json";
+
 export const fontOptions = [
+  { id: "futura-pt", name: "Futura PT — старый сайт", family: '"FuturaPT", Arial, sans-serif', google: "" },
   { id: "prata", name: "Prata", family: '"Prata", serif', google: "Prata" },
   { id: "manrope", name: "Manrope", family: '"Manrope", sans-serif', google: "Manrope:wght@300;400;500;600;700;800" },
   { id: "lora", name: "Lora", family: '"Lora", serif', google: "Lora:wght@400;500;600;700" },
@@ -12,33 +16,38 @@ export type FontId = typeof fontOptions[number]["id"];
 /** Per-block style: font family plus optional size (zoom scale), weight and line-height overrides. 0 means "keep default". */
 export type BlockStyle = { font: FontId; size: number; weight: number; lineHeight: number };
 export const typographyBlocks = [
-  { key: "header", label: "Шапка — имя художника", sample: "Наталья Дикунова / artist", defaultFont: "prata" },
-  { key: "headings", label: "Заголовки разделов и окон", sample: "Работы · Об авторе · Блог", defaultFont: "prata" },
-  { key: "body", label: "Основной текст и кнопки", sample: "Живопись, рисунок и печатная графика", defaultFont: "manrope" },
-  { key: "intro", label: "Текст рядом с подписью", sample: "О мифе и реальности.", defaultFont: "manrope" },
-  { key: "about", label: "Об авторе — текст биографии", sample: "Работы находятся в частных коллекциях", defaultFont: "manrope" },
-  { key: "navigation", label: "Полноэкранное меню", sample: "Работы · Об авторе · Контакты", defaultFont: "prata" },
-  { key: "filters", label: "Направления — фильтры работ", sample: "Все · Портреты · Печатная графика", defaultFont: "manrope" },
-  { key: "captions", label: "Подписи к работам", sample: "КИТАЙСКИЙ ЖЕМЧУГ · 2025 · 60 × 80 см", defaultFont: "manrope" },
-  { key: "footer", label: "Подвал — контакты и ссылки", sample: "Контакты · Instagram · Telegram", defaultFont: "manrope" },
-  { key: "footerLogo", label: "Подвал — надпись DIKUNOVA", sample: "DIKUNOVA", defaultFont: "prata" },
-  { key: "preloader", label: "Экран загрузки — имя", sample: "Наталья Дикунова / artist", defaultFont: "prata" },
-  { key: "blog", label: "Блог — текст публикаций", sample: "Выставки, проекты и заметки художника", defaultFont: "manrope" },
-  { key: "news", label: "Новости — текст выставок", sample: "Открытие выставки · Дата · Адрес", defaultFont: "manrope" },
+  { key: "header", label: "Шапка — имя художника", sample: "Наталья Дикунова / artist", defaultFont: "futura-pt" },
+  { key: "headings", label: "Заголовки разделов и окон", sample: "Работы · Об авторе · Блог", defaultFont: "futura-pt" },
+  { key: "body", label: "Основной текст и кнопки", sample: "Живопись, рисунок и печатная графика", defaultFont: "futura-pt" },
+  { key: "intro", label: "Текст рядом с подписью", sample: "О мифе и реальности.", defaultFont: "futura-pt" },
+  { key: "about", label: "Об авторе — текст биографии", sample: "Работы находятся в частных коллекциях", defaultFont: "futura-pt" },
+  { key: "navigation", label: "Полноэкранное меню", sample: "Работы · Об авторе · Контакты", defaultFont: "futura-pt" },
+  { key: "filters", label: "Направления — фильтры работ", sample: "Все · Портреты · Печатная графика", defaultFont: "futura-pt" },
+  { key: "captions", label: "Подписи к работам", sample: "КИТАЙСКИЙ ЖЕМЧУГ · 2025 · 60 × 80 см", defaultFont: "futura-pt" },
+  { key: "footer", label: "Подвал — контакты и ссылки", sample: "Контакты · Instagram · Telegram", defaultFont: "futura-pt" },
+  { key: "footerLogo", label: "Подвал — надпись DIKUNOVA", sample: "DIKUNOVA", defaultFont: "futura-pt" },
+  { key: "preloader", label: "Экран загрузки — имя", sample: "Наталья Дикунова / artist", defaultFont: "futura-pt" },
+  { key: "blog", label: "Блог — текст публикаций", sample: "Выставки, проекты и заметки художника", defaultFont: "futura-pt" },
+  { key: "news", label: "Новости — текст выставок", sample: "Открытие выставки · Дата · Адрес", defaultFont: "futura-pt" },
 ] as const;
 export type TypographyBlock = typeof typographyBlocks[number]["key"];
 export type TypographySettings = Record<TypographyBlock, BlockStyle>;
 
 const SIZES = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.4, 1.5];
 const WEIGHTS = [0, 300, 400, 500, 600, 700];
-const LINE_HEIGHTS = [0, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2];
+const LINE_HEIGHTS = [0, 1.05, 1.2, 1.23, 1.3, 1.35, 1.45, 1.55, 1.4, 1.5, 1.6, 1.8, 2];
 
 function pick(value: unknown, allowed: readonly number[], fallback: number) {
   return typeof value === "number" && allowed.includes(value) ? value : fallback;
 }
 
+/** Line-heights of the original Tilda site (dikunova.art). */
+export const referenceLineHeights: Record<TypographyBlock, number> = {
+  header: 1.05, preloader: 1.05, footerLogo: 1.05, headings: 1.23, navigation: 1.35, filters: 1.35,
+  body: 1.45, intro: 1.45, about: 1.45, blog: 1.45, news: 1.45, captions: 1.55, footer: 1.55,
+};
 export const defaultTypography = Object.fromEntries(
-  typographyBlocks.map(b => [b.key, { font: b.defaultFont, size: 1, weight: 0, lineHeight: 0 }]),
+  typographyBlocks.map(b => [b.key, { font: b.defaultFont, size: 1, weight: 0, lineHeight: referenceLineHeights[b.key] }]),
 ) as TypographySettings;
 
 /** Accepts the current format ({ block: { font, size, weight, lineHeight } }) and the legacy flat format ({ block: fontId }). */
@@ -47,14 +56,14 @@ export function normalizeTypography(value: unknown): TypographySettings {
   return Object.fromEntries(typographyBlocks.map(b => {
     const raw = source[b.key];
     if (typeof raw === "string" && fontOptions.some(f => f.id === raw)) {
-      return [b.key, { font: raw, size: 1, weight: 0, lineHeight: 0 }];
+      return [b.key, { font: raw, size: 1, weight: 0, lineHeight: referenceLineHeights[b.key] }];
     }
     const obj = raw && typeof raw === "object" ? raw as Record<string, unknown> : {};
     return [b.key, {
       font: fontOptions.some(f => f.id === obj["font"]) ? obj["font"] as FontId : b.defaultFont,
       size: pick(obj["size"], SIZES, 1),
       weight: pick(obj["weight"], WEIGHTS, 0),
-      lineHeight: pick(obj["lineHeight"], LINE_HEIGHTS, 0),
+      lineHeight: pick(obj["lineHeight"], LINE_HEIGHTS, referenceLineHeights[b.key]),
     }];
   })) as TypographySettings;
 }
@@ -69,6 +78,10 @@ export function typographyCss(settings: TypographySettings) {
     if (s.size !== 1) decls.push(`zoom: ${s.size}`);
     return decls.length ? ` ${decls.join("; ")}` : "";
   };
+  const faces = `@font-face { font-family: "FuturaPT"; src: url("${futuraLight.url}") format("woff2"); font-weight: 100 300; font-display: swap; }
+    @font-face { font-family: "FuturaPT"; src: url("${futuraBook.url}") format("woff2"); font-weight: 400 900; font-display: swap; }
+    .site-typography h2.font-display, .site-typography h3.font-display { letter-spacing: 2px; }
+    .site-typography button, .site-typography .btn { line-height: 1.4; }`;
   const base = `.site-typography { --site-body-font: ${family("body")}; --site-heading-font: ${family("headings")}; font-family: var(--site-body-font); }
     .site-typography .font-sans { font-family: var(--site-body-font); }
     .site-typography .font-display, .site-typography .post-body :is(h2,h3) { font-family: var(--site-heading-font);${extra("headings")} }
@@ -84,5 +97,5 @@ export function typographyCss(settings: TypographySettings) {
       ? `${selector} .font-sans, ${selector} .font-display { font-family: inherit; }` : "";
     return `${selector} { ${decls.join("; ")}; } ${children}`;
   });
-  return [base, ...scopes, ...fontOptions.map(f => `[data-font-preview="${f.id}"] { font-family: ${f.family}; }`)].join("\n");
+  return [faces, base, ...scopes, ...fontOptions.map(f => `[data-font-preview="${f.id}"] { font-family: ${f.family}; }`)].join("\n");
 }
