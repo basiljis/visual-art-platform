@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { defaultTypography, normalizeTypography } from "@/lib/typography";
+import { defaultTypography, normalizeTypography, typographyCss } from "@/lib/typography";
 
 describe("Typography settings", () => {
   it("changes header independently from main text", () => {
@@ -32,5 +32,11 @@ describe("Old-site typography defaults", () => {
     expect(defaultTypography.headings.lineHeight).toBe(1.23);
     expect(defaultTypography.body.lineHeight).toBe(1.45);
     expect(defaultTypography.captions.lineHeight).toBe(1.55);
+  });
+});
+describe("Saved settings without new blocks", () => {
+  it("builds CSS when the hero blocks are missing", () => {
+    const css = typographyCss({ header: defaultTypography.header } as never);
+    expect(css).toContain('[data-font-block="heroName"]');
   });
 });

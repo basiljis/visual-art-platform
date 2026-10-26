@@ -4,7 +4,7 @@ import { RotateCcw, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { defaultTypography, fontOptions, typographyBlocks, typographyCss, type BlockStyle } from "@/lib/typography";
+import { defaultTypography, normalizeTypography, fontOptions, typographyBlocks, typographyCss, type BlockStyle } from "@/lib/typography";
 import { typographyQuery } from "@/lib/typography.functions";
 
 const weightOptions = [
@@ -28,7 +28,7 @@ const lineHeightOptions = [
 
 export function TypographyPanel() {
   const { data } = useSuspenseQuery(typographyQuery);
-  const [draft, setDraft] = useState({ ...data });
+  const [draft, setDraft] = useState(() => normalizeTypography(data));
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const qc = useQueryClient();
