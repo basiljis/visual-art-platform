@@ -1,4 +1,5 @@
 import { NewsPopup } from "@/components/NewsPopup";
+import { VisitTracker } from "@/components/VisitTracker";
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from "@tanstack/react-query";
 import { typographyQuery } from "@/lib/typography.functions";
 import { fontOptions, typographyCss } from "@/lib/typography";
@@ -143,6 +144,7 @@ function TypographySite() {
   const admin = pathname.startsWith("/admin") || pathname.startsWith("/reset-password");
   return <>
     <style>{typographyCss(data)}</style>
+    <VisitTracker />
     <div className={admin ? "contents" : "site-typography contents"}><Outlet /><NewsPopup /></div>
   </>;
 }

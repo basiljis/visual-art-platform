@@ -7,6 +7,7 @@ import { postQuery } from "@/lib/content.functions";
 import { htmlForDisplay, mediaUrl } from "@/lib/media";
 import { useLanguage, localized, localizedDate } from "@/lib/language";
 import { absoluteImage, articleSchema, breadcrumbs, pageUrl } from "@/lib/seo";
+import { BlogViewCount } from "@/components/BlogViewCount";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ context, params }) => {
@@ -62,7 +63,7 @@ function PostPage() {
   return (
     <BlogShell back={{ to: "/blog", label: "Блог" }}>
       <article className="mx-auto max-w-3xl">
-        <p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">{en ? "Blog" : "Блог"} / {localizedDate(post.date, lang)}</p>
+        <div className="flex items-center justify-between gap-3"><p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">{en ? "Blog" : "Блог"} / {localizedDate(post.date, lang)}</p><BlogViewCount slug={slug} /></div>
         <h1 className="mt-4 font-display text-4xl leading-tight md:text-6xl">{localized(post.title, post.title_en, lang)}</h1>
         <BlogArticleBody key={`${slug}-${lang}`} html={htmlForDisplay(localized(post.content_html, post.content_html_en, lang))} />
         {(relatedTopics.length > 0 || relatedWorks.length > 0) && (

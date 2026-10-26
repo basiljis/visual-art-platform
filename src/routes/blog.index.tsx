@@ -11,6 +11,7 @@ import { breadcrumbs, pageUrl } from "@/lib/seo";
 import { BlogCalendar } from "@/components/BlogCalendar";
 import { Button } from "@/components/ui/button";
 import { samePublicationDay } from "@/lib/blog-dates";
+import { BlogViewCount } from "@/components/BlogViewCount";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
@@ -68,7 +69,7 @@ function BlogIndex() {
             <div className="aspect-[4/3] overflow-hidden bg-muted">
               {p.cover ? <img src={mediaUrl(p.cover)} alt={localized(p.title, p.title_en, lang)} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" /> : <div className="grid h-full place-items-center font-display text-3xl text-muted-foreground">{en ? "ND" : "ДН"}</div>}
             </div>
-            <p className="mt-4 text-[10px] uppercase tracking-[.2em] text-muted-foreground">{localizedDate(p.date, lang)}</p>
+            <div className="mt-4 flex items-center justify-between gap-3"><p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">{localizedDate(p.date, lang)}</p><BlogViewCount slug={p.slug} /></div>
             <h2 className="mt-2 text-base font-medium md:text-lg">{localized(p.title, p.title_en, lang)}</h2>
             {p.excerpt && <p className="mt-1 text-sm text-muted-foreground">{localized(p.excerpt, p.excerpt_en, lang)}</p>}
           </Link>
