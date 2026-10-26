@@ -1,5 +1,6 @@
 import { NewsPopup } from "@/components/NewsPopup";
 import { VisitTracker } from "@/components/VisitTracker";
+import { SitePreloader } from "@/components/SitePreloader";
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from "@tanstack/react-query";
 import { typographyQuery } from "@/lib/typography.functions";
 import { fontOptions, typographyCss } from "@/lib/typography";
@@ -102,7 +103,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: `https://fonts.googleapis.com/css2?${fontOptions.map(font => `family=${font.google}`).join("&")}&display=swap` },
+      { rel: "stylesheet", href: `https://fonts.googleapis.com/css2?${fontOptions.filter(font => font.google).map(font => `family=${font.google}`).join("&")}&display=swap` },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
@@ -117,7 +118,6 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="ru" suppressHydrationWarning>
       <head>
         <HeadContent />
-        <script dangerouslySetInnerHTML={{ __html: "try{if(sessionStorage.getItem('dikunova-preloader'))document.documentElement.classList.add('no-preloader');else sessionStorage.setItem('dikunova-preloader','1')}catch(e){}" }} />
       </head>
       <body>
         {children}
@@ -145,6 +145,6 @@ function TypographySite() {
   return <>
     <style>{typographyCss(data)}</style>
     <VisitTracker />
-    <div className={admin ? "admin-typography contents" : "site-typography contents"}><Outlet /><NewsPopup /></div>
+    <div className={admin ? "admin-typography contents" : "site-typography contents"}>{!admin && <SitePreloader />}<Outlet /><NewsPopup /></div>
   </>;
 }

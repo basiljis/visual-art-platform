@@ -9,6 +9,7 @@ import { typographyQuery } from "@/lib/typography.functions";
 
 const weightOptions = [
   { value: "0", label: "Обычная" },
+  { value: "100", label: "Тонкая 100 — старый сайт" },
   { value: "300", label: "Светлая 300" },
   { value: "400", label: "400" },
   { value: "500", label: "Средняя 500" },

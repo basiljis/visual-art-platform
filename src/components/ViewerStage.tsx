@@ -57,7 +57,7 @@ export function ZoomImage({ src, alt, resetKey }: { src: string; alt: string; re
         pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
         if (pointers.current.size === 2 && pinch.current) {
           const [a, b] = [...pointers.current.values()];
-          zoomAt(pinch.current.z * (dist() / (pinch.current.d || 1)), (a!.x + b!.x) / 2, (a!.y + b!.y) / 2);
+          if (a && b) zoomAt(pinch.current.z * (dist() / (pinch.current.d || 1)), (a.x + b.x) / 2, (a.y + b.y) / 2);
         } else if (tRef.current.z > 1) {
           setT((c) => ({ ...c, x: c.x + e.clientX - prev.x, y: c.y + e.clientY - prev.y }));
         }
@@ -106,6 +106,7 @@ export function InteriorView({ src, alt, size, lang }: { src: string; alt: strin
         <p className="absolute bottom-2 left-2 max-w-[calc(100%-1rem)] bg-paper/80 px-2 py-1 text-[10px] text-ink">{size.h} × {size.w} {lang === "ru" ? "см" : "cm"}{box.scale < 0.999 ? (lang === "ru" ? " · уменьшенный масштаб" : " · reduced scale") : ""}</p>
       </div>
       </div>
+      <p className="shrink-0 text-center text-xs leading-relaxed opacity-70">{lang === "ru" ? (scene.key === "sofa" ? "Ширина дивана для сравнения — около 260 см." : scene.key === "dining" ? "Ширина стола для сравнения — около 200 см." : "Ширина консоли для сравнения — около 200 см.") : (scene.key === "sofa" ? "Sofa reference width: approximately 260 cm." : scene.key === "dining" ? "Table reference width: approximately 200 cm." : "Console reference width: approximately 200 cm.")} {lang === "ru" ? "Размеры и размещение ориентировочные." : "Dimensions and placement are approximate."} {box.scale < 0.999 && (lang === "ru" ? "Картина показана в уменьшенном масштабе, чтобы поместиться на свободной стене." : "The artwork is scaled down to fit the unobstructed wall.")}</p>
     </div>
   );
 }

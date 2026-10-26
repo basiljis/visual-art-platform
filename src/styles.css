@@ -256,8 +256,8 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .paper-grain { background-size: 100% 100%, 100% 100%, 110px 110px; opacity: .07; }
 }
 
-/* Preloader plays once per browser session (flag set by inline head script) */
-.no-preloader .site-preloader { display: none; }
+/* Signature masks require white strokes independently of the visitor theme. */
+.site-preloader mask { color: var(--color-header-surface); }
 
 /* Blend only the introductory paper edge, preserving the original gallery image. */
 .intro-portrait {
