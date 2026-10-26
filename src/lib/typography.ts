@@ -19,6 +19,9 @@ export const typographyBlocks = [
   { key: "header", label: "Шапка — имя художника", sample: "Наталья Дикунова / artist", defaultFont: "futura-pt" },
   { key: "headings", label: "Заголовки разделов и окон", sample: "Работы · Об авторе · Блог", defaultFont: "futura-pt" },
   { key: "body", label: "Основной текст и кнопки", sample: "Живопись, рисунок и печатная графика", defaultFont: "futura-pt" },
+  { key: "heroName", label: "Главная — имя крупно", sample: "НАТАЛЬЯ ДИКУНОВА", defaultFont: "futura-pt" },
+  { key: "heroArtist", label: "Главная — подпись «/ artist»", sample: "/ artist", defaultFont: "futura-pt" },
+  { key: "heroLink", label: "Главная — ссылка «Все работы»", sample: "ВСЕ РАБОТЫ ↓", defaultFont: "futura-pt" },
   { key: "intro", label: "Текст рядом с подписью", sample: "О мифе и реальности.", defaultFont: "futura-pt" },
   { key: "about", label: "Об авторе — текст биографии", sample: "Работы находятся в частных коллекциях", defaultFont: "futura-pt" },
   { key: "navigation", label: "Полноэкранное меню", sample: "Работы · Об авторе · Контакты", defaultFont: "futura-pt" },
@@ -43,7 +46,7 @@ function pick(value: unknown, allowed: readonly number[], fallback: number) {
 
 /** Line-heights of the original Tilda site (dikunova.art). */
 export const referenceLineHeights: Record<TypographyBlock, number> = {
-  header: 1.05, preloader: 1.05, footerLogo: 1.05, headings: 1.23, navigation: 1.35, filters: 1.35,
+  header: 1.05, heroName: 1.05, heroArtist: 1.35, heroLink: 1.4, preloader: 1.05, footerLogo: 1.05, headings: 1.23, navigation: 1.35, filters: 1.35,
   body: 1.45, intro: 1.45, about: 1.45, blog: 1.45, news: 1.45, captions: 1.55, footer: 1.55,
 };
 export const defaultTypography = Object.fromEntries(
@@ -93,7 +96,7 @@ export function typographyCss(settings: TypographySettings) {
     if (s.weight) decls.push(`font-weight: ${s.weight}`);
     if (s.lineHeight) decls.push(`line-height: ${s.lineHeight}`);
     if (s.size !== 1) decls.push(`zoom: ${s.size}`);
-    const children = ["header", "navigation", "preloader"].includes(b.key)
+    const children = ["header", "heroName", "navigation", "preloader"].includes(b.key)
       ? `${selector} .font-sans, ${selector} .font-display { font-family: inherit; }` : "";
     return `${selector} { ${decls.join("; ")}; } ${children}`;
   });
