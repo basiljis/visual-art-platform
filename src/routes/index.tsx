@@ -373,7 +373,7 @@ function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: W
       </div>
       <div className="grid gap-4 px-5 py-5 md:grid-cols-[1fr_auto] md:items-end md:px-8">
         <div data-font-block="captions"><h2 className="text-base font-medium md:text-lg">{w[lang]}</h2><p className="mt-1 max-w-xl text-xs opacity-70">{c.desc(w)}</p>{w.technique && <p className="mt-1 text-xs opacity-70">{w.technique}</p>}<div className="mt-2"><ArtworkStatus status={w.status} lang={lang} /></div></div>
-        <Button variant="link" type="button" hidden={!canEnquire(w.status)} onClick={() => onEnquire(w[lang])} className="h-auto w-fit rounded-none border-b border-current p-0 text-xs uppercase">{c.buy}<ArrowUpRight className="size-4" /></Button>
+        {canEnquire(w.status) && <Button variant="link" type="button" onClick={() => onEnquire(w[lang])} className="h-auto w-fit rounded-none border-b border-current p-0 text-xs uppercase">{c.buy}<ArrowUpRight className="size-4" /></Button>}
       </div>
     </div>
   );
