@@ -17,10 +17,15 @@ const weightOptions = [
 ];
 const lineHeightOptions = [
   { value: "0", label: "Авто" },
+  { value: "1.05", label: "1.05" },
   { value: "1.2", label: "1.2" },
+  { value: "1.23", label: "1.23" },
   { value: "1.3", label: "1.3" },
+  { value: "1.35", label: "1.35" },
   { value: "1.4", label: "1.4" },
+  { value: "1.45", label: "1.45" },
   { value: "1.5", label: "1.5" },
+  { value: "1.55", label: "1.55" },
   { value: "1.6", label: "1.6" },
   { value: "1.8", label: "1.8" },
   { value: "2", label: "2.0" },
