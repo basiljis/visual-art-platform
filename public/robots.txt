@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://dikunova.headquaters.space/sitemap.xml
+Sitemap: https://dikunova.art/sitemap.xml

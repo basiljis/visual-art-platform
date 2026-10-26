@@ -17,7 +17,7 @@
 - Admin role is granted only by claim_admin() to the confirmed owner email — no client-side role checks.
 - Blog subscriptions are inserted by a server function with the admin client; blog_subscribers has RLS on and no public policies.
 - Purchase enquiries are saved by a server function (admin client) into purchase_enquiries (RLS on, no public policies); emailing them needs a mail connection.
-- Self-hosted build (Timeweb): Dockerfile builds with NITRO_PRESET=node-server; edge/nginx proxies site + api.dikunova.art — server code must not depend on the service role key, which isn't available off-platform.
+- Self-hosted build (Timeweb): Dockerfile builds with NITRO_PRESET=node-server; Compose publishes edge 8082→8080 and pins app to 0.0.0.0:8080, matching nginx upstream — keep one documented port chain; server code must not depend on the service role key, which isn't available off-platform.
 - Site typography is stored in site_content under typography, publicly loaded at the root and applied through scoped CSS tokens and block attributes; admin edits use existing admin-only RLS so choices persist for all visitors without changing admin fonts.
 - Public SEO URLs and structured data use src/lib/seo.ts, not request origins; sitemap reads paginate with public access and fail explicitly to avoid proxy-host URLs and incomplete successful responses.
 - Homepage design is selected in gallery_layout: portrait preserves the static self-portrait composition, while HomeCarousel owns the signature/introduction and uncropped Embla artwork composition; both headers use the editable header typography block and both designs open original works in the viewer.

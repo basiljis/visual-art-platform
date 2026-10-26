@@ -1,6 +1,6 @@
 import { mediaUrl } from "./media";
 
-export const SITE_URL = "https://dikunova.headquaters.space";
+export const SITE_URL = "https://dikunova.art";
 
 export function pageUrl(path: string) {
   return new URL(path, `${SITE_URL}/`).href;

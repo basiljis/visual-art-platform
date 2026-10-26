@@ -18,6 +18,9 @@ services:
         VITE_SUPABASE_PUBLISHABLE_KEY: ${VITE_SUPABASE_PUBLISHABLE_KEY}
         VITE_SUPABASE_PROJECT_ID: ${VITE_SUPABASE_PROJECT_ID}
     environment:
+      # Keep the internal port stable even if the hosting panel defines PORT.
+      HOST: 0.0.0.0
+      PORT: "8080"
       # Server-side calls go straight to the backend (outgoing traffic is not blocked)
       SUPABASE_URL: ${SUPABASE_URL}
       SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY}
