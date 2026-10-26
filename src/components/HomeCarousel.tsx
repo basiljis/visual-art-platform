@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
@@ -41,8 +41,6 @@ export function HomeCarousel({ slides, lang, onOpen }: { slides: Slide[]; lang: 
         </CarouselContent>
         <div className="relative mt-3 flex min-h-10 items-start justify-center px-10">
           <p data-font-block="captions" aria-live="polite" className="text-center text-[10px] uppercase leading-5 text-muted-foreground">{slides[selected]?.title}{slides[selected]?.year ? ` · ${slides[selected]?.year}` : ""}</p>
-          <Button variant="ghost" size="icon" disabled={slides.length < 2} onClick={() => api?.scrollPrev()} aria-label={lang === "ru" ? "Предыдущая картина" : "Previous painting"} title={lang === "ru" ? "Предыдущая картина" : "Previous painting"} className="absolute -left-2 -top-2 rounded-none hover:bg-transparent hover:text-red-accent"><ArrowLeft className="size-4" strokeWidth={1} /></Button>
-          <Button variant="ghost" size="icon" disabled={slides.length < 2} onClick={() => api?.scrollNext()} aria-label={lang === "ru" ? "Следующая картина" : "Next painting"} title={lang === "ru" ? "Следующая картина" : "Next painting"} className="absolute -right-2 -top-2 rounded-none hover:bg-transparent hover:text-red-accent"><ArrowRight className="size-4" strokeWidth={1} /></Button>
         </div>
       </Carousel>
     </div>
