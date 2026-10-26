@@ -84,6 +84,14 @@ export function TypographyPanel() {
                 <SelectContent>{lineHeightOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
               </Select>
             </div>
+            <Select value={s.textCase} disabled={busy} onValueChange={(value: BlockStyle["textCase"]) => setBlock(block.key, { textCase: value })}>
+              <SelectTrigger aria-label={`Регистр — ${block.label}`}><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Как написано</SelectItem>
+                <SelectItem value="upper">ЗАГЛАВНЫЕ</SelectItem>
+                <SelectItem value="lower">строчные</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </section>;
       })}

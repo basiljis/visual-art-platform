@@ -14,7 +14,10 @@ export const fontOptions = [
 
 export type FontId = typeof fontOptions[number]["id"];
 /** Per-block style: font family plus optional size (zoom scale), weight and line-height overrides. 0 means "keep default". */
-export type BlockStyle = { font: FontId; size: number; weight: number; lineHeight: number };
+export type TextCase = "none" | "upper" | "lower";
+export type BlockStyle = { font: FontId; size: number; weight: number; lineHeight: number; textCase: TextCase };
+export const TEXT_CASES: TextCase[] = ["none", "upper", "lower"];
+const defaultCase = (key: string): TextCase => ["header", "preloader", "heroName"].includes(key) ? "upper" : "none";
 export const typographyBlocks = [
   { key: "header", label: "Шапка — имя художника", sample: "Наталья Дикунова / artist", defaultFont: "futura-pt" },
   { key: "headings", label: "Заголовки разделов и окон", sample: "Работы · Об авторе · Блог", defaultFont: "futura-pt" },
@@ -50,7 +53,7 @@ export const referenceLineHeights: Record<TypographyBlock, number> = {
   body: 1.45, intro: 1.45, about: 1.45, blog: 1.45, news: 1.45, captions: 1.55, footer: 1.55,
 };
 export const defaultTypography = Object.fromEntries(
-  typographyBlocks.map(b => [b.key, { font: b.defaultFont, size: 1, weight: 0, lineHeight: referenceLineHeights[b.key] }]),
+  typographyBlocks.map(b => [b.key, { font: b.defaultFont, size: 1, weight: 0, lineHeight: referenceLineHeights[b.key], textCase: defaultCase(b.key) }]),
 ) as TypographySettings;
 
 /** Accepts the current format ({ block: { font, size, weight, lineHeight } }) and the legacy flat format ({ block: fontId }). */
@@ -59,7 +62,7 @@ export function normalizeTypography(value: unknown): TypographySettings {
   return Object.fromEntries(typographyBlocks.map(b => {
     const raw = source[b.key];
     if (typeof raw === "string" && fontOptions.some(f => f.id === raw)) {
-      return [b.key, { font: raw, size: 1, weight: 0, lineHeight: referenceLineHeights[b.key] }];
+      return [b.key, { font: raw, size: 1, weight: 0, lineHeight: referenceLineHeights[b.key], textCase: defaultCase(b.key) }];
     }
     const obj = raw && typeof raw === "object" ? raw as Record<string, unknown> : {};
     return [b.key, {
@@ -67,6 +70,7 @@ export function normalizeTypography(value: unknown): TypographySettings {
       size: pick(obj["size"], SIZES, 1),
       weight: pick(obj["weight"], WEIGHTS, 0),
       lineHeight: pick(obj["lineHeight"], LINE_HEIGHTS, referenceLineHeights[b.key]),
+      textCase: TEXT_CASES.includes(obj["textCase"] as TextCase) ? obj["textCase"] as TextCase : defaultCase(b.key),
     }];
   })) as TypographySettings;
 }
@@ -80,6 +84,7 @@ export function typographyCss(input: TypographySettings) {
     if (s.weight) decls.push(`font-weight: ${s.weight}`);
     if (s.lineHeight) decls.push(`line-height: ${s.lineHeight}`);
     if (s.size !== 1) decls.push(`zoom: ${s.size}`);
+    if (s.textCase !== "none") decls.push(`text-transform: ${s.textCase === "upper" ? "uppercase" : "lowercase"}`);
     return decls.length ? ` ${decls.join("; ")}` : "";
   };
   const faces = `@font-face { font-family: "FuturaPT"; src: url("${futuraLight.url}") format("woff2"); font-weight: 100 300; font-display: swap; }
@@ -97,6 +102,7 @@ export function typographyCss(input: TypographySettings) {
     if (s.weight) decls.push(`font-weight: ${s.weight}`);
     if (s.lineHeight) decls.push(`line-height: ${s.lineHeight}`);
     if (s.size !== 1) decls.push(`zoom: ${s.size}`);
+    if (s.textCase !== "none") decls.push(`text-transform: ${s.textCase === "upper" ? "uppercase" : "lowercase"}`);
     const children = ["header", "heroName", "navigation", "preloader"].includes(b.key)
       ? `${selector} .font-sans, ${selector} .font-display { font-family: inherit; }` : "";
     return `${selector} { ${decls.join("; ")}; } ${children}`;
