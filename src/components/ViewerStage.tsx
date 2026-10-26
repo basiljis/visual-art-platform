@@ -19,8 +19,16 @@ export function parseSize(size: string): { w: number; h: number } | null {
 }
 
 /** Image with wheel / pinch zoom and drag panning around the cursor. */
-export function ZoomImage({ src, alt, resetKey }: { src: string; alt: string; resetKey: string }) {
+export function ZoomImage({ src, alt, resetKey, sold, soldLabel }: { src: string; alt: string; resetKey: string; sold?: boolean; soldLabel?: string }) {
   const box = useRef<HTMLDivElement>(null);
+  const img = useRef<HTMLImageElement>(null);
+  const [dot, setDot] = useState<{ x: number; y: number } | null>(null);
+  useEffect(() => {
+    const el = img.current; if (!el || !sold) { setDot(null); return; }
+    const place = () => setDot({ x: el.offsetLeft + el.offsetWidth, y: el.offsetTop });
+    place(); el.addEventListener("load", place); window.addEventListener("resize", place);
+    return () => { el.removeEventListener("load", place); window.removeEventListener("resize", place); };
+  }, [src, sold]);
   const [t, setT] = useState({ z: 1, x: 0, y: 0 });
   const tRef = useRef(t); tRef.current = t;
   const pointers = useRef(new Map<number, { x: number; y: number }>());
@@ -64,7 +72,8 @@ export function ZoomImage({ src, alt, resetKey }: { src: string; alt: string; re
       }}
       onPointerUp={(e) => { pointers.current.delete(e.pointerId); if (pointers.current.size < 2) pinch.current = null; }}
       onPointerCancel={(e) => { pointers.current.delete(e.pointerId); pinch.current = null; }}>
-      <img src={src} alt={alt} draggable={false} style={{ transform: `translate(${t.x}px, ${t.y}px) scale(${t.z})` }} className="max-h-full max-w-full animate-reveal object-contain shadow-2xl transition-transform duration-75 will-change-transform" />
+      {dot && <span role="img" aria-label={soldLabel} title={soldLabel} style={{ left: dot.x - 26, top: dot.y + 12 }} className="pointer-events-none absolute z-[1] size-3.5 rounded-full bg-red-accent ring-2 ring-background" />}
+      <img ref={img} src={src} alt={alt} draggable={false} style={{ transform: `translate(${t.x}px, ${t.y}px) scale(${t.z})` }} className="max-h-full max-w-full animate-reveal object-contain shadow-2xl transition-transform duration-75 will-change-transform" />
     </div>
   );
 }
