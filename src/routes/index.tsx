@@ -1,3 +1,4 @@
+import { canEnquire, isSold } from "@/lib/artwork-availability";
 import { GalleryNavigation } from "@/components/GalleryNavigation";
 import { HomeCarousel } from "@/components/HomeCarousel";
 import { galleryLayoutQuery } from "@/lib/gallery-layout.functions";
@@ -58,11 +59,11 @@ type Lang = "ru" | "en";
 type Category = string;
 type Work = { id: string; image: string; category: string; project: string | undefined; cover: boolean; hero: boolean; ru: string; en: string; year: string; size: string; technique: string; status: string };
 type Cat = { key: string; ru: string; en: string; noteRu: string; noteEn: string; children: { key: string; ru: string; en: string }[] };
-const statusLabels: Record<Lang, Record<string, string>> = {
-  ru: { available: "В продаже", "for-sale": "В продаже", sold: "Продана", private: "В частной коллекции", "on-request": "По запросу" },
-  en: { available: "For sale", "for-sale": "For sale", sold: "Sold", private: "Private collection", "on-request": "On request" },
-};
-const statusLabel = (status: string, lang: Lang) => statusLabels[lang][status] ?? "";
+function ArtworkStatus({ status, lang }: { status: string; lang: Lang }) {
+  if (isSold(status)) return <span role="img" aria-label={lang === "ru" ? "Продана" : "Sold"} title={lang === "ru" ? "Продана" : "Sold"} className="inline-block size-2.5 shrink-0 rounded-full bg-red-accent" />;
+  if (status === "private") return <span className="text-xs text-muted-foreground">{lang === "ru" ? "В частной коллекции" : "Private collection"}</span>;
+  return null;
+}
 function buildGallery(data: { categories: CategoryRow[]; works: WorkRow[] }, lang: Lang) {
   const top = data.categories.filter((c) => !c.parent_key);
   const cats: Cat[] = top.map((c) => ({ key: c.key, ru: c.name_ru, en: c.name_en, noteRu: c.description_ru, noteEn: c.description_en, children: data.categories.filter((s) => s.parent_key === c.key).map((s) => ({ key: s.key, ru: s.name_ru, en: s.name_en })) }));
@@ -156,26 +157,9 @@ function Index() {
 
   return (
     <main className="min-h-screen overflow-x-clip bg-background text-foreground">
-      <div className="site-preloader pointer-events-none fixed inset-0 z-[100] flex animate-preloader flex-col items-center justify-center overflow-hidden bg-ink text-paper" aria-hidden="true">
-        <div className="paper-grain absolute inset-0" />
-        {/* Signature drawn stroke by stroke: an animated pen path reveals the original ink image */}
-        <svg viewBox="0 0 400 800" className="relative h-56 w-56 md:h-72 md:w-72">
-          <defs>
-            <mask id="preloader-sign-mask" maskUnits="userSpaceOnUse">
-              <g fill="none" stroke="#fff" strokeWidth="34" strokeLinecap="round" strokeLinejoin="round">
-                <path className="sign-stroke" pathLength={1} d="M28 310 L185 196 L72 368 L170 240 L122 380 L198 236 L155 392 L225 255 L192 476 L245 290 L270 200 L304 102 L282 170 L270 230 C285 280 300 285 332 300 L270 375 C255 400 262 408 300 412 C320 418 310 470 302 520 C300 580 360 640 368 720 L366 775 L356 762" />
-                <circle className="sign-dot" pathLength={1} cx="270" cy="318" r="10" />
-              </g>
-            </mask>
-          </defs>
-          <image href={signatureAsset.url} width="400" height="800" mask="url(#preloader-sign-mask)" />
-        </svg>
-        <p data-font-block="preloader" className="relative mt-6 font-display text-lg tracking-[.18em]">{t.artist} <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.24em] opacity-60">artist</span></p>
-      </div>
-
       <header className={`fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center px-4 text-ink transition-colors duration-300 motion-reduce:transition-none md:px-8 ${carouselHome ? "border-b border-border bg-header-surface" : showHeaderName ? "bg-header-surface" : "bg-transparent"}`}>
         <div className="flex items-center gap-4"><button aria-label={lang==="ru"?"Меню":"Menu"} data-tip={lang==="ru"?"Меню":"Menu"} onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em]"><Menu className="size-5"/><span className="hidden sm:inline">{lang === "ru" ? "Меню" : "Menu"}</span></button></div>
-        <a href="#top" data-font-block={carouselHome ? undefined : "header"} aria-hidden={!showHeaderName} tabIndex={showHeaderName ? 0 : -1} className={`whitespace-nowrap text-center ${carouselHome ? "font-sans font-medium" : "font-display"} [-webkit-text-stroke:0.4px_currentColor] sm:[-webkit-text-stroke:0] text-[15px] tracking-[.1em] sm:text-lg sm:tracking-[.18em] transition-opacity duration-300 motion-reduce:transition-none ${showHeaderName ? "visible opacity-100" : "invisible pointer-events-none opacity-0"}`}>{t.artist}<span className="hidden sm:inline"> <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.2em] opacity-60">artist</span></span></a>
+        <a href="#top" data-font-block="header" aria-hidden={!showHeaderName} tabIndex={showHeaderName ? 0 : -1} className={`whitespace-nowrap text-center font-display [-webkit-text-stroke:0.4px_currentColor] sm:[-webkit-text-stroke:0] text-[15px] tracking-[.1em] sm:text-lg sm:tracking-[.18em] transition-opacity duration-300 motion-reduce:transition-none ${showHeaderName ? "visible opacity-100" : "invisible pointer-events-none opacity-0"}`}>{t.artist}<span className="hidden sm:inline"> <span className="font-sans font-light text-red-accent">/</span> <span className="font-sans text-xs lowercase tracking-[.2em] opacity-60">artist</span></span></a>
         <div className="flex justify-end gap-1">
           <button onClick={() => setLang(lang === "ru" ? "en" : "ru")} className="h-9 w-10 text-xs font-semibold uppercase" aria-label={lang==="ru"?"Switch to English":"Переключить на русский"} data-tip={lang==="ru"?"Switch to English":"Переключить на русский"}>{lang}</button>
           <button onClick={() => setDark(!dark)} className="grid size-9 place-items-center" aria-label={lang==="ru"?(dark?"Светлая тема":"Тёмная тема"):(dark?"Light theme":"Dark theme")} data-tip={lang==="ru"?(dark?"Светлая тема":"Тёмная тема"):(dark?"Light theme":"Dark theme")}>{dark ? <Sun className="size-4"/> : <Moon className="size-4"/>}</button>
@@ -274,8 +258,8 @@ function Index() {
         })()}
         <div className={`grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 ${sideMenu && !galleryMenuCollapsed ? "xl:grid-cols-3" : "lg:grid-cols-3"}`}>
           {visible.map((work,i)=><article key={`${work.image}-${i}`} >
-            <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]"/></button><TooltipProvider delayDuration={200}><Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 place-items-center rounded-none bg-background/90 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-red-accent hover:text-background" aria-label={t.buy}><ArrowUpRight className="size-5"/></Button></TooltipTrigger><TooltipContent side="top" sideOffset={8}>{t.buy}</TooltipContent></Tooltip></TooltipProvider></div>
-            <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div>{work.cover && project === "all" && work.project && <p className="mb-1 text-[11px] uppercase tracking-[.16em] text-muted-foreground"><span className="text-red-accent">/ </span>{parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}</p>}<h2 className="text-base font-medium">{work[lang]}</h2>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}{work.status && <p className={`mt-1 text-[11px] uppercase tracking-[.14em] ${(work.status === "for-sale" || work.status === "available") ? "text-red-accent" : "text-muted-foreground"}`}>{statusLabel(work.status, lang)}</p>}{work.cover && project === "all" && work.project && <button onClick={()=>openProject(work.category, work.project!)} className="mt-4 inline-flex items-center gap-2 border border-foreground px-3 py-2 text-left text-[11px] font-medium uppercase tracking-[.14em] transition-colors hover:border-red-accent hover:bg-red-accent hover:text-background"><span className="text-red-accent">/</span>{t.more}<ArrowUpRight className="size-3.5 shrink-0"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
+            <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]"/></button>{canEnquire(work.status) && <TooltipProvider delayDuration={200}><Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 place-items-center rounded-none bg-background/90 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-red-accent hover:text-background" aria-label={t.buy}><ArrowUpRight className="size-5"/></Button></TooltipTrigger><TooltipContent side="top" sideOffset={8}>{t.buy}</TooltipContent></Tooltip></TooltipProvider>}</div>
+            <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div>{work.cover && project === "all" && work.project && <p className="mb-1 text-[11px] uppercase tracking-[.16em] text-muted-foreground"><span className="text-red-accent">/ </span>{parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}</p>}<h2 className="text-base font-medium">{work[lang]}</h2>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}<div className="mt-2"><ArtworkStatus status={work.status} lang={lang} /></div>{work.cover && project === "all" && work.project && <button onClick={()=>work.project && openProject(work.category, work.project)} className="mt-4 inline-flex items-center gap-2 border border-foreground px-3 py-2 text-left text-[11px] font-medium uppercase tracking-[.14em] transition-colors hover:border-red-accent hover:bg-red-accent hover:text-background"><span className="text-red-accent">/</span>{t.more}<ArrowUpRight className="size-3.5 shrink-0"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
         </div>
         {relatedPosts.length > 0 && (
@@ -318,7 +302,7 @@ function Index() {
 
       <footer id="contact" data-font-block="footer" className="relative overflow-hidden bg-ink px-5 pt-20 text-paper md:px-8 md:pt-28">
         <div className="grid gap-14 md:grid-cols-2"><div className="flex min-w-0 flex-wrap items-center gap-4 md:gap-6"><h2 className="font-display text-4xl sm:text-5xl md:text-6xl xl:text-7xl">{t.contact}</h2><img src={signatureAsset.url} alt="Наталья Дикунова" className="h-14 w-14 shrink-0 object-contain md:h-20 md:w-20 xl:h-28 xl:w-28" /></div><div className="space-y-3 text-lg"><a className="block border-b border-paper/30 pb-3" href="mailto:morrasdream@gmail.com">morrasdream@gmail.com</a><a className="block border-b border-paper/30 pb-3" href="tel:+79268215342">+7 926 821-53-42</a><div className="flex flex-wrap gap-x-6 gap-y-3 pt-3 text-xs uppercase tracking-[.18em]"><a href="https://www.instagram.com/natasha_dikunova_zipalova" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Instagram<ArrowUpRight className="size-3"/></a><a href="https://www.facebook.com/share/15dxi5pfo6/" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Facebook<ArrowUpRight className="size-3"/></a><a href="https://t.me/Natasha_Dikunova_Zipalova" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-red-accent">Telegram<ArrowUpRight className="size-3"/></a></div></div></div>
-        <div className="mt-20 flex flex-col items-start gap-4 sm:flex-row sm:justify-between sm:gap-6"><p data-font-block="body" className="max-w-4xl text-[10px] uppercase leading-5 tracking-[.18em] opacity-60">{t.achievements}</p><Link to="/admin" aria-label={lang==="ru"?"Администрирование":"Admin"} data-tip={lang==="ru"?"Администрирование":"Admin"} className="shrink-0 opacity-30 transition-opacity hover:text-red-accent hover:opacity-100"><Settings className="size-3.5" /></Link></div>
+        <div className="mt-20 flex flex-col items-start gap-4 sm:flex-row sm:justify-between sm:gap-6"><Link to="/admin" aria-label={lang==="ru"?"Администрирование":"Admin"} data-tip={lang==="ru"?"Администрирование":"Admin"} className="shrink-0 opacity-30 transition-opacity hover:text-red-accent hover:opacity-100"><Settings className="size-3.5" /></Link></div>
         <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 border-t border-paper/25 pt-5">
           {(["privacy", "terms"] as const).map((kind) => <Button key={kind} variant="link" onClick={() => setLegalOpen(kind)} className="h-auto whitespace-normal p-0 text-left text-xs text-paper/80 hover:text-red-accent">{legalDocuments[lang][kind].title}</Button>)}
         </div>
@@ -334,8 +318,8 @@ function Index() {
 }
 
 const viewerCopy = {
-  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: Work) => `${[w.ru, w.year, w.size].filter(Boolean).join(", ")}. Оригинальная работа Натальи Дикуновой.` },
-  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: Work) => `${[w.en, w.year, w.size.replace("см", "cm")].filter(Boolean).join(", ")}. Original work by Natalia Dikunova.` },
+  ru: { bg: "Фон", close: "Закрыть", prev: "Предыдущая", next: "Следующая", buy: "Узнать о покупке", desc: (w: Work) => `${[w.ru, w.year, w.size].filter(Boolean).join(", ")}` },
+  en: { bg: "Background", close: "Close", prev: "Previous", next: "Next", buy: "Purchase enquiry", desc: (w: Work) => `${[w.en, w.year, w.size.replace("см", "cm")].filter(Boolean).join(", ")}` },
 };
 const backgrounds = [
   { key: "dark", cls: "bg-ink text-paper" },
@@ -361,9 +345,9 @@ function slowScroll(target: number) {
 function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: Work[]; index: number; lang: Lang; onChange: (i: number) => void; onClose: () => void; onEnquire: (w: string) => void }) {
   const [bg, setBg] = useState(0);
   const [interior, setInterior] = useState(false);
-  const w: Work = works[index] ?? works[0]!;
+  const w = works[index] ?? works[0];
   const c = viewerCopy[lang];
-  const dims = parseSize(w.size);
+  const dims = w ? parseSize(w.size) : null;
   const go = (d: number) => onChange((index + d + works.length) % works.length);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -375,6 +359,7 @@ function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: W
     document.body.style.overflow = "hidden";
     return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
   });
+  if (!w) return null;
   return (
     <div role="dialog" aria-modal="true" aria-label={w[lang]} className={`fixed inset-0 z-[90] flex flex-col transition-colors duration-500 ${backgrounds[bg]?.cls ?? ""}`}>
       <div className="flex h-16 items-center justify-between px-5 md:px-8">
@@ -387,8 +372,8 @@ function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: W
         <button onClick={() => go(1)} aria-label={c.next} data-tip={c.next} className="absolute right-1 z-10 grid size-11 place-items-center md:right-8"><ArrowRight className="size-6" /></button>
       </div>
       <div className="grid gap-4 px-5 py-5 md:grid-cols-[1fr_auto] md:items-end md:px-8">
-        <div data-font-block="captions"><h2 className="text-base font-medium md:text-lg">{w[lang]}</h2><p className="mt-1 max-w-xl text-xs opacity-70">{c.desc(w)}</p>{w.technique && <p className="mt-1 text-xs opacity-70">{w.technique}</p>}{w.status && <p className={`mt-1 text-[11px] uppercase tracking-[.14em] ${(w.status === "for-sale" || w.status === "available") ? "text-red-accent" : "opacity-70"}`}>{statusLabel(w.status, lang)}</p>}</div>
-        <button type="button" onClick={() => onEnquire(w[lang])} className="flex w-fit items-center gap-2 border-b border-current pb-1 text-xs uppercase tracking-[.18em]">{c.buy}<ArrowUpRight className="size-4" /></button>
+        <div data-font-block="captions"><h2 className="text-base font-medium md:text-lg">{w[lang]}</h2><p className="mt-1 max-w-xl text-xs opacity-70">{c.desc(w)}</p>{w.technique && <p className="mt-1 text-xs opacity-70">{w.technique}</p>}<div className="mt-2"><ArtworkStatus status={w.status} lang={lang} /></div></div>
+        <Button variant="link" type="button" hidden={!canEnquire(w.status)} onClick={() => onEnquire(w[lang])} className="h-auto w-fit rounded-none border-b border-current p-0 text-xs uppercase">{c.buy}<ArrowUpRight className="size-4" /></Button>
       </div>
     </div>
   );
