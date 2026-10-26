@@ -1,0 +1,1 @@
+ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS description_hidden boolean NOT NULL DEFAULT false;

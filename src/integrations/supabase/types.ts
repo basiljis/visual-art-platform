@@ -92,6 +92,7 @@ export type Database = {
           curator_en: string
           curator_ru: string
           description_en: string
+          description_hidden: boolean
           description_ru: string
           exhibited_en: string
           exhibited_ru: string
@@ -108,6 +109,7 @@ export type Database = {
           curator_en?: string
           curator_ru?: string
           description_en?: string
+          description_hidden?: boolean
           description_ru?: string
           exhibited_en?: string
           exhibited_ru?: string
@@ -124,6 +126,7 @@ export type Database = {
           curator_en?: string
           curator_ru?: string
           description_en?: string
+          description_hidden?: boolean
           description_ru?: string
           exhibited_en?: string
           exhibited_ru?: string
