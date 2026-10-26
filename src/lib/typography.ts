@@ -17,9 +17,10 @@ export type FontId = typeof fontOptions[number]["id"];
 export type TextCase = "none" | "upper" | "lower";
 export type BlockStyle = { font: FontId; size: number; weight: number; lineHeight: number; textCase: TextCase };
 export const TEXT_CASES: TextCase[] = ["none", "upper", "lower"];
-const defaultCase = (key: string): TextCase => ["header", "preloader", "heroName"].includes(key) ? "upper" : "none";
+const defaultCase = (key: string): TextCase => ["header", "preloader", "heroName"].includes(key) ? "upper" : ["headerArtist", "preloaderArtist", "heroArtist"].includes(key) ? "lower" : "none";
 export const typographyBlocks = [
-  { key: "header", label: "Шапка — имя художника", sample: "Наталья Дикунова / artist", defaultFont: "futura-pt" },
+  { key: "header", label: "Шапка — ФИО", sample: "Наталья Дикунова", defaultFont: "futura-pt" },
+  { key: "headerArtist", label: "Шапка — «/ artist»", sample: "/ artist", defaultFont: "futura-pt" },
   { key: "headings", label: "Заголовки разделов и окон", sample: "Работы · Об авторе · Блог", defaultFont: "futura-pt" },
   { key: "body", label: "Основной текст и кнопки", sample: "Живопись, рисунок и печатная графика", defaultFont: "futura-pt" },
   { key: "heroName", label: "Главная — имя крупно", sample: "НАТАЛЬЯ ДИКУНОВА", defaultFont: "futura-pt" },
@@ -32,7 +33,8 @@ export const typographyBlocks = [
   { key: "captions", label: "Подписи к работам", sample: "КИТАЙСКИЙ ЖЕМЧУГ · 2025 · 60 × 80 см", defaultFont: "futura-pt" },
   { key: "footer", label: "Подвал — контакты и ссылки", sample: "Контакты · Instagram · Telegram", defaultFont: "futura-pt" },
   { key: "footerLogo", label: "Подвал — надпись DIKUNOVA", sample: "DIKUNOVA", defaultFont: "futura-pt" },
-  { key: "preloader", label: "Экран загрузки — имя", sample: "Наталья Дикунова / artist", defaultFont: "futura-pt" },
+  { key: "preloader", label: "Экран загрузки — ФИО", sample: "Наталья Дикунова", defaultFont: "futura-pt" },
+  { key: "preloaderArtist", label: "Экран загрузки — «/ artist»", sample: "/ artist", defaultFont: "futura-pt" },
   { key: "blog", label: "Блог — текст публикаций", sample: "Выставки, проекты и заметки художника", defaultFont: "futura-pt" },
   { key: "news", label: "Новости — текст выставок", sample: "Открытие выставки · Дата · Адрес", defaultFont: "futura-pt" },
 ] as const;
@@ -49,7 +51,7 @@ function pick(value: unknown, allowed: readonly number[], fallback: number) {
 
 /** Line-heights of the original Tilda site (dikunova.art). */
 export const referenceLineHeights: Record<TypographyBlock, number> = {
-  header: 1.05, heroName: 1.05, heroArtist: 1.35, heroLink: 1.4, preloader: 1.05, footerLogo: 1.05, headings: 1.23, navigation: 1.35, filters: 1.35,
+  header: 1.05, headerArtist: 1.35, preloaderArtist: 1.35, heroName: 1.05, heroArtist: 1.35, heroLink: 1.4, preloader: 1.05, footerLogo: 1.05, headings: 1.23, navigation: 1.35, filters: 1.35,
   body: 1.45, intro: 1.45, about: 1.45, blog: 1.45, news: 1.45, captions: 1.55, footer: 1.55,
 };
 export const defaultTypography = Object.fromEntries(
