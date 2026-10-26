@@ -98,7 +98,7 @@ export function CategoriesPanel() {
   const top = rows.filter((r) => !r.parent_key);
   const save = async () => {
     if (!edit?.name_ru) { alert("Укажите название"); return; }
-    const payload = { key: edit.key || slugify(edit.name_en || edit.name_ru), parent_key: edit.parent_key || null, name_ru: edit.name_ru, name_en: edit.name_en || edit.name_ru, description_ru: edit.description_ru ?? "", description_en: edit.description_en ?? "", curator_ru: edit.curator_ru ?? "", curator_en: edit.curator_en ?? "", exhibited_ru: edit.exhibited_ru ?? "", exhibited_en: edit.exhibited_en ?? "", process_images: edit.process_images ?? [], sort: Number(edit.sort ?? rows.length + 1) };
+    const payload = { key: edit.key || slugify(edit.name_en || edit.name_ru), parent_key: edit.parent_key || null, name_ru: edit.name_ru, name_en: edit.name_en || edit.name_ru, description_ru: edit.description_ru ?? "", description_en: edit.description_en ?? "", description_hidden: !!edit.description_hidden, curator_ru: edit.curator_ru ?? "", curator_en: edit.curator_en ?? "", exhibited_ru: edit.exhibited_ru ?? "", exhibited_en: edit.exhibited_en ?? "", process_images: edit.process_images ?? [], sort: Number(edit.sort ?? rows.length + 1) };
     const { error } = edit.id ? await supabase.from("categories").update(payload).eq("id", edit.id) : await supabase.from("categories").insert(payload);
     if (error) { alert(error.message); return; }
     setEdit(null); reload(); inv();
@@ -115,7 +115,7 @@ export function CategoriesPanel() {
     <div className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-b border-border py-4 pl-10 ${sub ? "ml-6" : ""}`}>
       <button disabled={order.dirty || order.busy} onClick={() => setEdit(c)} className="min-w-0 text-left">
         <p className={sub ? "text-sm" : "font-display text-2xl"}>{sub && <span className="text-red-accent">/ </span>}{c.name_ru} <span className="text-xs text-muted-foreground">· {c.name_en}</span></p>
-        {c.description_ru && <p className="mt-1 truncate text-xs text-muted-foreground">{c.description_ru}</p>}
+        {c.description_ru && <p className="mt-1 truncate text-xs text-muted-foreground">{c.description_hidden && <span className="mr-1 text-red-accent">[скрыто]</span>}{c.description_ru}</p>}
       </button>
       <div className="flex items-center gap-4">
         {!sub && <button disabled={order.dirty || order.busy} onClick={() => setEdit({ parent_key: c.key, sort: rows.filter((r) => r.parent_key === c.key).length + 1 })} className={ghostBtn}><Plus className="size-3" />Подраздел</button>}
@@ -144,6 +144,7 @@ export function CategoriesPanel() {
             <F l="Название (EN)"><input className={field} value={edit.name_en ?? ""} onChange={(e) => setEdit({ ...edit, name_en: e.target.value })} /></F>
             <F l="Описание (RU)" className="md:col-span-2"><textarea rows={3} className={field} value={edit.description_ru ?? ""} onChange={(e) => setEdit({ ...edit, description_ru: e.target.value })} /></F>
             <F l="Описание (EN)" className="md:col-span-2"><textarea rows={3} className={field} value={edit.description_en ?? ""} onChange={(e) => setEdit({ ...edit, description_en: e.target.value })} /></F>
+            <label className="flex items-center gap-2 text-sm md:col-span-2"><input type="checkbox" checked={!!edit.description_hidden} onChange={(e) => setEdit({ ...edit, description_hidden: e.target.checked })} />Скрыть описание на сайте (текст сохранится)</label>
             <F l="Текст куратора (RU)" className="md:col-span-2"><textarea rows={4} className={field} value={edit.curator_ru ?? ""} onChange={(e) => setEdit({ ...edit, curator_ru: e.target.value })} /></F>
             <F l="Текст куратора (EN)" className="md:col-span-2"><textarea rows={4} className={field} value={edit.curator_en ?? ""} onChange={(e) => setEdit({ ...edit, curator_en: e.target.value })} /></F>
             <F l="Где выставлялась (RU) — по строке" className="md:col-span-2"><textarea rows={3} className={field} placeholder="2024 — МСХ, Москва" value={edit.exhibited_ru ?? ""} onChange={(e) => setEdit({ ...edit, exhibited_ru: e.target.value })} /></F>
