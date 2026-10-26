@@ -30,5 +30,5 @@
 - The blog calendar filters loaded public posts client-side by local calendar day via blog-dates, combined with text search; no database date conversion is required.
 - Visit statistics use a session-only random browser ID and an idempotent database RPC per content path, without IP addresses or service keys; only aggregate blog counts are public, and admin reports enforce has_role in the database.
 - Gallery menu placement lives in site_content as gallery_layout, read through a public publishable-client function and saved in the settings admin panel under existing admin-only RLS; one navigation component serves both layouts, with the side layout stacking above artworks on narrow screens.
-- SettingsPanel composes the existing layout, typography and statistics panels under one admin tab; keep their persistence and access controls unchanged so moving controls does not alter site data.
+- SettingsPanel composes the existing layout, typography and statistics panels in accessible inner tabs under one admin tab; preserve editor drafts across inner-tab switches and keep persistence and access controls unchanged so moving controls does not alter site data.
 - Scope admin typography through admin-typography and dedicated CSS tokens, with lower-specificity font rules than site previews; this isolates admin fonts while preserving editable visitor font samples.
