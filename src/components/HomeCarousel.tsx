@@ -24,17 +24,17 @@ export function HomeCarousel({ slides, lang, onOpen }: { slides: Slide[]; lang: 
     return () => window.clearInterval(timer);
   }, [api, slides.length, paused, selected]);
   return <section id="top" data-home-design="carousel" className="bg-background pt-20 text-foreground">
-    <div className="mx-auto grid max-w-[1440px] items-center gap-8 px-6 pb-8 pt-8 md:min-h-[calc(100dvh-5rem)] md:grid-cols-[1.15fr_1fr] md:gap-12 md:px-16 lg:gap-20 lg:px-28">
+    <div className="mx-auto grid max-w-[1440px] items-center gap-8 px-6 pb-8 pt-8 md:min-h-[calc(100dvh-5rem)] md:grid-cols-2 md:gap-12 md:px-16 lg:gap-20 lg:px-28">
       <div className="flex min-w-0 flex-col items-start md:justify-center">
-        <span aria-hidden="true" className="mb-8 block h-44 w-28 bg-sanguine md:mb-10 md:ml-16 md:h-80 md:w-48" style={{ WebkitMaskImage: `url(${signatureAsset.url})`, WebkitMaskSize: "contain", WebkitMaskRepeat: "no-repeat", WebkitMaskPosition: "center", maskImage: `url(${signatureAsset.url})`, maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center" }} />
+        <span aria-hidden="true" className="mb-7 block h-40 w-24 bg-sanguine md:mb-8 md:ml-16 md:h-[min(32dvh,17rem)] md:w-40" style={{ WebkitMaskImage: `url(${signatureAsset.url})`, WebkitMaskSize: "contain", WebkitMaskRepeat: "no-repeat", WebkitMaskPosition: "center", maskImage: `url(${signatureAsset.url})`, maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center" }} />
         <h1 className="sr-only">{lang === "ru" ? "Наталья Дикунова — живопись и графика" : "Natalia Dikunova — painting and printmaking"}</h1>
-        <p data-font-block="intro" className="max-w-lg text-lg leading-relaxed md:text-2xl md:leading-10">{lang === "ru" ? "Живопись, рисунок и печатная графика о памяти, мифе и человеческом присутствии." : "Painting, drawing and printmaking about memory, myth and human presence."}</p>
+        <p data-font-block="intro" className="max-w-md text-lg leading-relaxed md:text-[22px] md:leading-9">{lang === "ru" ? "Живопись, рисунок и печатная графика о памяти, мифе и человеческом присутствии." : "Painting, drawing and printmaking about memory, myth and human presence."}</p>
         <a href="#works" data-font-block="body" className="mt-6 inline-flex items-center gap-3 border-b border-current pb-1 text-xs uppercase hover:text-red-accent">{lang === "ru" ? "Все работы" : "All works"}<ArrowDown className="size-3.5" /></a>
       </div>
       <Carousel className="min-w-0" opts={{ loop: slides.length > 1 }} setApi={setApi} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false); }} aria-label={lang === "ru" ? "Картины на главной" : "Featured paintings"}>
         <CarouselContent className="ml-0">
           {slides.map((slide, i) => <CarouselItem key={slide.index} className="pl-0" aria-label={`${i + 1} / ${slides.length}`}>
-            <Button variant="ghost" onClick={() => onOpen(slide.index)} aria-label={slide.title} tabIndex={i === selected ? 0 : -1} className="block h-[44dvh] min-h-56 w-full cursor-zoom-in rounded-none p-0 hover:bg-transparent md:h-[calc(75dvh-8rem)] md:max-h-[40rem]">
+            <Button variant="ghost" onClick={() => onOpen(slide.index)} aria-label={slide.title} tabIndex={i === selected ? 0 : -1} className="block h-[44dvh] min-h-56 w-full cursor-zoom-in rounded-none p-0 hover:bg-transparent md:h-[min(60dvh,34rem)]">
               <img src={slide.image} alt={slide.title} className="h-full w-full object-contain" loading={i === 0 ? "eager" : "lazy"} />
             </Button>
           </CarouselItem>)}
