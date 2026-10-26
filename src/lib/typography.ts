@@ -71,7 +71,8 @@ export function normalizeTypography(value: unknown): TypographySettings {
   })) as TypographySettings;
 }
 
-export function typographyCss(settings: TypographySettings) {
+export function typographyCss(input: TypographySettings) {
+  const settings = normalizeTypography(input);
   const family = (key: TypographyBlock) => fontOptions.find(f => f.id === settings[key].font)?.family ?? '"Manrope", sans-serif';
   const extra = (key: TypographyBlock) => {
     const s = settings[key];
