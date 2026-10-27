@@ -11,6 +11,8 @@ export function absoluteImage(ref: string | null | undefined): string | undefine
   if (!ref) return undefined;
   const url = mediaUrl(ref);
   if (!url) return undefined;
+  // Bundled Vite assets have no stable absolute origin in preview; hosting supplies their social preview.
+  if (url.startsWith("/src/") || url.startsWith("/assets/") || url.startsWith("/__l5e/")) return undefined;
   return /^https?:/.test(url) ? url : pageUrl(url);
 }
 
@@ -49,15 +51,25 @@ export function articleSchema(post: { title: string; desc: string; slug: string;
   };
 }
 
-export function visualArtwork(work: { name: string; image?: string | undefined; technique?: string | undefined; year?: string | undefined }) {
+export function visualArtwork(work: { name: string; image?: string | undefined; technique?: string | undefined; year?: string | undefined; path?: string; size?: string }) {
   return {
     "@context": "https://schema.org",
     "@type": "VisualArtwork",
     name: work.name,
     ...(work.image ? { image: work.image } : {}),
-    ...(work.technique ? { artMedium: work.technique } : {}),
+    ...(work.technique || work.size?.includes(",") ? { artMedium: work.technique || work.size?.split(",")[0] } : {}),
     ...(work.year ? { dateCreated: work.year } : {}),
+    ...(work.size ? { size: work.size } : {}),
     creator: { "@type": "Person", name: "Наталья Дикунова", url: pageUrl("/") },
-    url: pageUrl("/"),
+    url: pageUrl(work.path ?? "/"),
+  };
+}
+
+export function personSchema() {
+  return {
+    "@context": "https://schema.org", "@type": "Person",
+    name: "Наталья Дикунова", alternateName: "Natalia Dikunova", jobTitle: "Художник",
+    url: pageUrl("/about"),
+    sameAs: ["https://www.instagram.com/natasha_dikunova_zipalova", "https://www.facebook.com/share/15dxi5pfo6/", "https://t.me/Natasha_Dikunova_Zipalova"],
   };
 }

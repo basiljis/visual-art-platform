@@ -7,6 +7,7 @@ import { postQuery } from "@/lib/content.functions";
 import { htmlForDisplay, mediaUrl } from "@/lib/media";
 import { useLanguage, localized, localizedDate } from "@/lib/language";
 import { absoluteImage, articleSchema, breadcrumbs, pageUrl } from "@/lib/seo";
+import { artworkSlug } from "@/lib/artwork-seo";
 import { BlogViewCount } from "@/components/BlogViewCount";
 
 export const Route = createFileRoute("/blog/$slug")({
@@ -72,7 +73,7 @@ function PostPage() {
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
                 <span className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">{en ? "Topics" : "Тематики"}</span>
                 {relatedTopics.map((t) => (
-                  <Link key={t.key} to="/" search={{ category: t.key }} hash="works" className="flex items-center gap-1 border-b border-current pb-0.5 text-xs uppercase tracking-[.14em] transition-colors hover:border-red-accent hover:text-red-accent">
+                  <Link key={t.key} to="/works/$category" params={{ category: t.key }} className="flex items-center gap-1 border-b border-current pb-0.5 text-xs uppercase tracking-[.14em] transition-colors hover:border-red-accent hover:text-red-accent">
                     <span className="text-red-accent">/ </span>{localized(t.name_ru, t.name_en, lang)}
                   </Link>
                 ))}
@@ -83,7 +84,7 @@ function PostPage() {
                 <h2 className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">{en ? "Related works" : "Связанные работы"}</h2>
                 <div className="mt-6 grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3">
                   {relatedWorks.map((w) => (
-                    <Link key={w.id} to="/" search={{ category: w.category_key }} hash="works" className="group block">
+                    <Link key={w.id} to="/works/$category/$slug" params={{ category: w.category_key, slug: artworkSlug(w) }} className="group block">
                       <span className="block aspect-[4/5] overflow-hidden bg-muted">
                         <img src={mediaUrl(w.image)} alt={localized(w.title_ru, w.title_en, lang)} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" />
                       </span>

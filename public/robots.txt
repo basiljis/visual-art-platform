@@ -1,16 +1,26 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /admin
+Disallow: /reset-password
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
+Disallow: /reset-password
 
 User-agent: Twitterbot
 Allow: /
+Disallow: /admin
+Disallow: /reset-password
 
 User-agent: facebookexternalhit
 Allow: /
+Disallow: /admin
+Disallow: /reset-password
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /reset-password
 
 Sitemap: https://dikunova.art/sitemap.xml

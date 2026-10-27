@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { publicDb } from "@/lib/public-db.server";
 import { SITE_URL, articleDate } from "@/lib/seo";
+import { artworkPath } from "@/lib/artwork-seo";
 
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -13,10 +14,25 @@ export const Route = createFileRoute("/sitemap.xml")({
         const urls: { loc: string; lastmod: string | undefined }[] = [
           { loc: `${origin}/`, lastmod: undefined },
           { loc: `${origin}/blog`, lastmod: undefined },
+          { loc: `${origin}/about`, lastmod: undefined },
         ];
         try {
           const db = publicDb();
           const pageSize = 500;
+          for (let offset = 0; ; offset += pageSize) {
+            const { data, error } = await db.from("categories").select("key").order("sort").order("id").range(offset, offset + pageSize - 1);
+            if (error) throw new Error(error.message);
+            if (!data) throw new Error("Missing sitemap category response");
+            for (const c of data) urls.push({ loc: `${origin}/works/${encodeURIComponent(c.key)}`, lastmod: undefined });
+            if (data.length < pageSize) break;
+          }
+          for (let offset = 0; ; offset += pageSize) {
+            const { data, error } = await db.from("works").select("id,title_ru,year,category_key").eq("hidden", false).order("sort").order("id").range(offset, offset + pageSize - 1);
+            if (error) throw new Error(error.message);
+            if (!data) throw new Error("Missing sitemap artwork response");
+            for (const w of data) urls.push({ loc: `${origin}${artworkPath(w)}`, lastmod: undefined });
+            if (data.length < pageSize) break;
+          }
           for (let offset = 0; ; offset += pageSize) {
             const { data, error } = await db.from("blog_posts")
               .select("slug,date").eq("published", true)

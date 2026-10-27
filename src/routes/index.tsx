@@ -19,13 +19,15 @@ import portraitAsset from "@/assets/artist-about-photo.png.asset.json";
 import { ZoomImage, InteriorView, parseSize } from "@/components/ViewerStage";
 import { absoluteImage, breadcrumbs, pageUrl, visualArtwork } from "@/lib/seo";
 import { useLanguage, localized, localizedSize } from "@/lib/language";
+import { artworkAlt, artworkSlug } from "@/lib/artwork-seo";
+import { CvDownload } from "@/components/CvDownload";
 
 export const Route = createFileRoute("/")({
   head: ({ loaderData }: { loaderData?: { ogImage?: string | undefined; artwork?: { name: string; image?: string | undefined; technique?: string | undefined; year?: string | undefined } | undefined } | undefined }) => ({ meta: [
-    { title: "Наталья Дикунова — живопись и графика" },
-    { name: "description", content: "Галерея живописи и печатной графики художника Натальи Дикуновой." },
-    { property: "og:title", content: "Наталья Дикунова — живопись и графика" },
-    { property: "og:description", content: "Галерея живописи и печатной графики художника Натальи Дикуновой." },
+    { title: "Наталья Дикунова — Современный художник, живопись и графика | Портфолио" },
+    { name: "description", content: "Официальный сайт художника Натальи Дикуновой. Живопись, рисунок, офорт и линогравюра. Работы находятся в музеях и частных коллекциях России, Европы и Китая. Возможна покупка картин." },
+    { property: "og:title", content: "Наталья Дикунова — Современный художник, живопись и графика | Портфолио" },
+    { property: "og:description", content: "Официальный сайт художника Натальи Дикуновой. Живопись, рисунок, офорт и линогравюра. Работы находятся в музеях и частных коллекциях России, Европы и Китая. Возможна покупка картин." },
     { property: "og:type", content: "website" },
     { property: "og:url", content: pageUrl("/") },
     { name: "twitter:card", content: "summary_large_image" },
@@ -177,17 +179,17 @@ function Index() {
         </nav>
       </div>
 
-      {carouselHome ? <HomeCarousel slides={heroWorks.flatMap(index => { const work = works[index]; return work ? [{ image: work.image, title: work[lang], year: work.year, index }] : []; })} lang={lang} onOpen={setViewer} /> : <section id="top" data-home-design="portrait" className="relative bg-portrait-paper text-ink">
+      {carouselHome ? <HomeCarousel slides={heroWorks.flatMap(index => { const work = works[index]; return work ? [{ image: work.image, title: work[lang], year: work.year, index, alt: artworkAlt({ title_ru: work.ru, title_en: work.en, technique: work.technique, size: work.size, year: work.year }, lang) }] : []; })} lang={lang} onOpen={setViewer} /> : <section id="top" data-home-design="portrait" className="relative bg-portrait-paper text-ink">
         <div className="relative grid min-h-dvh grid-cols-[30%_70%] md:grid-cols-[38%_62%]">
           <div className="relative overflow-hidden">
             {heroWork && <a href="#works" onClick={(e) => { e.preventDefault(); setViewer(heroIndex); }} aria-label={heroWork[lang]} className="absolute inset-x-0 bottom-0 top-20 block overflow-hidden">
-              <img src={heroWork.image} alt={heroWork[lang]} className="intro-portrait h-full w-full -translate-x-[35%] translate-y-[18%] origin-[65%_35%] scale-[1.35] object-cover object-[65%_center] md:scale-[1.65]" />
+              <img src={heroWork.image} alt={artworkAlt({ title_ru: heroWork.ru, title_en: heroWork.en, technique: heroWork.technique, size: heroWork.size, year: heroWork.year }, lang)} className="intro-portrait h-full w-full -translate-x-[35%] translate-y-[18%] origin-[65%_35%] scale-[1.35] object-cover object-[65%_center] md:scale-[1.65]" />
             </a>}
           </div>
           <div className="relative flex min-w-0 flex-col justify-center px-5 pb-6 pt-14 md:-ml-16 md:px-6 md:pb-6 md:pt-24 lg:px-8">
             <div className="mb-6">
               <span aria-hidden className="mb-4 mt-10 block h-56 w-36 bg-sanguine md:mt-16 md:h-80 md:w-56" style={{ WebkitMaskImage: `url(${signatureAsset.url})`, WebkitMaskSize: "contain", WebkitMaskRepeat: "no-repeat", WebkitMaskPosition: "center", maskImage: `url(${signatureAsset.url})`, maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center" }} />
-              <h1 data-font-block="heroName" className="mb-4 font-sans text-2xl font-light leading-tight md:text-5xl">{lang === "ru" ? "НАТАЛЬЯ" : "NATALIA"}<br /><span className="flex flex-wrap items-baseline gap-x-3 gap-y-2"><span>{lang === "ru" ? "ДИКУНОВА" : "DIKUNOVA"}</span><span data-font-block="heroArtist" className="whitespace-nowrap lowercase text-xs font-normal md:text-base"><span className="text-red-accent">/</span> artist</span></span></h1>
+              <h1 className="sr-only">{lang === "ru" ? "Наталья Дикунова — Живопись и графика" : "Natalia Dikunova — Painting and graphics"}</h1><div data-font-block="heroName" className="mb-4 font-sans text-2xl font-light leading-tight md:text-5xl">{lang === "ru" ? "НАТАЛЬЯ" : "NATALIA"}<br /><span className="flex flex-wrap items-baseline gap-x-3 gap-y-2"><span>{lang === "ru" ? "ДИКУНОВА" : "DIKUNOVA"}</span><span data-font-block="heroArtist" className="whitespace-nowrap lowercase text-xs font-normal md:text-base"><span className="text-red-accent">/</span> artist</span></span></div>
               <p data-font-block="intro" className="max-w-md text-base leading-relaxed md:text-xl">{t.intro}</p>
             </div>
             <a href="#works" data-font-block="heroLink" onClick={(e) => { const el = document.getElementById("works"); if (!el) return; e.preventDefault(); const y = el.getBoundingClientRect().top + window.scrollY - 64; if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) window.scrollTo(0, y); else slowScroll(y); }} className="flex w-fit items-center gap-3 border-b border-current pb-1 text-xs uppercase tracking-[.18em] hover:text-red-accent">{t.all}<ArrowDown className="size-4"/></a>
@@ -196,7 +198,7 @@ function Index() {
       </section>}
 
       <section id="works" className="border-t border-border px-5 pb-20 pt-8 md:px-8 md:pb-28 md:pt-10">
-        <div className="mb-14 flex items-end justify-between gap-6"><div><p data-font-block="body" className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.breadcrumb}</p><h1 className="font-display text-5xl md:text-8xl">{t.works}</h1></div><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
+        <div className="mb-14 flex items-end justify-between gap-6"><div><p data-font-block="body" className="mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.breadcrumb}</p><h2 className="font-display text-5xl md:text-8xl">{t.works}</h2></div><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
         <div data-gallery-menu={galleryLayout.menuPlacement} className={sideMenu ? `grid items-start ${galleryMenuCollapsed ? "gap-x-4 md:grid-cols-[2.5rem_minmax(0,1fr)]" : "gap-x-8 md:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-10"}` : ""}>
           <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} collapsed={galleryMenuCollapsed} onToggle={() => setGalleryMenuCollapsed(value => !value)} onCategory={(key) => { setCategory(key); setProject("all"); }} onProject={openProject} onQuery={setQuery} />
           <div className="min-w-0">
@@ -209,7 +211,7 @@ function Index() {
         )}
         {category === "all" && !q && (
           <div className="mb-28">
-            <p className="mb-8 text-[11px] uppercase tracking-[.18em] text-muted-foreground"><span className="text-red-accent">/ </span>{lang === "ru" ? "Серии" : "Series"}</p>
+            <h2 className="mb-8 text-[11px] uppercase tracking-[.18em] text-muted-foreground"><span className="text-red-accent">/ </span>{lang === "ru" ? "Серии работ" : "Series"}</h2>
             <div className="grid gap-x-6 gap-y-16 md:grid-cols-2">
               {cats.map((c, i) => {
                 const cw = works.filter((w) => w.category === c.key);
@@ -217,11 +219,11 @@ function Index() {
                 if (!cov) return null;
                 const phrase = ((lang === "ru" ? c.noteRu : c.noteEn) || "").replace(/^[^—]*—\s*/, "").split(/(?<=[.!?])\s/)[0];
                 return (
-                  <button key={c.key} type="button" onClick={() => { setCategory(c.key); setProject("all"); document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); }} className="group text-left">
-                    <div className="aspect-[4/3] overflow-hidden bg-muted"><img src={cov.image} alt={c[lang]} loading="lazy" className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]" /></div>
-                    <div data-font-block="captions" className="mt-5 flex items-baseline justify-between gap-4 border-t border-border pt-4"><h2 className="font-display text-3xl transition-colors group-hover:text-red-accent md:text-4xl">{c[lang]}</h2><span className="text-xs tabular-nums text-muted-foreground">{String(cw.length).padStart(2, "0")}</span></div>
+                  <Link key={c.key} to="/works/$category" params={{ category: c.key }} className="group text-left">
+                    <div className="aspect-[4/3] overflow-hidden bg-muted"><img src={cov.image} alt={artworkAlt({ title_ru: cov.ru, title_en: cov.en, technique: cov.technique, size: cov.size, year: cov.year }, lang)} loading="lazy" className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]" /></div>
+                    <div data-font-block="captions" className="mt-5 flex items-baseline justify-between gap-4 border-t border-border pt-4"><h3 className="font-display text-3xl transition-colors group-hover:text-red-accent md:text-4xl">{c[lang]}</h3><span className="text-xs tabular-nums text-muted-foreground">{String(cw.length).padStart(2, "0")}</span></div>
                     {phrase && <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">{phrase}</p>}
-                  </button>
+                  </Link>
                 );
               })}
             </div>
@@ -258,8 +260,8 @@ function Index() {
         })()}
         <div className={`grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 ${sideMenu && !galleryMenuCollapsed ? "xl:grid-cols-3" : "lg:grid-cols-3"}`}>
           {visible.map((work,i)=><article key={`${work.image}-${i}`} >
-            <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={work[lang]} className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]"/></button>{isSold(work.status) && <span aria-hidden className="pointer-events-none absolute right-3 top-3 size-3.5 rounded-full bg-red-accent ring-2 ring-background" />}{canEnquire(work.status) && <TooltipProvider delayDuration={200}><Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 place-items-center rounded-none bg-background/90 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-red-accent hover:text-background" aria-label={t.buy}><ArrowUpRight className="size-5"/></Button></TooltipTrigger><TooltipContent side="top" sideOffset={8}>{t.buy}</TooltipContent></Tooltip></TooltipProvider>}</div>
-            <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div>{work.cover && project === "all" && work.project && <p className="mb-1 text-[11px] uppercase tracking-[.16em] text-muted-foreground"><span className="text-red-accent">/ </span>{parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}</p>}<h2 className="text-base font-medium">{isSold(work.status) && <ArtworkStatus status={work.status} lang={lang} />}{work[lang]}</h2>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}{!isSold(work.status) && work.status === "private" && <div className="mt-2"><ArtworkStatus status={work.status} lang={lang} /></div>}{work.cover && project === "all" && work.project && <button onClick={()=>work.project && openProject(work.category, work.project)} className="mt-4 inline-flex items-center gap-2 border border-foreground px-3 py-2 text-left text-[11px] font-medium uppercase tracking-[.14em] transition-colors hover:border-red-accent hover:bg-red-accent hover:text-background"><span className="text-red-accent">/</span>{t.more}<ArrowUpRight className="size-3.5 shrink-0"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
+            <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={artworkAlt({ title_ru: work.ru, title_en: work.en, technique: work.technique, size: work.size, year: work.year }, lang)} loading="lazy" className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]"/></button>{isSold(work.status) && <span aria-hidden className="pointer-events-none absolute right-3 top-3 size-3.5 rounded-full bg-red-accent ring-2 ring-background" />}{canEnquire(work.status) && <TooltipProvider delayDuration={200}><Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 place-items-center rounded-none bg-background/90 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-red-accent hover:text-background" aria-label={t.buy}><ArrowUpRight className="size-5"/></Button></TooltipTrigger><TooltipContent side="top" sideOffset={8}>{t.buy}</TooltipContent></Tooltip></TooltipProvider>}</div>
+            <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div>{work.cover && project === "all" && work.project && <p className="mb-1 text-[11px] uppercase tracking-[.16em] text-muted-foreground"><span className="text-red-accent">/ </span>{parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}</p>}<h3 className="text-base font-medium">{isSold(work.status) && <ArtworkStatus status={work.status} lang={lang} />}<Link to="/works/$category/$slug" params={{ category: work.category, slug: artworkSlug({ id: work.id, title_ru: work.ru, year: work.year }) }} className="hover:text-red-accent">{work[lang]}</Link></h3>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}{!isSold(work.status) && work.status === "private" && <div className="mt-2"><ArtworkStatus status={work.status} lang={lang} /></div>}{work.cover && project === "all" && work.project && <button onClick={()=>work.project && openProject(work.category, work.project)} className="mt-4 inline-flex items-center gap-2 border border-foreground px-3 py-2 text-left text-[11px] font-medium uppercase tracking-[.14em] transition-colors hover:border-red-accent hover:bg-red-accent hover:text-background"><span className="text-red-accent">/</span>{t.more}<ArrowUpRight className="size-3.5 shrink-0"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
         </div>
         {relatedPosts.length > 0 && (
@@ -295,7 +297,7 @@ function Index() {
                 </div>
               ))}
             </div>
-            <button onClick={() => setAboutOpen(true)} className="mt-10 flex w-fit items-center gap-2 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em] transition-colors hover:text-red-accent">{lang === "ru" ? "Полная биография" : "Full CV"}<ArrowUpRight className="size-4"/></button>
+            <Link to="/about" className="mt-10 flex w-fit items-center gap-2 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em] transition-colors hover:text-red-accent">{lang === "ru" ? "Полная биография" : "Full CV"}<ArrowUpRight className="size-4"/></Link><div className="mt-4"><CvDownload about={gallery.about} lang={lang} /></div>
           </div>
         </div>
       </section>
@@ -368,7 +370,7 @@ function Viewer({ works, index, lang, onChange, onClose, onEnquire }: { works: W
       </div>
       <div className="relative flex min-h-0 flex-1 items-center justify-center px-2 md:px-24">
         <button onClick={() => go(-1)} aria-label={c.prev} data-tip={c.prev} className="absolute left-1 z-10 grid size-11 bg-current/0 place-items-center md:left-8"><ArrowLeft className="size-6" /></button>
-        {interior && dims ? <InteriorView src={w.image} alt={w[lang]} size={dims} lang={lang} /> : <ZoomImage src={w.image} alt={w[lang]} resetKey={w.image} sold={isSold(w.status)} soldLabel={lang === "ru" ? "Продана" : "Sold"} />}
+        {interior && dims ? <InteriorView src={w.image} alt={artworkAlt({ title_ru: w.ru, title_en: w.en, technique: w.technique, size: w.size, year: w.year }, lang)} size={dims} lang={lang} /> : <ZoomImage src={w.image} alt={artworkAlt({ title_ru: w.ru, title_en: w.en, technique: w.technique, size: w.size, year: w.year }, lang)} resetKey={w.image} sold={isSold(w.status)} soldLabel={lang === "ru" ? "Продана" : "Sold"} />}
         <button onClick={() => go(1)} aria-label={c.next} data-tip={c.next} className="absolute right-1 z-10 grid size-11 place-items-center md:right-8"><ArrowRight className="size-6" /></button>
       </div>
       <div className="grid gap-4 px-5 py-5 md:grid-cols-[1fr_auto] md:items-end md:px-8">
