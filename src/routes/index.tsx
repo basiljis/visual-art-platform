@@ -199,7 +199,7 @@ function Index() {
         </div>
       </section>}
 
-      <section id="works" className="border-t border-border px-5 pb-20 pt-8 md:px-8 md:pb-28 md:pt-10">
+      <section id="works" className="border-t border-border px-5 pb-10 pt-8 md:px-8 md:pb-28 md:pt-10">
         <div className="mb-6 flex items-end md:mb-14 justify-between gap-6"><div><p data-font-block="body" className="mb-2 md:mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.breadcrumb}</p><h2 className="font-display text-5xl md:text-8xl">{t.works}</h2></div><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
         <div data-gallery-menu={galleryLayout.menuPlacement} className={sideMenu ? `grid items-start ${galleryMenuCollapsed ? "gap-x-4 md:grid-cols-[2.5rem_minmax(0,1fr)]" : "gap-x-8 md:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-10"}` : ""}>
           <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} collapsed={galleryMenuCollapsed} onToggle={() => setGalleryMenuCollapsed(value => !value)} onCategory={(key) => { setCategory(key); setProject("all"); }} onProject={openProject} onQuery={setQuery} />
@@ -280,12 +280,12 @@ function Index() {
             </div>
           </div>
         )}
-        {relatedPosts.length === 0 && <Link to="/blog" className="mt-20 flex items-center justify-between gap-6 border-y border-red-accent py-8 font-display text-3xl text-red-accent transition-colors hover:text-foreground md:text-5xl"><span>{lang === "ru" ? "Блог" : "Blog"}</span><ArrowUpRight className="size-9 shrink-0" /></Link>}
+        {relatedPosts.length === 0 && <Link to="/blog" className="mt-10 flex items-center justify-between gap-6 border-y border-red-accent py-5 md:mt-20 md:py-8 font-display text-3xl text-red-accent transition-colors hover:text-foreground md:text-5xl"><span>{lang === "ru" ? "Блог" : "Blog"}</span><ArrowUpRight className="size-9 shrink-0" /></Link>}
           </div>
         </div>
       </section>
 
-      <section id="about" className="border-t border-border px-5 py-24 md:px-8 md:py-36">
+      <section id="about" className="px-5 pb-12 pt-4 md:border-t md:border-border md:px-8 md:py-36">
         <div className="grid gap-12 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:gap-20">
           <img src={gallery.about.portrait ? mediaUrl(gallery.about.portrait) : portraitAsset.url} alt={t.artist} loading="lazy" className="aspect-[4/5] w-full max-w-md object-cover" />
           <div data-font-block="about">
