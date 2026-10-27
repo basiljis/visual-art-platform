@@ -45,7 +45,7 @@ export function GalleryNavigation({ placement, lang, categories, category, proje
         {query && <Button variant="ghost" size="icon" onClick={() => onQuery("")} aria-label={lang === "ru" ? "Очистить" : "Clear"} className="size-6 shrink-0 hover:bg-transparent hover:text-red-accent"><X /></Button>}
       </label>
     </div>
-    {!!current?.children.length && <div className={`mt-5 flex flex-wrap gap-x-5 gap-y-3 md:border-t md:border-border md:pt-4 ${side ? "md:hidden" : ""}`}>{[{ key: "all", ru: "Все проекты", en: "All projects" }, ...current.children].map(p => <Button key={p.key} variant="ghost" aria-pressed={project === p.key} onClick={pick(() => onProject(category, p.key))} className={`${control} text-xs ${project === p.key ? "text-red-accent" : "text-muted-foreground"}`}>{p[lang]}</Button>)}</div>}
+    {!!current?.children.length && <div className={`-mx-5 mt-3 flex snap-x gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] md:mx-0 md:mt-5 md:flex-wrap md:gap-x-5 md:gap-y-3 md:overflow-visible md:border-t md:border-border md:px-0 md:pt-4 ${side ? "md:hidden" : ""}`}>{[{ key: "all", ru: "Все проекты", en: "All projects" }, ...current.children].map(p => <Button key={p.key} variant="ghost" aria-pressed={project === p.key} onClick={pick(() => onProject(category, p.key))} className={`${control} shrink-0 snap-start whitespace-nowrap text-xs max-md:min-h-9 max-md:border max-md:px-3 max-md:py-1.5 ${project === p.key ? "text-red-accent max-md:border-red-accent" : "text-muted-foreground max-md:border-border"}`}><span className="mr-1 text-red-accent md:hidden">/</span>{p[lang]}</Button>)}</div>}
     </div>
   </nav>;
 }

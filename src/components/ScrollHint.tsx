@@ -11,7 +11,7 @@ export function ScrollHint({ direction, label, target }: { direction: "x" | "y";
     return () => el.removeEventListener("scroll", hide);
   }, [target]);
   if (!show) return null;
-  return <div aria-hidden className="pointer-events-none flex items-center gap-2 text-[10px] uppercase tracking-[.18em] text-muted-foreground sm:hidden">
+  return <div aria-hidden className="pointer-events-none flex items-center gap-2 pl-6 text-[10px] uppercase tracking-[.18em] text-muted-foreground sm:hidden">
     <Pointer strokeWidth={1.4} className={`size-6 text-red-accent ${direction === "x" ? "animate-swipe-hint" : "animate-scroll-hint"}`} />
     <span>{label}</span>
   </div>;
