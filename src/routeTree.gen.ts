@@ -10,16 +10,25 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as WorksCategoryRouteImport } from './routes/works.$category'
+import { Route as WorksCategoryIndexRouteImport } from './routes/works.$category.index'
+import { Route as WorksCategorySlugRouteImport } from './routes/works.$category.$slug'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media.$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -47,6 +56,21 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WorksCategoryRoute = WorksCategoryRouteImport.update({
+  id: '/works/$category',
+  path: '/works/$category',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorksCategoryIndexRoute = WorksCategoryIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => WorksCategoryRoute,
+} as any)
+const WorksCategorySlugRoute = WorksCategorySlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => WorksCategoryRoute,
+} as any)
 const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
   id: '/api/public/media/$',
   path: '/api/public/media/$',
@@ -55,68 +79,92 @@ const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/works/$category': typeof WorksCategoryRouteWithChildren
   '/blog/': typeof BlogIndexRoute
+  '/works/$category/$slug': typeof WorksCategorySlugRoute
+  '/works/$category/': typeof WorksCategoryIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog': typeof BlogIndexRoute
+  '/works/$category/$slug': typeof WorksCategorySlugRoute
+  '/works/$category': typeof WorksCategoryIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/works/$category': typeof WorksCategoryRouteWithChildren
   '/blog/': typeof BlogIndexRoute
+  '/works/$category/$slug': typeof WorksCategorySlugRoute
+  '/works/$category/': typeof WorksCategoryIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/admin'
     | '/reset-password'
     | '/sitemap.xml'
     | '/blog/$slug'
+    | '/works/$category'
     | '/blog/'
+    | '/works/$category/$slug'
+    | '/works/$category/'
     | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/admin'
     | '/reset-password'
     | '/sitemap.xml'
     | '/blog/$slug'
     | '/blog'
+    | '/works/$category/$slug'
+    | '/works/$category'
     | '/api/public/media/$'
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/admin'
     | '/reset-password'
     | '/sitemap.xml'
     | '/blog/$slug'
+    | '/works/$category'
     | '/blog/'
+    | '/works/$category/$slug'
+    | '/works/$category/'
     | '/api/public/media/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  WorksCategoryRoute: typeof WorksCategoryRouteWithChildren
   BlogIndexRoute: typeof BlogIndexRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
@@ -128,6 +176,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -165,6 +220,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/works/$category': {
+      id: '/works/$category'
+      path: '/works/$category'
+      fullPath: '/works/$category'
+      preLoaderRoute: typeof WorksCategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/works/$category/': {
+      id: '/works/$category/'
+      path: '/'
+      fullPath: '/works/$category/'
+      preLoaderRoute: typeof WorksCategoryIndexRouteImport
+      parentRoute: typeof WorksCategoryRoute
+    }
+    '/works/$category/$slug': {
+      id: '/works/$category/$slug'
+      path: '/$slug'
+      fullPath: '/works/$category/$slug'
+      preLoaderRoute: typeof WorksCategorySlugRouteImport
+      parentRoute: typeof WorksCategoryRoute
+    }
     '/api/public/media/$': {
       id: '/api/public/media/$'
       path: '/api/public/media/$'
@@ -175,12 +251,28 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface WorksCategoryRouteChildren {
+  WorksCategorySlugRoute: typeof WorksCategorySlugRoute
+  WorksCategoryIndexRoute: typeof WorksCategoryIndexRoute
+}
+
+const WorksCategoryRouteChildren: WorksCategoryRouteChildren = {
+  WorksCategorySlugRoute: WorksCategorySlugRoute,
+  WorksCategoryIndexRoute: WorksCategoryIndexRoute,
+}
+
+const WorksCategoryRouteWithChildren = WorksCategoryRoute._addFileChildren(
+  WorksCategoryRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   BlogSlugRoute: BlogSlugRoute,
+  WorksCategoryRoute: WorksCategoryRouteWithChildren,
   BlogIndexRoute: BlogIndexRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }

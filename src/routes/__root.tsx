@@ -88,11 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Наталья Дикунова — художник" },
-      { name: "description", content: "Живопись и печатная графика Натальи Дикуновой." },
       { name: "author", content: "Наталья Дикунова" },
-      { property: "og:title", content: "Наталья Дикунова — художник" },
-      { property: "og:description", content: "Живопись и печатная графика Натальи Дикуновой." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

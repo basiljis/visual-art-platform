@@ -20,6 +20,8 @@
 - Self-hosted build (Timeweb): Dockerfile builds with NITRO_PRESET=node-server; Compose publishes edge 8082→8080 and pins app to 0.0.0.0:8080, matching nginx upstream — keep one documented port chain; server code must not depend on the service role key, which isn't available off-platform.
 - Site typography is stored in site_content under typography, publicly loaded at the root and applied through scoped CSS tokens and block attributes; admin edits use existing admin-only RLS so choices persist for all visitors without changing admin fonts.
 - Public SEO URLs and structured data use src/lib/seo.ts, not request origins; sitemap reads paginate with public access and fail explicitly to avoid proxy-host URLs and incomplete successful responses.
+- Crawlable series and artwork pages supplement, not replace, the editorial homepage; artwork slugs include the stable database ID to avoid collisions, and only leaf routes emit canonicals.
+- CV downloads are generated on demand in the browser from the current localized database biography with lazily loaded PDF fonts, so admin biography changes appear in subsequent downloads.
 - Homepage design is selected in gallery_layout: portrait preserves the static self-portrait composition, while HomeCarousel owns the signature/introduction and uncropped Embla artwork composition; both headers use the editable header typography block and both designs open original works in the viewer.
 - Mount SitePreloader once in the public root shell, without session flags, so full reloads replay it while internal navigation does not.
 - Use shared artwork-availability rules for gallery and viewer purchase controls and sold markers, so unavailable works cannot expose an enquiry action on one surface only.
