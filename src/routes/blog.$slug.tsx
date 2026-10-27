@@ -66,9 +66,6 @@ function PostPage() {
   return (
     <BlogShell back={{ to: "/blog", label: "Блог" }}>
       <article className="mx-auto max-w-3xl">
-        <Button asChild variant="link" className="mb-3 h-9 px-0 text-red-accent">
-          <Link to="/blog"><ArrowLeft aria-hidden="true" />{en ? "Back to blog" : "Назад к блогу"}</Link>
-        </Button>
         <nav aria-label={en ? "Breadcrumbs" : "Хлебные крошки"} className="mb-3 flex flex-wrap items-center gap-2 text-[10px] uppercase text-muted-foreground">
           <Link to="/" className="py-1 transition-colors hover:text-red-accent">{en ? "Home" : "Главная"}</Link>
           <span aria-hidden="true">/</span>
@@ -76,6 +73,9 @@ function PostPage() {
           <span aria-hidden="true">/</span>
           <span aria-current="page">{en ? "Post" : "Статья"}</span>
         </nav>
+        <Button asChild variant="link" className="mb-3 h-9 px-0 text-red-accent">
+          <Link to="/blog"><ArrowLeft aria-hidden="true" />{en ? "Back to blog" : "Назад к блогу"}</Link>
+        </Button>
         <div className="flex items-center justify-between gap-3"><p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">{en ? "Blog" : "Блог"} / {localizedDate(post.date, lang)}</p><BlogViewCount slug={slug} /></div>
         <h1 className="mt-4 font-display text-4xl leading-tight md:text-6xl">{localized(post.title, post.title_en, lang)}</h1>
         <BlogArticleBody key={`${slug}-${lang}`} html={htmlForDisplay(localized(post.content_html, post.content_html_en, lang))} />
