@@ -49,7 +49,7 @@ export function articleSchema(post: { title: string; desc: string; slug: string;
   };
 }
 
-export function visualArtwork(work: { name: string; image?: string | undefined; technique?: string | undefined; year?: string | undefined }) {
+export function visualArtwork(work: { name: string; image?: string | undefined; technique?: string | undefined; year?: string | undefined; path?: string; size?: string }) {
   return {
     "@context": "https://schema.org",
     "@type": "VisualArtwork",
@@ -57,7 +57,17 @@ export function visualArtwork(work: { name: string; image?: string | undefined; 
     ...(work.image ? { image: work.image } : {}),
     ...(work.technique ? { artMedium: work.technique } : {}),
     ...(work.year ? { dateCreated: work.year } : {}),
+    ...(work.size ? { size: work.size } : {}),
     creator: { "@type": "Person", name: "Наталья Дикунова", url: pageUrl("/") },
-    url: pageUrl("/"),
+    url: pageUrl(work.path ?? "/"),
+  };
+}
+
+export function personSchema() {
+  return {
+    "@context": "https://schema.org", "@type": "Person",
+    name: "Наталья Дикунова", alternateName: "Natalia Dikunova", jobTitle: "Художник",
+    url: pageUrl("/about"),
+    sameAs: ["https://www.instagram.com/natasha_dikunova_zipalova", "https://www.facebook.com/share/15dxi5pfo6/", "https://t.me/Natasha_Dikunova_Zipalova"],
   };
 }
