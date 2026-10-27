@@ -11,7 +11,7 @@ import { mediaUrl } from "@/lib/media";
 import { artworkAlt, artworkSlug } from "@/lib/artwork-seo";
 import { canEnquire, isSold } from "@/lib/artwork-availability";
 
-export function ArtworkPage({ work, category, next }: { work: WorkRow; category: CategoryRow; next?: WorkRow }) {
+export function ArtworkPage({ work, category, next }: { work: WorkRow; category: CategoryRow; next?: WorkRow | undefined }) {
   const { lang } = useLanguage();
   const [enquiry, setEnquiry] = useState(false);
   const [zoom, setZoom] = useState(false);
