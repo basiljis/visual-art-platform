@@ -78,3 +78,18 @@ docker exec <edge> rm /etc/nginx/flags/maintenance.enabled      # выключи
 Шрифт Futura PT, фото блога и загруженные картины хранятся в хранилище Lovable по адресам `/__l5e/...`.
 Контейнер `edge` проксирует их с https://dikunova.headquaters.space — после обновления кода пересоберите оба контейнера (`edge` и `app`).
 Если https://dikunova.art показывает «Сайт обновляется», значит контейнер `app` не запущен — смотрите его журнал в панели Timeweb.
+
+
+## Ошибка «app could not be resolved» в журнале edge
+
+Причина: в `edge/nginx.conf` кроме DNS Docker (127.0.0.11) были указаны 8.8.8.8 и 1.1.1.1. nginx опрашивает их по очереди, а внешние DNS не знают внутреннее имя `app`, поэтому часть запросов уходила на заглушку. Теперь используется только `127.0.0.11` — он знает `app` и сам пересылает запросы к `*.supabase.co`.
+
+Также: `www.dikunova.art` перенаправляется на `https://dikunova.art`; у `api.dikunova.art` есть проверка `/__edge_health`.
+
+Строки `Error: aborted` в журнале app — посетитель закрыл страницу до окончания ответа, это не ошибка сайта.
+
+Проверка после перезапуска:
+- `curl -I https://dikunova.art/` → 200
+- `curl -I https://www.dikunova.art/` → 301 на https://dikunova.art/
+- `curl https://api.dikunova.art/auth/v1/health -H "apikey: <VITE_SUPABASE_PUBLISHABLE_KEY>"` → JSON от бэкенда
+- В панели Timeweb переменная `VITE_SUPABASE_URL=https://api.dikunova.art` (браузер), `SUPABASE_URL=https://fzdhixryjteuofsofwnw.supabase.co` (сервер).
