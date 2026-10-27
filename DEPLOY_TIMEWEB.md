@@ -73,3 +73,8 @@
 docker exec <edge> touch /etc/nginx/flags/maintenance.enabled   # включить
 docker exec <edge> rm /etc/nginx/flags/maintenance.enabled      # выключить
 ```
+
+## Шрифты и загруженные фото (/__l5e/)
+Шрифт Futura PT, фото блога и загруженные картины хранятся в хранилище Lovable по адресам `/__l5e/...`.
+Контейнер `edge` проксирует их с https://dikunova.headquaters.space — после обновления кода пересоберите оба контейнера (`edge` и `app`).
+Если https://dikunova.art показывает «Сайт обновляется», значит контейнер `app` не запущен — смотрите его журнал в панели Timeweb.
