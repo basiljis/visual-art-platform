@@ -53,11 +53,11 @@ function BlogIndex() {
   return (
     <BlogShell back={{ to: "/", label: "Главная" }}>
       <p className="text-[10px] uppercase tracking-[.2em] text-muted-foreground">{en ? "Home / Blog" : "Главная / Блог"}</p>
-      <div className="mt-4 flex items-end justify-between border-b border-border pb-8">
+      <div className="mt-2 flex items-end justify-between border-b border-border pb-4 md:mt-4 md:pb-8">
         <h1 className="font-display text-5xl md:text-8xl">{en ? "Blog" : "Блог"}</h1>
         <span className="text-sm text-muted-foreground">{blogPosts.length}</span>
       </div>
-      <div className="mt-8 flex items-end justify-end gap-3 lg:justify-start"><Button variant="ghost" size="icon" onClick={() => setSearchOpen(v => !v)} aria-expanded={searchOpen || !!q} aria-label={en ? "Search the blog" : "Поиск по блогу"} className={`size-10 shrink-0 rounded-none border border-border hover:bg-transparent hover:text-red-accent lg:hidden ${searchOpen || q ? "text-red-accent" : ""}`}><Search className="size-4" /></Button><label className={`${searchOpen || q ? "flex" : "hidden lg:flex"} min-w-0 max-w-sm flex-1 items-center gap-3 border-b border-border pb-2 focus-within:border-foreground`}>
+      <div className="mt-3 flex items-end justify-end gap-2 md:mt-8 md:gap-3 lg:justify-start"><Button variant="ghost" size="icon" onClick={() => setSearchOpen(v => !v)} aria-expanded={searchOpen || !!q} aria-label={en ? "Search the blog" : "Поиск по блогу"} className={`size-10 shrink-0 rounded-none border border-border hover:bg-transparent hover:text-red-accent lg:hidden ${searchOpen || q ? "text-red-accent" : ""}`}><Search className="size-4" /></Button><label className={`${searchOpen || q ? "flex" : "hidden lg:flex"} min-w-0 max-w-sm flex-1 items-center gap-3 border-b border-border pb-2 focus-within:border-foreground`}>
         <Search className="size-4 shrink-0 text-muted-foreground" />
         <input autoFocus={searchOpen} value={q} onChange={(e) => setQ(e.target.value)} placeholder={en ? "Search the blog" : "Поиск по блогу"} aria-label={en ? "Search the blog" : "Поиск по блогу"} className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
         {q && <Button variant="ghost" size="icon" onClick={() => setQ("")} aria-label={en ? "Clear search" : "Очистить поиск"} className="size-7 shrink-0 hover:bg-transparent hover:text-red-accent"><X className="size-4" /></Button>}
