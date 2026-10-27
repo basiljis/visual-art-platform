@@ -46,6 +46,7 @@ function BlogIndex() {
   const [q, setQ] = useState("");
   const [day, setDay] = useState<Date | undefined>();
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const needle = q.trim().toLowerCase();
   const searchedPosts = needle ? allPosts.filter((p) => `${localized(p.title, p.title_en, lang)} ${localized(p.excerpt, p.excerpt_en, lang)} ${localizedDate(p.date, lang)}`.toLowerCase().includes(needle)) : allPosts;
   const blogPosts = day ? searchedPosts.filter((post) => samePublicationDay(post.date, day)) : searchedPosts;
@@ -56,9 +57,9 @@ function BlogIndex() {
         <h1 className="font-display text-5xl md:text-8xl">{en ? "Blog" : "Блог"}</h1>
         <span className="text-sm text-muted-foreground">{blogPosts.length}</span>
       </div>
-      <div className="mt-8 flex items-end gap-3"><label className="flex min-w-0 max-w-sm flex-1 items-center gap-3 border-b border-border pb-2 focus-within:border-foreground">
+      <div className="mt-8 flex items-end justify-end gap-3 lg:justify-start"><Button variant="ghost" size="icon" onClick={() => setSearchOpen(v => !v)} aria-expanded={searchOpen || !!q} aria-label={en ? "Search the blog" : "Поиск по блогу"} className={`size-10 shrink-0 rounded-none border border-border hover:bg-transparent hover:text-red-accent lg:hidden ${searchOpen || q ? "text-red-accent" : ""}`}><Search className="size-4" /></Button><label className={`${searchOpen || q ? "flex" : "hidden lg:flex"} min-w-0 max-w-sm flex-1 items-center gap-3 border-b border-border pb-2 focus-within:border-foreground`}>
         <Search className="size-4 shrink-0 text-muted-foreground" />
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={en ? "Search the blog" : "Поиск по блогу"} aria-label={en ? "Search the blog" : "Поиск по блогу"} className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
+        <input autoFocus={searchOpen} value={q} onChange={(e) => setQ(e.target.value)} placeholder={en ? "Search the blog" : "Поиск по блогу"} aria-label={en ? "Search the blog" : "Поиск по блогу"} className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
         {q && <Button variant="ghost" size="icon" onClick={() => setQ("")} aria-label={en ? "Clear search" : "Очистить поиск"} className="size-7 shrink-0 hover:bg-transparent hover:text-red-accent"><X className="size-4" /></Button>}
       </label>
       <Button variant="ghost" size="icon" onClick={() => setCalendarOpen(v => !v)} aria-expanded={calendarOpen} aria-controls="blog-calendar" aria-label={en ? "Publication calendar" : "Календарь публикаций"} className={`size-10 shrink-0 rounded-none border border-border hover:bg-transparent hover:text-red-accent lg:hidden ${calendarOpen || day ? "text-red-accent" : ""}`}><CalendarDays className="size-4" /></Button>
