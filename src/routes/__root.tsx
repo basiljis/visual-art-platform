@@ -1,5 +1,6 @@
 import { NewsPopup } from "@/components/NewsPopup";
 import { VisitTracker } from "@/components/VisitTracker";
+import { YandexMetrika } from "@/components/YandexMetrika";
 import { SitePreloader } from "@/components/SitePreloader";
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from "@tanstack/react-query";
 import { typographyQuery } from "@/lib/typography.functions";
@@ -146,6 +147,7 @@ function TypographySite() {
   return <>
     <style>{typographyCss(data)}</style>
     <VisitTracker />
+    {!admin && <YandexMetrika />}
     <div className={admin ? "admin-typography contents" : "site-typography contents"}>{!admin && <SitePreloader />}<Outlet /><NewsPopup /></div>
   </>;
 }
