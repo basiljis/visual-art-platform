@@ -5,7 +5,6 @@ import { useLanguage } from "@/lib/language";
 import { Button } from "@/components/ui/button";
 import { LegalModal } from "@/components/LegalModal";
 import { legalDocuments, type LegalKind } from "@/lib/legal";
-import { ScrollHint } from "@/components/ScrollHint";
 
 const smooth = (top: number) => window.scrollTo({ top, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 
@@ -41,7 +40,6 @@ export function BlogShell({ children }: { children: ReactNode; back: { to: "/" |
         </nav>
       </div>
       <div className="px-5 pb-24 pt-24 md:pt-32 md:px-8">
-        <div className="mb-2 md:mb-6"><ScrollHint direction="y" label={ru ? "Прокрутите вниз" : "Scroll down"} /></div>
         {children}
       </div>
       <footer data-font-block="footer" className="relative overflow-hidden bg-ink px-5 pt-16 text-paper md:px-8 md:pt-24">
