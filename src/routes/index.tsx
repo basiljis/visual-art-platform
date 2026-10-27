@@ -1,5 +1,6 @@
 import { canEnquire, isSold } from "@/lib/artwork-availability";
 import { GalleryNavigation } from "@/components/GalleryNavigation";
+import { ScrollHint } from "@/components/ScrollHint";
 import { HomeCarousel } from "@/components/HomeCarousel";
 import { galleryLayoutQuery } from "@/lib/gallery-layout.functions";
 import { EnquiryModal } from "@/components/EnquiryModal";
@@ -116,6 +117,7 @@ function Index() {
   const parentOf = (key: string) => cats.find((c) => c.key === key);
   const hasSub = (key: string) => (parentOf(key)?.children.length ?? 0) > 0;
   const [markInView, setMarkInView] = useState(false);
+  const stripRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const updateHeaderName = () => setHeaderNameVisible(window.scrollY > 20);
     updateHeaderName();
@@ -258,8 +260,9 @@ function Index() {
             </div>
           );
         })()}
-        <div className={`grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 ${sideMenu && !galleryMenuCollapsed ? "xl:grid-cols-3" : "lg:grid-cols-3"}`}>
-          {visible.map((work,i)=><article key={`${work.image}-${i}`} >
+        {visible.length > 1 && <div className="mb-4"><ScrollHint key={`${category}-${project}-${q}`} direction="x" target={stripRef} label={lang === "ru" ? "Листайте" : "Swipe"} /></div>}
+        <div ref={stripRef} className={`-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-4 [scrollbar-width:none] sm:mx-0 sm:grid sm:snap-none sm:gap-x-6 sm:gap-y-20 sm:overflow-visible sm:px-0 sm:pb-0 sm:grid-cols-2 ${sideMenu && !galleryMenuCollapsed ? "xl:grid-cols-3" : "lg:grid-cols-3"}`}>
+          {visible.map((work,i)=><article key={`${work.image}-${i}`} className="w-[82vw] shrink-0 snap-center sm:w-auto">
             <div className="group relative aspect-[4/5] overflow-hidden bg-muted"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={artworkAlt({ title_ru: work.ru, title_en: work.en, technique: work.technique, size: work.size, year: work.year }, lang)} loading="lazy" className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]"/></button>{isSold(work.status) && <span aria-hidden className="pointer-events-none absolute right-3 top-3 size-3.5 rounded-full bg-red-accent ring-2 ring-background" />}{canEnquire(work.status) && <TooltipProvider delayDuration={200}><Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 place-items-center rounded-none bg-background/90 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-red-accent hover:text-background" aria-label={t.buy}><ArrowUpRight className="size-5"/></Button></TooltipTrigger><TooltipContent side="top" sideOffset={8}>{t.buy}</TooltipContent></Tooltip></TooltipProvider>}</div>
             <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div>{work.cover && project === "all" && work.project && <p className="mb-1 text-[11px] uppercase tracking-[.16em] text-muted-foreground"><span className="text-red-accent">/ </span>{parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}</p>}<h3 className="text-base font-medium">{isSold(work.status) && <ArtworkStatus status={work.status} lang={lang} />}<Link to="/works/$category/$slug" params={{ category: work.category, slug: artworkSlug({ id: work.id, title_ru: work.ru, year: work.year }) }} className="hover:text-red-accent">{work[lang]}</Link></h3>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}{!isSold(work.status) && work.status === "private" && <div className="mt-2"><ArtworkStatus status={work.status} lang={lang} /></div>}{work.cover && project === "all" && work.project && <button onClick={()=>work.project && openProject(work.category, work.project)} className="mt-4 inline-flex items-center gap-2 border border-foreground px-3 py-2 text-left text-[11px] font-medium uppercase tracking-[.14em] transition-colors hover:border-red-accent hover:bg-red-accent hover:text-background"><span className="text-red-accent">/</span>{t.more}<ArrowUpRight className="size-3.5 shrink-0"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
