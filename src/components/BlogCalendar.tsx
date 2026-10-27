@@ -13,7 +13,7 @@ export function BlogCalendar({ dates, selected, onSelect }: { dates: string[]; s
   const earliest = days.reduce<Date | undefined>((best, day) => !best || day < best ? day : best, undefined);
   const [month, setMonth] = useState<Date | undefined>(latest);
   return (
-    <aside className="border-t border-border pt-6 lg:border-t-0 lg:border-l lg:pl-7 lg:pt-0" aria-label={en ? "Publication calendar" : "Календарь публикаций"}>
+    <aside className="lg:border-t-0 lg:border-l lg:pl-7 lg:pt-0" aria-label={en ? "Publication calendar" : "Календарь публикаций"}>
       <h2 className="mb-4 font-display text-2xl">{en ? "Publication calendar" : "Календарь публикаций"}</h2>
       <Calendar mode="single" selected={selected} onSelect={onSelect} {...(month ? { month } : {})} onMonthChange={setMonth}
         locale={en ? enUS : ru} weekStartsOn={1} captionLayout="dropdown" showOutsideDays={false}
