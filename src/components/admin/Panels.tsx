@@ -1,4 +1,4 @@
-import { isSold } from "@/lib/artwork-availability";
+import { hasRedDot } from "@/lib/artwork-availability";
 import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus, Trash2, Upload, X, Star, Eye, EyeOff } from "lucide-react";
@@ -209,10 +209,10 @@ export function WorksPanel() {
             <button disabled={order.dirty || order.busy} onClick={() => setEdit(w)} className="relative block aspect-[4/5] w-full overflow-hidden bg-muted">
               <img src={mediaUrl(w.image)} alt={w.title_ru} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
               <span className="absolute left-2 top-2 flex gap-1">{w.hidden && <span className="bg-red-accent px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-background">скрыта</span>}{w.hero && <span className="bg-background px-1.5 py-0.5 text-[9px] uppercase tracking-wider">главная</span>}{w.cover && <span className="bg-background px-1.5 py-0.5 text-[9px] uppercase tracking-wider">обложка</span>}</span>
-              {isSold(w.status) && <span role="img" aria-label="Продана" title="Продана" className="absolute right-2 top-2 size-3 rounded-full bg-red-accent ring-2 ring-background" />}
+              {hasRedDot(w.status) && <span role="img" aria-label="Продана" title="Продана" className="absolute right-2 top-2 size-3 rounded-full bg-red-accent ring-2 ring-background" />}
             </button>
             <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
-              <div className="min-w-0"><p className="flex items-center gap-1.5 truncate text-sm">{isSold(w.status) && <span aria-hidden className="size-2 shrink-0 rounded-full bg-red-accent" />}<span className="truncate">{w.title_ru || "Без названия"}</span></p><p className="truncate text-[11px] text-muted-foreground">{[w.year, w.size].filter(Boolean).join(" · ")}</p></div>
+              <div className="min-w-0"><p className="flex items-center gap-1.5 truncate text-sm">{hasRedDot(w.status) && <span aria-hidden className="size-2 shrink-0 rounded-full bg-red-accent" />}<span className="truncate">{w.title_ru || "Без названия"}</span></p><p className="truncate text-[11px] text-muted-foreground">{[w.year, w.size].filter(Boolean).join(" · ")}</p></div>
               <button disabled={order.dirty || order.busy} onClick={async () => { const { error } = await supabase.from("works").update({ hidden: !w.hidden }).eq("id", w.id); if (error) alert(error.message); else { reload(); inv(); } }} aria-label={w.hidden ? "Показать" : "Скрыть"} title={w.hidden ? "Показать на сайте" : "Скрыть с сайта"} className="opacity-40 hover:opacity-100">{w.hidden ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}</button>
               <button disabled={order.dirty || order.busy} onClick={() => remove(w)} aria-label="Удалить" className="opacity-40 hover:text-red-accent hover:opacity-100"><Trash2 className="size-3.5" /></button>
             </div>
