@@ -263,3 +263,8 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 .intro-portrait {
   mask-image: linear-gradient(to right, black 82%, transparent 100%);
 }
+
+@keyframes swipe-hint { 0%,100% { transform: translateX(10px) rotate(-8deg); opacity: .9 } 50% { transform: translateX(-22px) rotate(-8deg); opacity: 1 } }
+@keyframes scroll-hint { 0%,100% { transform: translateY(-6px); opacity: .9 } 50% { transform: translateY(10px); opacity: 1 } }
+@utility animate-swipe-hint { animation: swipe-hint 1.6s ease-in-out infinite; @media (prefers-reduced-motion: reduce) { animation: none; } }
+@utility animate-scroll-hint { animation: scroll-hint 1.6s ease-in-out infinite; @media (prefers-reduced-motion: reduce) { animation: none; } }
