@@ -219,11 +219,11 @@ function Index() {
                 if (!cov) return null;
                 const phrase = ((lang === "ru" ? c.noteRu : c.noteEn) || "").replace(/^[^—]*—\s*/, "").split(/(?<=[.!?])\s/)[0];
                 return (
-                  <Link key={c.key} to="/works/$category" params={{ category: c.key }} className="group text-left">
+                  <button type="button" key={c.key} onClick={() => { setCategory(c.key); setProject("all"); document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); }} className="group block text-left">
                     <div className="aspect-[4/3] overflow-hidden bg-muted"><img src={cov.image} alt={artworkAlt({ title_ru: cov.ru, title_en: cov.en, technique: cov.technique, size: cov.size, year: cov.year }, lang)} loading="lazy" className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]" /></div>
                     <div data-font-block="captions" className="mt-5 flex items-baseline justify-between gap-4 border-t border-border pt-4"><h3 className="font-display text-3xl transition-colors group-hover:text-red-accent md:text-4xl">{c[lang]}</h3><span className="text-xs tabular-nums text-muted-foreground">{String(cw.length).padStart(2, "0")}</span></div>
                     {phrase && <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">{phrase}</p>}
-                  </Link>
+                  </button>
                 );
               })}
             </div>
