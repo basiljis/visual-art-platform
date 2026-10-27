@@ -3,10 +3,10 @@ import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
 
 export const recordPageView = createServerFn({ method: "POST" })
-  .inputValidator((input) => z.object({ sessionId: z.string().uuid(), path: z.string().min(1).max(220) }).parse(input))
+  .inputValidator((input) => z.object({ sessionId: z.string().uuid(), visitorId: z.string().uuid().optional(), path: z.string().min(1).max(220) }).parse(input))
   .handler(async ({ data }) => {
     const { publicDb } = await import("./public-db.server");
-    const { error } = await publicDb().rpc("record_page_view", { _session_id: data.sessionId, _path: data.path });
+    const { error } = await publicDb().rpc("record_page_view", { _session_id: data.sessionId, _path: data.path, _visitor_id: data.visitorId });
     return { ok: !error };
   });
 
