@@ -40,8 +40,8 @@ export function BlogShell({ children }: { children: ReactNode; back: { to: "/" |
           {navItems.map((item) => <Link key={item.label} to={item.to} {...(item.hash ? { hash: item.hash } : {})} onClick={() => setMenuOpen(false)} tabIndex={menuOpen ? 0 : -1} className="group flex items-center justify-between border-b border-paper/25 py-3 font-display text-[clamp(2.5rem,8vw,7.5rem)] leading-none transition-colors hover:border-red-accent hover:text-red-accent"><span>{item.label}</span><ArrowUpRight className="size-8 text-red-accent opacity-0 transition-opacity group-hover:opacity-100 md:size-14" /></Link>)}
         </nav>
       </div>
-      <div className="px-5 pb-24 pt-32 md:px-8">
-        <div className="mb-6"><ScrollHint direction="y" label={ru ? "Прокрутите вниз" : "Scroll down"} /></div>
+      <div className="px-5 pb-24 pt-24 md:pt-32 md:px-8">
+        <div className="mb-2 md:mb-6"><ScrollHint direction="y" label={ru ? "Прокрутите вниз" : "Scroll down"} /></div>
         {children}
       </div>
       <footer data-font-block="footer" className="relative overflow-hidden bg-ink px-5 pt-16 text-paper md:px-8 md:pt-24">
