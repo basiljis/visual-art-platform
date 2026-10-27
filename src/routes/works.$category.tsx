@@ -1,8 +1,7 @@
-import { createFileRoute, Link, notFound, Outlet, useLocation } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, Outlet } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { galleryQuery } from "@/lib/content.functions";
-import { artworkAlt, artworkSlug, seriesMetadata } from "@/lib/artwork-seo";
-import { pageUrl, breadcrumbs } from "@/lib/seo";
+import { artworkAlt, artworkSlug } from "@/lib/artwork-seo";
 import { useLanguage, localized } from "@/lib/language";
 import { mediaUrl } from "@/lib/media";
 import { BlogShell } from "@/components/BlogShell";
@@ -13,12 +12,6 @@ export const Route = createFileRoute("/works/$category")({
     const category = gallery.categories.find(c => c.key === params.category);
     if (!category) throw notFound();
     return category;
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) return { meta: [{ title: "Серия недоступна — Наталья Дикунова" }, { name: "robots", content: "noindex" }] };
-    const { title, description } = seriesMetadata(loaderData);
-    const path = `/works/${loaderData.key}`;
-    return { meta: [{ title }, { name: "description", content: description }, { property: "og:title", content: title }, { property: "og:description", content: description }, { property: "og:type", content: "website" }, { property: "og:url", content: pageUrl(path) }, { name: "twitter:card", content: "summary" }], links: [{ rel: "canonical", href: pageUrl(path) }], scripts: [{ type: "application/ld+json", children: JSON.stringify(breadcrumbs([{ name: "Главная", path: "/" }, { name: loaderData.name_ru, path }])) }] };
   },
   errorComponent: () => <p className="p-8">Не удалось загрузить серию.</p>,
   notFoundComponent: () => <p className="p-8">Серия не найдена.</p>,
