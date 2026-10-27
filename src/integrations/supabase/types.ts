@@ -248,18 +248,21 @@ export type Database = {
           path: string
           session_id: string
           viewed_at: string
+          visitor_id: string | null
         }
         Insert: {
           id?: string
           path: string
           session_id: string
           viewed_at?: string
+          visitor_id?: string | null
         }
         Update: {
           id?: string
           path?: string
           session_id?: string
           viewed_at?: string
+          visitor_id?: string | null
         }
         Relationships: []
       }
@@ -360,7 +363,7 @@ export type Database = {
         Returns: boolean
       }
       record_page_view: {
-        Args: { _path: string; _session_id: string }
+        Args: { _path: string; _session_id: string; _visitor_id?: string }
         Returns: undefined
       }
     }

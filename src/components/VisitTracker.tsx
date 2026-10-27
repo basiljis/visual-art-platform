@@ -19,7 +19,12 @@ export function VisitTracker() {
           sessionId = crypto.randomUUID();
           sessionStorage.setItem("dikunova-visit-session", sessionId);
         }
-        const result = await record({ data: { sessionId, path } });
+        let visitorId = localStorage.getItem("dikunova-visitor");
+        if (!visitorId) {
+          visitorId = crypto.randomUUID();
+          localStorage.setItem("dikunova-visitor", visitorId);
+        }
+        const result = await record({ data: { sessionId, visitorId, path } });
         if (result.ok) await qc.invalidateQueries({ queryKey: ["blog-views"] });
       } catch { /* Statistics must never interrupt reading the site. */ }
     }, 1000);

@@ -1,5 +1,6 @@
 import { NewsPopup } from "@/components/NewsPopup";
 import { VisitTracker } from "@/components/VisitTracker";
+import { YandexMetrika } from "@/components/YandexMetrika";
 import { SitePreloader } from "@/components/SitePreloader";
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from "@tanstack/react-query";
 import { typographyQuery } from "@/lib/typography.functions";
@@ -102,7 +103,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: `https://fonts.googleapis.com/css2?${fontOptions.filter(font => font.google).map(font => `family=${font.google}`).join("&")}&display=swap` },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "icon", href: "/favicon.png?v=3", type: "image/png" },
+      { rel: "shortcut icon", href: "/favicon.png?v=3", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/favicon.png?v=3" },
     ],
   }),
   shellComponent: RootShell,
@@ -118,6 +121,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <noscript><div><img src="https://mc.yandex.ru/watch/113831441" style={{ position: "absolute", left: "-9999px" }} alt="" /></div></noscript>
         {children}
         <Scripts />
       </body>
@@ -143,6 +147,7 @@ function TypographySite() {
   return <>
     <style>{typographyCss(data)}</style>
     <VisitTracker />
+    {!admin && <YandexMetrika />}
     <div className={admin ? "admin-typography contents" : "site-typography contents"}>{!admin && <SitePreloader />}<Outlet /><NewsPopup /></div>
   </>;
 }
