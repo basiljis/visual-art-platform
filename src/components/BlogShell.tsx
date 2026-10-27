@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useLanguage } from "@/lib/language";
 import { Button } from "@/components/ui/button";
@@ -13,16 +13,33 @@ export function BlogShell({ children, back }: { children: ReactNode; back: { to:
   const { lang, setLang } = useLanguage();
   const ru = lang === "ru";
   const [legal, setLegal] = useState<LegalKind | null>(null);
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", window.localStorage.getItem("dikunova-theme") === "dark");
-  }, []);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dark, setDark] = useState(false);
+  useEffect(() => { setDark(window.localStorage.getItem("dikunova-theme") === "dark"); }, []);
+  const toggleTheme = () => { const next = !dark; setDark(next); document.documentElement.classList.toggle("dark", next); window.localStorage.setItem("dikunova-theme", next ? "dark" : "light"); };
+  useEffect(() => { document.documentElement.classList.toggle("dark", dark); }, [dark]);
+  const navItems: { label: string; to: "/" | "/about" | "/blog"; hash?: string }[] = [
+    { label: ru ? "Работы" : "Works", to: "/", hash: "works" },
+    { label: ru ? "Об авторе" : "About", to: "/about" },
+    { label: ru ? "Контакты" : "Contact", to: "/", hash: "contact" },
+    { label: ru ? "Блог" : "Blog", to: "/blog" },
+  ];
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <header className="fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-b border-border/60 bg-background/80 px-4 backdrop-blur-md md:grid-cols-[1fr_auto_1fr] md:px-8">
-        <Link to={back.to} aria-label={ru ? back.label : back.to === "/" ? "Home" : "Blog"} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em] hover:text-red-accent"><ArrowLeft className="size-4" /><span className="hidden sm:inline">{ru ? back.label : back.to === "/" ? "Home" : "Blog"}</span></Link>
-        <Link to="/" className="min-w-0 truncate whitespace-nowrap text-center"><span data-font-block="header" className="font-display text-[15px] tracking-[.08em] sm:text-2xl sm:tracking-[.16em]">{ru ? "НАТАЛЬЯ ДИКУНОВА" : "NATALIA DIKUNOVA"}</span> <span className="font-sans font-light text-red-accent">/</span> <span data-font-block="headerArtist" className="font-sans text-xs lowercase tracking-[.2em] opacity-60 sm:text-sm">artist</span></Link>
-        <div className="flex justify-end"><Button variant="ghost" size="sm" onClick={() => setLang(ru ? "en" : "ru")} aria-label={ru ? "Switch to English" : "Переключить на русский"}>{lang.toUpperCase()}</Button></div>
+      <header className="fixed inset-x-0 top-0 z-50 grid h-20 grid-cols-[1fr_auto_1fr] items-center border-b border-border bg-header-surface px-4 text-ink md:px-8">
+        <div className="flex items-center"><button aria-label={ru ? "Меню" : "Menu"} onClick={() => setMenuOpen(true)} className="flex w-fit items-center gap-2 text-xs uppercase tracking-[.18em] hover:text-red-accent"><Menu className="size-5" /><span className="hidden sm:inline">{ru ? "Меню" : "Menu"}</span></button></div>
+        <Link to="/" data-font-block="header" className="whitespace-nowrap text-center font-display text-[15px] tracking-[.1em] [-webkit-text-stroke:0.4px_currentColor] sm:text-lg sm:tracking-[.18em] sm:[-webkit-text-stroke:0]">{ru ? "НАТАЛЬЯ ДИКУНОВА" : "NATALIA DIKUNOVA"}<span className="hidden sm:inline"> <span data-font-block="headerArtist" className="text-xs lowercase tracking-[.2em]"><span className="font-light text-red-accent">/</span> <span className="opacity-60">artist</span></span></span></Link>
+        <div className="flex justify-end">
+          <button onClick={() => setLang(ru ? "en" : "ru")} className="h-9 w-7 text-xs font-semibold uppercase hover:text-red-accent" aria-label={ru ? "Switch to English" : "Переключить на русский"}>{lang}</button>
+          <button onClick={toggleTheme} className="grid size-9 place-items-center hover:text-red-accent" aria-label={ru ? (dark ? "Светлая тема" : "Тёмная тема") : (dark ? "Light theme" : "Dark theme")}>{dark ? <Sun className="size-4" /> : <Moon className="size-4" />}</button>
+        </div>
       </header>
+      <div className={`fixed inset-0 z-[80] bg-ink text-paper transition-transform duration-700 ease-[cubic-bezier(.76,0,.24,1)] ${menuOpen ? "translate-y-0" : "-translate-y-full"}`} aria-hidden={!menuOpen}>
+        <div className="flex h-20 items-center justify-between border-b border-paper/20 px-5 md:px-8"><span className="text-xs uppercase tracking-[.2em]">{ru ? "Навигация" : "Navigation"}</span><button onClick={() => setMenuOpen(false)} aria-label={ru ? "Закрыть меню" : "Close menu"} className="hover:text-red-accent"><X className="size-7" /></button></div>
+        <nav data-font-block="navigation" className="flex flex-col px-5 py-8 md:px-10">
+          {navItems.map((item) => <Link key={item.label} to={item.to} hash={item.hash} onClick={() => setMenuOpen(false)} tabIndex={menuOpen ? 0 : -1} className="group flex items-center justify-between border-b border-paper/25 py-3 font-display text-[clamp(2.5rem,8vw,7.5rem)] leading-none transition-colors hover:border-red-accent hover:text-red-accent"><span>{item.label}</span><ArrowUpRight className="size-8 text-red-accent opacity-0 transition-opacity group-hover:opacity-100 md:size-14" /></Link>)}
+        </nav>
+      </div>
       <div className="px-5 pb-24 pt-32 md:px-8">
         <div className="mb-6"><ScrollHint direction="y" label={ru ? "Прокрутите вниз" : "Scroll down"} /></div>
         {children}
