@@ -9,7 +9,7 @@ import { ScrollHint } from "@/components/ScrollHint";
 
 const smooth = (top: number) => window.scrollTo({ top, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 
-export function BlogShell({ children, back }: { children: ReactNode; back: { to: "/" | "/blog"; label: string } }) {
+export function BlogShell({ children }: { children: ReactNode; back: { to: "/" | "/blog"; label: string } }) {
   const { lang, setLang } = useLanguage();
   const ru = lang === "ru";
   const [legal, setLegal] = useState<LegalKind | null>(null);
