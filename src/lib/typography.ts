@@ -1,5 +1,6 @@
-import futuraLight from "@/assets/futura-pt-light.woff2.asset.json";
-import futuraBook from "@/assets/futura-pt-book.woff2.asset.json";
+// Self-hosted in public/fonts so Futura PT loads on every host (Lovable and Timeweb).
+const futuraLight = { url: "/fonts/futura-pt-light.woff2" };
+const futuraBook = { url: "/fonts/futura-pt-book.woff2" };
 
 export const fontOptions = [
   { id: "futura-pt", name: "Futura PT — старый сайт", family: '"FuturaPT", Arial, sans-serif', google: "" },
