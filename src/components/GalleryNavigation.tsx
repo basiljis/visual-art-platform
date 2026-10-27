@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Menu, Search, X } from "lucide-react";
 import { useState } from "react";
 import type { MenuPlacement } from "@/lib/gallery-layout";
 
@@ -15,6 +15,7 @@ type Props = {
 export function GalleryNavigation({ placement, lang, categories, category, project, query, collapsed, onToggle, onCategory, onProject, onQuery }: Props) {
   const side = placement === "side";
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const pick = (fn: () => void) => () => { fn(); setMobileOpen(false); };
   const current = categories.find(c => c.key === category);
   const label = lang === "ru" ? "Направления" : "Practices";
@@ -22,10 +23,10 @@ export function GalleryNavigation({ placement, lang, categories, category, proje
   const control = "h-auto min-h-8 whitespace-normal rounded-none p-0 text-left font-normal leading-relaxed hover:bg-transparent hover:text-red-accent";
   const toggleLabel = lang === "ru" ? (collapsed ? "Развернуть меню направлений" : "Свернуть меню направлений") : (collapsed ? "Expand practices menu" : "Collapse practices menu");
   return <nav aria-label={label} data-font-block="filters" className={side ? `mb-8 min-w-0 md:sticky md:top-24 md:mb-0 md:max-h-[calc(100dvh-7rem)] md:overflow-y-auto md:border-y-0 md:py-0 ${collapsed ? "" : "md:border-r md:pr-6"}` : "mb-8 md:mb-16 md:border-y md:border-border md:py-5"}>
-    <Button variant="ghost" onClick={() => setMobileOpen(v => !v)} aria-expanded={mobileOpen} aria-controls="gallery-navigation-controls" className="mb-4 flex h-11 w-full items-center justify-between rounded-none border border-border px-4 text-[11px] font-normal uppercase tracking-[.18em] hover:bg-transparent hover:text-red-accent md:hidden">
+    <div className="mb-4 flex gap-2 md:hidden"><Button variant="ghost" onClick={() => setMobileOpen(v => !v)} aria-expanded={mobileOpen} aria-controls="gallery-navigation-controls" className="flex h-11 min-w-0 flex-1 items-center justify-between rounded-none border border-border px-4 text-[11px] font-normal uppercase tracking-[.18em] hover:bg-transparent hover:text-red-accent md:hidden">
       <span className="flex min-w-0 items-center gap-2"><span className="text-muted-foreground">{label}</span><span className="truncate text-red-accent">{current ? current[lang] : (lang === "ru" ? "Все" : "All")}</span></span>
       {mobileOpen ? <X className="size-4 shrink-0" /> : <Menu className="size-4 shrink-0" />}
-    </Button>
+    </Button><Button variant="ghost" size="icon" onClick={() => setSearchOpen(v => !v)} aria-expanded={searchOpen || !!query} aria-label={lang === "ru" ? "Поиск по названию" : "Search by title"} className={`size-11 shrink-0 rounded-none border border-border hover:bg-transparent hover:text-red-accent ${searchOpen || query ? "text-red-accent" : ""}`}><Search className="size-4" /></Button></div>
     <div className={`hidden items-center justify-between gap-2 md:flex ${side ? "md:h-4" : ""} ${side && collapsed ? "" : "mb-4"}`}>
       {(!side || !collapsed) && <p className="text-[11px] uppercase tracking-[.18em] text-muted-foreground">{label}</p>}
       {side && <Button variant="ghost" size="icon" onClick={onToggle} aria-label={toggleLabel} title={toggleLabel} aria-expanded={!collapsed} aria-controls="gallery-navigation-controls" className="size-8 shrink-0 rounded-none text-muted-foreground hover:bg-transparent hover:text-red-accent">{collapsed ? <ChevronRight strokeWidth={1} /> : <ChevronLeft strokeWidth={1} />}</Button>}
@@ -39,8 +40,8 @@ export function GalleryNavigation({ placement, lang, categories, category, proje
           {side && category === cat.key && cat.children.length > 0 && <div className="hidden flex-col items-stretch gap-1 border-l border-border pl-3 md:my-2 md:flex">{[{ key: "all", ru: "Все проекты", en: "All projects" }, ...cat.children].map(p => <Button key={p.key} variant="ghost" aria-pressed={project === p.key} onClick={() => onProject(cat.key, p.key)} className={`${control} justify-start text-xs ${project === p.key ? "text-red-accent" : "text-muted-foreground"}`}>{p[lang]}</Button>)}</div>}
         </div>)}
       </div>
-      <label data-font-block="body" className={`flex w-full items-center gap-2 border-b border-border pb-1 focus-within:border-red-accent ${side ? "" : "sm:w-64"}`}>
-        <span className="text-xs text-red-accent">/</span><input type="search" value={query} onChange={e => onQuery(e.target.value)} placeholder={lang === "ru" ? "Поиск по названию" : "Search by title"} aria-label={lang === "ru" ? "Поиск по названию работы" : "Search by work title"} className="min-w-0 w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground" />
+      <label data-font-block="body" className={`${searchOpen || query ? "flex" : "max-md:hidden flex"} w-full items-center gap-2 border-b border-border pb-1 focus-within:border-red-accent ${side ? "" : "sm:w-64"}`}>
+        <span className="text-xs text-red-accent">/</span><input type="search" autoFocus={searchOpen} value={query} onChange={e => onQuery(e.target.value)} placeholder={lang === "ru" ? "Поиск по названию" : "Search by title"} aria-label={lang === "ru" ? "Поиск по названию работы" : "Search by work title"} className="min-w-0 w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground" />
         {query && <Button variant="ghost" size="icon" onClick={() => onQuery("")} aria-label={lang === "ru" ? "Очистить" : "Clear"} className="size-6 shrink-0 hover:bg-transparent hover:text-red-accent"><X /></Button>}
       </label>
     </div>
