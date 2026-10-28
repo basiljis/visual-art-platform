@@ -203,16 +203,22 @@ function Index() {
         <div data-gallery-menu={galleryLayout.menuPlacement} className={sideMenu ? `grid items-start ${galleryMenuCollapsed ? "gap-x-4 md:grid-cols-[2.5rem_minmax(0,1fr)]" : "gap-x-8 md:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-10"}` : ""}>
           <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} collapsed={galleryMenuCollapsed} onToggle={() => setGalleryMenuCollapsed(value => !value)} onCategory={(key) => { setCategory(key); setProject("all"); }} onProject={openProject} onQuery={setQuery} />
           <div className="min-w-0">
-        {(category !== "all" || q) && (
-          <nav aria-label={lang === "en" ? "Breadcrumbs" : "Хлебные крошки"} className="mb-8 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] uppercase tracking-[.18em] text-muted-foreground">
-            <button type="button" onClick={() => slowScroll(0)} className="py-1 transition-colors hover:text-red-accent">{lang === "ru" ? "Главная" : "Home"}</button>
-            <span aria-hidden="true" className="text-red-accent">/</span>
-            <button type="button" onClick={() => { setCategory("all"); setProject("all"); }} className="py-1 transition-colors hover:text-red-accent">{lang === "ru" ? "Работы" : "Works"}</button>
-            {category !== "all" && <>{project !== "all" ? (<><span aria-hidden="true" className="text-red-accent">/</span><button type="button" onClick={() => setProject("all")} className="py-1 transition-colors hover:text-red-accent">{parentOf(category)?.[lang]}</button></>) : <span aria-current="page">{parentOf(category)?.[lang]}</span>}</>}
-            {project !== "all" && <><span aria-hidden="true" className="text-red-accent">/</span><span aria-current="page">{parentOf(project)?.[lang]}</span></>}
-            {q && <><span aria-hidden="true" className="text-red-accent">/</span><span aria-current="page">{lang === "ru" ? "Поиск" : "Search"}</span></>}
+        {(category !== "all" || q) && (() => {
+          const crumb = "min-w-0 max-w-[9rem] truncate py-1 sm:max-w-none";
+          const sep = <span aria-hidden="true" className="shrink-0 text-red-accent">/</span>;
+          const catName = parentOf(category)?.[lang];
+          const projName = parentOf(category)?.children.find((s) => s.key === project)?.[lang];
+          return (
+          <nav aria-label={lang === "en" ? "Breadcrumbs" : "Хлебные крошки"} className="mb-8 flex min-w-0 items-center gap-x-2 overflow-hidden text-[11px] uppercase tracking-[.18em] text-muted-foreground sm:flex-wrap">
+            <button type="button" onClick={() => slowScroll(0)} className="shrink-0 py-1 transition-colors hover:text-red-accent">{lang === "ru" ? "Главная" : "Home"}</button>
+            {sep}
+            <button type="button" onClick={() => { setCategory("all"); setProject("all"); setQuery(""); }} className="shrink-0 py-1 transition-colors hover:text-red-accent">{lang === "ru" ? "Работы" : "Works"}</button>
+            {category !== "all" && <>{sep}{project !== "all" ? <button type="button" title={catName} onClick={() => setProject("all")} className={`${crumb} transition-colors hover:text-red-accent`}>{catName}</button> : <span aria-current="page" title={catName} className={crumb}>{catName}</span>}</>}
+            {project !== "all" && projName && <>{sep}<span aria-current="page" title={projName} className={crumb}>{projName}</span></>}
+            {q && <>{sep}<span aria-current="page" className={crumb}>{lang === "ru" ? "Поиск" : "Search"}</span></>}
           </nav>
-        )}
+          );
+        })()}
         {q && visible.length === 0 && (
           <div className="mx-auto max-w-md border-y border-border py-14 text-center">
             <p className="font-display text-3xl">{lang==="ru"?"Ничего не найдено":"Nothing found"}</p>
