@@ -199,10 +199,20 @@ function Index() {
       </section>}
 
       <section id="works" className="border-t border-border px-5 pb-10 pt-8 md:px-8 md:pb-28 md:pt-10">
-        <div className="mb-6 flex items-end md:mb-14 justify-between gap-6"><div><nav data-font-block="body" aria-label={lang === "en" ? "Breadcrumbs" : "Хлебные крошки"} className="mb-2 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[.18em] text-muted-foreground md:mb-4"><button type="button" onClick={() => slowScroll(0)} className="py-1 transition-colors hover:text-red-accent">{lang === "ru" ? "Главная" : "Home"}</button><span aria-hidden="true">/</span><button type="button" onClick={() => { setCategory("all"); setProject("all"); }} className="py-1 transition-colors hover:text-red-accent">{lang === "ru" ? "Работы" : "Works"}</button>{category !== "all" && <><span aria-hidden="true">/</span>{project !== "all" ? <button type="button" onClick={() => setProject("all")} className="py-1 transition-colors hover:text-red-accent">{parentOf(category)?.[lang]}</button> : <span aria-current="page">{parentOf(category)?.[lang]}</span>}</>}{project !== "all" && <><span aria-hidden="true">/</span><span aria-current="page">{parentOf(project)?.[lang]}</span></>}</nav><h2 className="font-display text-5xl md:text-8xl">{t.works}</h2></div><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
+        <div className="mb-6 flex items-end md:mb-14 justify-between gap-6"><div><p data-font-block="body" className="mb-2 md:mb-4 text-[10px] uppercase tracking-[.18em] text-muted-foreground">{t.breadcrumb}</p><h2 className="font-display text-5xl md:text-8xl">{t.works}</h2></div><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
         <div data-gallery-menu={galleryLayout.menuPlacement} className={sideMenu ? `grid items-start ${galleryMenuCollapsed ? "gap-x-4 md:grid-cols-[2.5rem_minmax(0,1fr)]" : "gap-x-8 md:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-10"}` : ""}>
           <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} collapsed={galleryMenuCollapsed} onToggle={() => setGalleryMenuCollapsed(value => !value)} onCategory={(key) => { setCategory(key); setProject("all"); }} onProject={openProject} onQuery={setQuery} />
           <div className="min-w-0">
+        {(category !== "all" || q) && (
+          <nav aria-label={lang === "en" ? "Breadcrumbs" : "Хлебные крошки"} className="mb-8 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] uppercase tracking-[.18em] text-muted-foreground">
+            <button type="button" onClick={() => slowScroll(0)} className="py-1 transition-colors hover:text-red-accent">{lang === "ru" ? "Главная" : "Home"}</button>
+            <span aria-hidden="true" className="text-red-accent">/</span>
+            <button type="button" onClick={() => { setCategory("all"); setProject("all"); }} className="py-1 transition-colors hover:text-red-accent">{lang === "ru" ? "Работы" : "Works"}</button>
+            {category !== "all" && <>{project !== "all" ? (<><span aria-hidden="true" className="text-red-accent">/</span><button type="button" onClick={() => setProject("all")} className="py-1 transition-colors hover:text-red-accent">{parentOf(category)?.[lang]}</button></>) : <span aria-current="page">{parentOf(category)?.[lang]}</span>}</>}
+            {project !== "all" && <><span aria-hidden="true" className="text-red-accent">/</span><span aria-current="page">{parentOf(project)?.[lang]}</span></>}
+            {q && <><span aria-hidden="true" className="text-red-accent">/</span><span aria-current="page">{lang === "ru" ? "Поиск" : "Search"}</span></>}
+          </nav>
+        )}
         {q && visible.length === 0 && (
           <div className="mx-auto max-w-md border-y border-border py-14 text-center">
             <p className="font-display text-3xl">{lang==="ru"?"Ничего не найдено":"Nothing found"}</p>
@@ -212,7 +222,7 @@ function Index() {
         )}
         {category === "all" && !q && (
           <div className="mb-28">
-            <h2 className="mb-8 text-[11px] uppercase tracking-[.18em] text-muted-foreground"><span className="text-red-accent">/ </span>{lang === "ru" ? "Серии работ" : "Series"}</h2>
+            <h2 className="mb-8 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] uppercase tracking-[.18em] text-muted-foreground"><button type="button" onClick={() => slowScroll(0)} className="py-1 transition-colors hover:text-red-accent">{lang === "ru" ? "Главная" : "Home"}</button><span aria-hidden="true" className="text-red-accent">/</span><button type="button" onClick={() => { setCategory("all"); setProject("all"); }} className="py-1 transition-colors hover:text-red-accent">{lang === "ru" ? "Работы" : "Works"}</button><span aria-hidden="true" className="text-red-accent">/</span>{lang === "ru" ? "Серии работ" : "Series"}</h2>
             <div className="grid gap-x-6 gap-y-16 md:grid-cols-2">
               {cats.map((c, i) => {
                 const cw = works.filter((w) => w.category === c.key);
