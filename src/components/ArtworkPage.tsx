@@ -17,6 +17,7 @@ export function ArtworkPage({ work, category, next }: { work: WorkRow; category:
   const [zoom, setZoom] = useState(false);
   const title = localized(work.title_ru, work.title_en, lang);
   return <BlogShell back={{ to: "/", label: "Главная" }}>
+    <nav aria-label={lang === "en" ? "Breadcrumbs" : "Хлебные крошки"} className="mb-3 flex flex-wrap items-center gap-2 text-[10px] uppercase text-muted-foreground"><Link to="/" className="py-1 transition-colors hover:text-red-accent">{lang === "en" ? "Home" : "Главная"}</Link><span aria-hidden="true">/</span><Link to="/" {...(true ? { hash: "works" } : {})} className="py-1 transition-colors hover:text-red-accent">{lang === "en" ? "Works" : "Работы"}</Link><span aria-hidden="true">/</span><Link to="/works/$category" params={{ category: category.key }} className="py-1 transition-colors hover:text-red-accent">{localized(category.name_ru, category.name_en, lang)}</Link><span aria-hidden="true">/</span><span aria-current="page">{title}</span></nav>
     <nav className="mb-8"><Link to="/works/$category" params={{ category: category.key }} className="inline-flex items-center gap-2 text-sm hover:text-red-accent"><ArrowLeft className="size-4" />{lang === "ru" ? "Вернуться к серии" : "Back to series"} · {localized(category.name_ru, category.name_en, lang)}</Link></nav>
     <article className="grid items-start gap-8 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:gap-16">
       <div className="relative">
