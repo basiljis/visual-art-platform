@@ -23,4 +23,13 @@ describe("Artwork stays on the free wall, clear of furniture", () => {
     const box = placeArtwork(interiorGeometry.sofa, { w: 80, h: 120 }, 2);
     expect(box.width / box.height).toBe(2);
   });
+  for (const name of ["dining", "console"] as const) {
+    it(`${name}: keeps paintings above the styled furniture and tabletop objects`, () => {
+      for (const size of [{ w: 97, h: 165 }, { w: 200, h: 100 }, { w: 1000, h: 1000 }]) {
+        const box = placeArtwork(interiorGeometry[name], size);
+        expect(box.top + box.height).toBeLessThanOrEqual(460);
+        expect(box.width / box.height).toBeCloseTo(size.w / size.h);
+      }
+    });
+  }
 });

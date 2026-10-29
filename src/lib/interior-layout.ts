@@ -13,6 +13,6 @@ export function placeArtwork(scene: WallScene, size: { w: number; h: number }, a
 
 export const interiorGeometry = {
   sofa: { width: 1600, height: 1008, pixelsPerCm: 1275 / 260, wall: { x: 380, y: 70, width: 900, height: 460 } },
-  dining: { width: 1600, height: 1008, pixelsPerCm: 1040 / 200, wall: { x: 330, y: 70, width: 950, height: 460 } },
-  console: { width: 1600, height: 1008, pixelsPerCm: 1050 / 200, wall: { x: 330, y: 70, width: 950, height: 490 } },
+  dining: { width: 1600, height: 1008, pixelsPerCm: 1040 / 200, wall: { x: 350, y: 60, width: 940, height: 400 } },
+  console: { width: 1600, height: 1008, pixelsPerCm: 1035 / 200, wall: { x: 340, y: 60, width: 1000, height: 400 } },
 } satisfies Record<string, WallScene>;
