@@ -92,9 +92,11 @@ export function NewsPanel() {
               <div className="md:col-span-2"><span className={label}>Тип</span><select value={edit.type} onChange={(e) => set("type", e.target.value as NewsType)} className={field}>{NEWS_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label_ru}</option>)}</select></div>
               <div><span className={label}>Заголовок (RU)</span><input value={edit.title_ru} onChange={(e) => set("title_ru", e.target.value)} className={field} /></div>
               <div><span className={label}>Заголовок (EN)</span><input value={edit.title_en} onChange={(e) => set("title_en", e.target.value)} className={field} /></div>
-              <div className="md:col-span-2"><span className={label}>Дата (например, 12–30 ноября 2026)</span><input value={edit.event_date} onChange={(e) => set("event_date", e.target.value)} className={field} /></div>
-              <div><span className={label}>Адрес (RU)</span><input value={edit.address_ru} onChange={(e) => set("address_ru", e.target.value)} className={field} /></div>
-              <div><span className={label}>Адрес (EN)</span><input value={edit.address_en} onChange={(e) => set("address_en", e.target.value)} className={field} /></div>
+              {(edit.type === "exhibition" || edit.type === "event") && <>
+                <div className="md:col-span-2"><span className={label}>Дата (например, 12–30 ноября 2026)</span><input value={edit.event_date} onChange={(e) => set("event_date", e.target.value)} className={field} /></div>
+                <div><span className={label}>Адрес (RU)</span><input value={edit.address_ru} onChange={(e) => set("address_ru", e.target.value)} className={field} /></div>
+                <div><span className={label}>Адрес (EN)</span><input value={edit.address_en} onChange={(e) => set("address_en", e.target.value)} className={field} /></div>
+              </>}
               <div><span className={label}>Описание (RU)</span><textarea rows={4} value={edit.body_ru} onChange={(e) => set("body_ru", e.target.value)} className={field} /></div>
               <div><span className={label}>Описание (EN)</span><textarea rows={4} value={edit.body_en} onChange={(e) => set("body_en", e.target.value)} className={field} /></div>
               <div className="md:col-span-2"><span className={label}>Ссылка (необязательно)</span><input value={edit.link ?? ""} onChange={(e) => set("link", e.target.value)} className={field} placeholder="https://" /></div>
