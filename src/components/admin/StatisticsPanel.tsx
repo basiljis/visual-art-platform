@@ -7,13 +7,15 @@ import type { VisitStatistics } from "@/lib/visit-statistics";
 
 export function StatisticsPanel() {
   const [days, setDays] = useState(30);
-  const { data, isPending, isError, refetch, isFetching } = useQuery({
+  const { data, isPending, isError, refetch, isFetching, dataUpdatedAt } = useQuery({
     queryKey: ["admin-visit-statistics", days],
     queryFn: async () => {
       const { data, error } = await supabase.rpc("admin_visit_statistics", { _days: days });
       if (error) throw new Error("Не удалось загрузить статистику");
       return data as unknown as VisitStatistics;
     },
+    refetchInterval: 30_000,
+    refetchIntervalInBackground: false,
   });
   return <section aria-label="Статистика посещений" className="space-y-8">
     <div className="flex flex-wrap items-center justify-between gap-4">
