@@ -11,12 +11,12 @@ describe("Typography settings", () => {
     const settings = normalizeTypography({
       body: { font: "lora", size: 1.2, weight: 500, lineHeight: 1.5 },
     });
-    expect(settings.body).toEqual({ font: "lora", size: 1.2, weight: 500, lineHeight: 1.5 });
+    expect(settings.body).toEqual({ font: "lora", size: 1.2, weight: 500, lineHeight: 1.5, textCase: "none" });
     expect(settings.footer).toEqual(defaultTypography.footer);
   });
   it("upgrades the legacy flat font format with defaults", () => {
     const settings = normalizeTypography({ header: "pt-sans", body: "lora", footer: "pt-serif", preloader: "montserrat" });
-    expect(settings.header).toEqual({ font: "pt-sans", size: 1, weight: 0, lineHeight: 1.05 });
+    expect(settings.header).toEqual({ font: "pt-sans", size: 1, weight: 0, lineHeight: 1.05, textCase: "upper" });
     expect(settings.body.font).toBe("lora");
     expect(settings.footer.font).toBe("pt-serif");
     expect(settings.preloader.font).toBe("montserrat");
