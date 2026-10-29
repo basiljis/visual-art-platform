@@ -1,6 +1,6 @@
 import roomImg from "@/assets/interior-room.jpg";
-import diningImg from "@/assets/interior-dining.jpg";
-import consoleImg from "@/assets/interior-console.jpg";
+import diningImg from "@/assets/interior-dining-editorial.jpg";
+import consoleImg from "@/assets/interior-console-editorial.jpg";
 import { Button } from "@/components/ui/button";
 import { interiorGeometry, placeArtwork } from "@/lib/interior-layout";
 import { useEffect, useRef, useState } from "react";
