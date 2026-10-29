@@ -8,6 +8,7 @@ import { mediaUrl, htmlForDisplay, htmlForStorage } from "@/lib/media";
 import { uploadMedia } from "@/lib/admin-media";
 import { defaultAbout, type AboutContent, type AboutLang } from "@/lib/about";
 import { RichEditor } from "./RichEditor";
+import { BroadcastButton } from "./BroadcastButton";
 import { Button } from "@/components/ui/button";
 import { SortableGallery, SortableGalleryItem } from "./SortableGallery";
 import { reorderScope } from "@/lib/gallery-order";
