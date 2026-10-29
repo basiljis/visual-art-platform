@@ -200,7 +200,7 @@ function Index() {
       </section>}
 
       <section id="works" className="border-t border-border px-5 pb-10 pt-8 md:px-8 md:pb-28 md:pt-10">
-        <div className="mb-6 flex items-end md:mb-14 justify-between gap-6"><h2 className="font-display text-5xl md:text-8xl">{t.works}</h2><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
+        <div className="mb-4 flex items-end md:mb-6 justify-between gap-6"><h2 className="font-display text-5xl md:text-8xl">{t.works}</h2><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
         <div data-gallery-menu={galleryLayout.menuPlacement} className={sideMenu ? `grid items-start ${galleryMenuCollapsed ? "gap-x-4 md:grid-cols-[2.5rem_minmax(0,1fr)]" : "gap-x-8 md:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-10"}` : ""}>
           <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} collapsed={galleryMenuCollapsed} onToggle={() => setGalleryMenuCollapsed(value => !value)} onCategory={(key) => { setCategory(key); setProject("all"); }} onProject={openProject} onQuery={setQuery} />
           <div className="min-w-0">
