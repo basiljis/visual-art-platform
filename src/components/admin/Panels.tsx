@@ -8,6 +8,7 @@ import { mediaUrl, htmlForDisplay, htmlForStorage } from "@/lib/media";
 import { uploadMedia } from "@/lib/admin-media";
 import { defaultAbout, type AboutContent, type AboutLang } from "@/lib/about";
 import { RichEditor } from "./RichEditor";
+import { BroadcastButton } from "./BroadcastButton";
 import { Button } from "@/components/ui/button";
 import { SortableGallery, SortableGalleryItem } from "./SortableGallery";
 import { reorderScope } from "@/lib/gallery-order";
@@ -323,7 +324,7 @@ export function BlogPanel() {
         <div key={p.id} className="grid grid-cols-[4rem_minmax(0,1fr)_auto] items-center gap-4 border-b border-border py-4">
           <div className="aspect-square overflow-hidden bg-muted">{p.cover && <img src={mediaUrl(p.cover)} alt="" className="h-full w-full object-cover" />}</div>
           <button onClick={() => setEdit(p)} className="min-w-0 text-left"><p className="text-[10px] uppercase tracking-[.18em] text-muted-foreground">{p.date}</p><p className="truncate text-base">{p.title}</p></button>
-          <div className="flex items-center gap-3">{p.published ? <Eye className="size-4 opacity-40" aria-label="Опубликовано" /> : <EyeOff className="size-4 text-red-accent" aria-label="Черновик" />}<button onClick={() => remove(p)} aria-label="Удалить" className="hover:text-red-accent"><Trash2 className="size-4" /></button></div>
+          <div className="flex items-center gap-3"><BroadcastButton item={{ kind: "blog", title: p.title, text: p.excerpt, image: p.cover, link: `/blog/${p.slug}`, meta: p.date }} />{p.published ? <Eye className="size-4 opacity-40" aria-label="Опубликовано" /> : <EyeOff className="size-4 text-red-accent" aria-label="Черновик" />}<button onClick={() => remove(p)} aria-label="Удалить" className="hover:text-red-accent"><Trash2 className="size-4" /></button></div>
         </div>
       ))}
     </div>
