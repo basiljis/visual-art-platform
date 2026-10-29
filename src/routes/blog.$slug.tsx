@@ -66,12 +66,12 @@ function PostPage() {
   return (
     <BlogShell back={{ to: "/blog", label: "Блог" }}>
       <article className="mx-auto max-w-3xl">
-        <nav aria-label={en ? "Breadcrumbs" : "Хлебные крошки"} className="mb-3 flex flex-wrap items-center gap-2 text-[10px] uppercase text-muted-foreground">
+        <nav aria-label={en ? "Breadcrumbs" : "Хлебные крошки"} className="mb-3 flex flex-wrap items-center gap-x-2 text-[11px] uppercase tracking-[.18em] text-muted-foreground">
           <Link to="/" className="py-1 transition-colors hover:text-red-accent">{en ? "Home" : "Главная"}</Link>
-          <span aria-hidden="true">/</span>
+          <span aria-hidden="true" className="text-red-accent">/</span>
           <Link to="/blog" className="py-1 transition-colors hover:text-red-accent">{en ? "Blog" : "Блог"}</Link>
-          <span aria-hidden="true">/</span>
-          <span aria-current="page">{en ? "Post" : "Статья"}</span>
+          <span aria-hidden="true" className="text-red-accent">/</span>
+          <span aria-current="page" className="min-w-0 max-w-[12rem] truncate sm:max-w-none" title={localized(post.title, post.title_en, lang)}>{localized(post.title, post.title_en, lang)}</span>
         </nav>
         <Button asChild variant="link" className="mb-3 h-9 px-0 text-red-accent">
           <Link to="/blog"><ArrowLeft aria-hidden="true" />{en ? "Back to blog" : "Назад к блогу"}</Link>

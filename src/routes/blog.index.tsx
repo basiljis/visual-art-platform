@@ -52,9 +52,9 @@ function BlogIndex() {
   const blogPosts = day ? searchedPosts.filter((post) => samePublicationDay(post.date, day)) : searchedPosts;
   return (
     <BlogShell back={{ to: "/", label: "Главная" }}>
-      <nav aria-label={en ? "Breadcrumbs" : "Хлебные крошки"} className="flex items-center gap-2 text-[10px] uppercase text-muted-foreground">
+      <nav aria-label={en ? "Breadcrumbs" : "Хлебные крошки"} className="flex items-center gap-x-2 text-[11px] uppercase tracking-[.18em] text-muted-foreground">
         <Link to="/" className="py-1 transition-colors hover:text-red-accent">{en ? "Home" : "Главная"}</Link>
-        <span aria-hidden="true">/</span>
+        <span aria-hidden="true" className="text-red-accent">/</span>
         <span aria-current="page">{en ? "Blog" : "Блог"}</span>
       </nav>
       <div className="mt-2 flex items-end justify-between border-b border-border pb-4 md:mt-4 md:pb-8">
