@@ -68,8 +68,9 @@ function ArtworkStatus({ status, lang }: { status: string; lang: Lang }) {
 }
 function buildGallery(data: { categories: CategoryRow[]; works: WorkRow[] }, lang: Lang) {
   const top = data.categories.filter((c) => !c.parent_key);
-  const cats: Cat[] = top.map((c) => ({ key: c.key, ru: c.name_ru, en: c.name_en, noteRu: c.description_hidden ? "" : c.description_ru, noteEn: c.description_hidden ? "" : c.description_en, children: data.categories.filter((s) => s.parent_key === c.key).map((s) => ({ key: s.key, ru: s.name_ru, en: s.name_en })) }));
   const works: Work[] = data.works.map((w) => ({ id: w.id, image: mediaUrl(w.image), category: w.category_key, project: w.project_key ?? undefined, cover: w.cover, hero: w.hero, ru: w.title_ru, en: w.title_en || w.title_ru, year: w.year, size: localizedSize(w.size, lang), technique: localized(w.technique ?? "", w.technique_en, lang), status: w.status ?? "" }));
+  // Разделы без работ (например, пустое «Новое») не показываем посетителям
+  const cats: Cat[] = top.filter((c) => works.some((w) => w.category === c.key)).map((c) => ({ key: c.key, ru: c.name_ru, en: c.name_en, noteRu: c.description_hidden ? "" : c.description_ru, noteEn: c.description_hidden ? "" : c.description_en, children: data.categories.filter((s) => s.parent_key === c.key).map((s) => ({ key: s.key, ru: s.name_ru, en: s.name_en })) }));
   return { cats, works };
 }
 const copy = {
