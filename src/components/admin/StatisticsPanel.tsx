@@ -7,18 +7,21 @@ import type { VisitStatistics } from "@/lib/visit-statistics";
 
 export function StatisticsPanel() {
   const [days, setDays] = useState(30);
-  const { data, isPending, isError, refetch, isFetching } = useQuery({
+  const { data, isPending, isError, refetch, isFetching, dataUpdatedAt } = useQuery({
     queryKey: ["admin-visit-statistics", days],
     queryFn: async () => {
       const { data, error } = await supabase.rpc("admin_visit_statistics", { _days: days });
       if (error) throw new Error("Не удалось загрузить статистику");
       return data as unknown as VisitStatistics;
     },
+    refetchInterval: 30_000,
+    refetchIntervalInBackground: false,
   });
   return <section aria-label="Статистика посещений" className="space-y-8">
     <div className="flex flex-wrap items-center justify-between gap-4">
       <h2 className="font-display text-3xl">Статистика посещений</h2>
       <div className="flex items-center gap-3">
+        {dataUpdatedAt > 0 && <span className="text-xs text-muted-foreground">Обновлено {new Date(dataUpdatedAt).toLocaleTimeString("ru-RU")} · автообновление каждые 30 секунд</span>}
         <div className="flex border-b border-border" aria-label="Период статистики">
           {[7, 30, 90].map((period) => <Button key={period} variant="ghost" size="sm" aria-pressed={days === period} onClick={() => setDays(period)} className={`rounded-none hover:bg-transparent hover:text-red-accent ${days === period ? "border-b border-red-accent text-red-accent" : "text-muted-foreground"}`}>{period} дней</Button>)}
         </div>

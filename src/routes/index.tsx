@@ -68,8 +68,9 @@ function ArtworkStatus({ status, lang }: { status: string; lang: Lang }) {
 }
 function buildGallery(data: { categories: CategoryRow[]; works: WorkRow[] }, lang: Lang) {
   const top = data.categories.filter((c) => !c.parent_key);
-  const cats: Cat[] = top.map((c) => ({ key: c.key, ru: c.name_ru, en: c.name_en, noteRu: c.description_hidden ? "" : c.description_ru, noteEn: c.description_hidden ? "" : c.description_en, children: data.categories.filter((s) => s.parent_key === c.key).map((s) => ({ key: s.key, ru: s.name_ru, en: s.name_en })) }));
   const works: Work[] = data.works.map((w) => ({ id: w.id, image: mediaUrl(w.image), category: w.category_key, project: w.project_key ?? undefined, cover: w.cover, hero: w.hero, ru: w.title_ru, en: w.title_en || w.title_ru, year: w.year, size: localizedSize(w.size, lang), technique: localized(w.technique ?? "", w.technique_en, lang), status: w.status ?? "" }));
+  // Разделы без работ (например, пустое «Новое») не показываем посетителям
+  const cats: Cat[] = top.filter((c) => works.some((w) => w.category === c.key)).map((c) => ({ key: c.key, ru: c.name_ru, en: c.name_en, noteRu: c.description_hidden ? "" : c.description_ru, noteEn: c.description_hidden ? "" : c.description_en, children: data.categories.filter((s) => s.parent_key === c.key).map((s) => ({ key: s.key, ru: s.name_ru, en: s.name_en })) }));
   return { cats, works };
 }
 const copy = {
@@ -199,7 +200,7 @@ function Index() {
       </section>}
 
       <section id="works" className="border-t border-border px-5 pb-10 pt-8 md:px-8 md:pb-28 md:pt-10">
-        <div className="mb-6 flex items-end md:mb-14 justify-between gap-6"><h2 className="font-display text-5xl md:text-8xl">{t.works}</h2><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
+        <div className="mb-4 flex items-end md:mb-6 justify-between gap-6"><h2 className="font-display text-5xl md:text-8xl">{t.works}</h2><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
         <div data-gallery-menu={galleryLayout.menuPlacement} className={sideMenu ? `grid items-start ${galleryMenuCollapsed ? "gap-x-4 md:grid-cols-[2.5rem_minmax(0,1fr)]" : "gap-x-8 md:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-10"}` : ""}>
           <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} collapsed={galleryMenuCollapsed} onToggle={() => setGalleryMenuCollapsed(value => !value)} onCategory={(key) => { setCategory(key); setProject("all"); }} onProject={openProject} onQuery={setQuery} />
           <div className="min-w-0">
