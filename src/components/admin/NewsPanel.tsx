@@ -5,6 +5,7 @@ import { mediaUrl } from "@/lib/media";
 import { uploadMedia } from "@/lib/admin-media";
 import { defaultNewsSettings, NEWS_TYPES, type NewsRow, type NewsSettings, type NewsType } from "@/lib/news.functions";
 import { field, label, primaryBtn } from "./Panels";
+import { BroadcastButton } from "./BroadcastButton";
 
 const ghost = "inline-flex items-center gap-2 border-b border-current pb-0.5 text-xs uppercase tracking-[.16em] transition-colors hover:text-red-accent";
 const empty: Omit<NewsRow, "id"> = { type: "exhibition", title_ru: "", title_en: "", body_ru: "", body_en: "", event_date: "", address_ru: "", address_en: "", link: null, image: null, published: true, sort: 0 };
@@ -83,6 +84,7 @@ export function NewsPanel() {
                   <p className="truncate text-sm">{n.title_ru}{!n.published && <span className="ml-2 text-[10px] uppercase tracking-[.16em] text-red-accent">скрыта</span>}</p>
                   <p className="truncate text-xs text-muted-foreground">{[typeLabel, n.event_date, n.address_ru].filter(Boolean).join(" · ")}</p>
                 </button>
+                <BroadcastButton item={{ kind: n.type === "exhibition" ? "exhibition" : "news", title: n.title_ru, text: n.body_ru, image: n.image, link: n.link, meta: [n.event_date, n.address_ru].filter(Boolean).join(" · ") }} />
                 <button onClick={() => toggle(n)} title={n.published ? "Скрыть" : "Показать"} aria-label={n.published ? "Скрыть" : "Показать"} className="hover:text-red-accent">{n.published ? <Eye className="size-4" /> : <EyeOff className="size-4" />}</button>
                 <button onClick={() => remove(n)} title="Удалить" aria-label="Удалить" className="hover:text-red-accent"><Trash2 className="size-4" /></button>
               </li>
