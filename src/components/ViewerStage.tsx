@@ -59,8 +59,7 @@ export function ZoomImage({ src, alt, resetKey, sold, soldLabel }: { src: string
   const press = useRef<{ x: number; y: number; moved: boolean } | null>(null);
   return (
     <div ref={box} className={`relative flex h-full w-full touch-none select-none items-center justify-center overflow-hidden ${t.z > 1 ? "cursor-grab active:cursor-grabbing" : "cursor-zoom-in"}`}
-      onDoubleClick={(e) => zoomAt(t.z > 1 ? 1 : 2.5, e.clientX, e.clientY)}
-      onPointerDown={(e) => { (e.target as Element).setPointerCapture?.(e.pointerId); pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY }); press.current = { x: e.clientX, y: e.clientY, moved: false }; if (pointers.current.size === 2) pinch.current = { d: dist(), z: tRef.current.z }; }}
+      onPointerDown={(e) => { if (e.button !== 0) return; e.currentTarget.setPointerCapture?.(e.pointerId); pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY }); press.current = { x: e.clientX, y: e.clientY, moved: pointers.current.size > 1 }; if (pointers.current.size === 2) pinch.current = { d: dist(), z: tRef.current.z }; }}
       onPointerMove={(e) => {
         const prev = pointers.current.get(e.pointerId); if (!prev) return;
         pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -80,7 +79,7 @@ export function ZoomImage({ src, alt, resetKey, sold, soldLabel }: { src: string
       }}
       onPointerCancel={(e) => { pointers.current.delete(e.pointerId); pinch.current = null; press.current = null; }}>
       {dot && <span role="img" aria-label={soldLabel} title={soldLabel} style={{ left: dot.x - 26, top: dot.y + 12 }} className="pointer-events-none absolute z-[1] size-3.5 rounded-full bg-red-accent ring-2 ring-background" />}
-      <img ref={img} src={src} alt={alt} draggable={false} style={{ transform: `translate(${t.x}px, ${t.y}px) scale(${t.z})` }} className="max-h-full max-w-full animate-reveal object-contain shadow-2xl transition-transform duration-75 will-change-transform" />
+      <img ref={img} src={src} alt={alt} draggable={false} style={{ transform: `translate(${t.x}px, ${t.y}px) scale(${t.z})` }} className="max-h-full max-w-full object-contain shadow-2xl transition-transform duration-75 will-change-transform" />
     </div>
   );
 }

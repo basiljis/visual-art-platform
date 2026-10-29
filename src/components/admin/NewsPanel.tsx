@@ -14,6 +14,9 @@ export function NewsPanel() {
   const [edit, setEdit] = useState<(Omit<NewsRow, "id"> & { id?: string }) | null>(null);
   const [settings, setSettings] = useState<NewsSettings>(defaultNewsSettings);
   const [savedMsg, setSavedMsg] = useState("");
+  const [blogPosts, setBlogPosts] = useState<{ id: string; title: string; slug: string }[]>([]);
+  const [blogLoading, setBlogLoading] = useState(true);
+  const [blogError, setBlogError] = useState("");
 
   const load = async () => {
     const { data, error } = await supabase.from("news").select("*").order("sort");
@@ -21,6 +24,11 @@ export function NewsPanel() {
   };
   useEffect(() => {
     load();
+    supabase.from("blog_posts").select("id,title,slug").eq("published", true).order("sort").then(({ data, error }) => {
+      if (error) setBlogError("Не удалось загрузить публикации блога. Можно указать ссылку вручную.");
+      else setBlogPosts(data ?? []);
+      setBlogLoading(false);
+    });
     supabase.from("site_content").select("data").eq("key", "news_settings").maybeSingle().then(({ data }) => {
       if (data?.data) setSettings({ ...defaultNewsSettings, ...(data.data as Partial<NewsSettings>) });
     });
@@ -99,7 +107,15 @@ export function NewsPanel() {
               </>}
               <div><span className={label}>Описание (RU)</span><textarea rows={4} value={edit.body_ru} onChange={(e) => set("body_ru", e.target.value)} className={field} /></div>
               <div><span className={label}>Описание (EN)</span><textarea rows={4} value={edit.body_en} onChange={(e) => set("body_en", e.target.value)} className={field} /></div>
-              <div className="md:col-span-2"><span className={label}>Ссылка (необязательно)</span><input value={edit.link ?? ""} onChange={(e) => set("link", e.target.value)} className={field} placeholder="https://" /></div>
+              {edit.type === "blog" && <div className="md:col-span-2">
+                <label htmlFor="news-blog-post" className={label}>Публикация в блоге</label>
+                <select id="news-blog-post" value={blogPosts.some((post) => edit.link === `/blog/${post.slug}`) ? edit.link ?? "" : ""} onChange={(e) => set("link", e.target.value || null)} disabled={blogLoading || !!blogError} className={field}>
+                  <option value="">{blogLoading ? "Загрузка…" : "Выберите публикацию"}</option>
+                  {blogPosts.map((post) => <option key={post.id} value={`/blog/${post.slug}`}>{post.title}</option>)}
+                </select>
+                {blogError ? <p role="alert" className="mt-2 text-xs text-red-accent">{blogError}</p> : !blogLoading && blogPosts.length === 0 && <p className="mt-2 text-xs text-muted-foreground">Опубликованных записей пока нет.</p>}
+              </div>}
+              <div className="md:col-span-2"><label htmlFor="news-link" className={label}>Ссылка (необязательно)</label><input id="news-link" value={edit.link ?? ""} onChange={(e) => set("link", e.target.value)} className={field} placeholder="https://" /></div>
             </div>
             <div className="flex items-end gap-4">
               <div className="aspect-[4/3] w-32 overflow-hidden bg-muted">{edit.image && <img src={mediaUrl(edit.image)} alt="" className="h-full w-full object-cover" />}</div>

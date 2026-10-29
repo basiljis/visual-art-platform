@@ -64,7 +64,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-red-accent: var(--red-accent);
   --color-sanguine: var(--sanguine);
-  --color-portrait-paper: oklch(1 0 0);
+  --color-portrait-paper: var(--background);
   --color-ink: oklch(0.14 0 0);
   --color-wall: oklch(0.93 0.012 85);
   --color-floor: oklch(0.62 0.04 60);
@@ -259,10 +259,15 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 /* Signature masks require white strokes independently of the visitor theme. */
 .site-preloader mask { color: var(--color-header-surface); }
 
-/* Blend the introductory portrait into the white section: multiply hides the light paper of the photo. */
+/* Neutralize introductory paper only; blend it into the shared site surface. */
 .intro-portrait {
   mask-image: linear-gradient(to right, black 82%, transparent 100%);
+  filter: grayscale(1) brightness(1.12) contrast(1.08);
   mix-blend-mode: multiply;
+}
+.dark .intro-portrait {
+  filter: grayscale(1) brightness(1.12) contrast(1.08) invert(1);
+  mix-blend-mode: screen;
 }
 
 @keyframes swipe-hint { 0%,100% { transform: translateX(10px) rotate(-8deg); opacity: .9 } 50% { transform: translateX(-22px) rotate(-8deg); opacity: 1 } }

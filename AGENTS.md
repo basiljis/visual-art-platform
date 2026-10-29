@@ -12,6 +12,7 @@
 - Keep the artist portfolio as a single editorial gallery experience; language and theme preferences remain browser-persisted because no backend is required.
 
 - Gallery (categories, works) and blog posts live in the database, read through public server functions in src/lib/content.functions.ts and edited at /admin via the browser client under admin-only RLS (has_role) — keeps content editable without code changes.
+- Blog-type news selects published blog posts in the admin editor and stores their relative path in the existing news link field; manual links remain supported to avoid a separate relationship or duplicate navigation source.
 - Media refs: bundled assets are stored as "site/…", "projects/…" or "asset:blog/…", uploads as "media:<path>" in the private media bucket served by /api/public/media/*; always resolve via src/lib/media.ts — workspace blocks public buckets.
 - Imported blog media uses CDN pointer files resolved by the shared media helper; MP4 videos have WebM playback fallbacks, and the original-source manifest verifies complete photo coverage.
 - Admin role is granted only by claim_admin() to the confirmed owner email — no client-side role checks.

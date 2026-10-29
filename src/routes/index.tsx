@@ -181,7 +181,7 @@ function Index() {
         </nav>
       </div>
 
-      {carouselHome ? <HomeCarousel slides={heroWorks.flatMap(index => { const work = works[index]; return work ? [{ image: work.image, title: work[lang], year: work.year, index, alt: artworkAlt({ title_ru: work.ru, title_en: work.en, technique: work.technique, size: work.size, year: work.year }, lang) }] : []; })} lang={lang} onOpen={setViewer} /> : <section id="top" data-home-design="portrait" className="relative bg-portrait-paper text-ink">
+      {carouselHome ? <HomeCarousel slides={heroWorks.flatMap(index => { const work = works[index]; return work ? [{ image: work.image, title: work[lang], year: work.year, index, alt: artworkAlt({ title_ru: work.ru, title_en: work.en, technique: work.technique, size: work.size, year: work.year }, lang) }] : []; })} lang={lang} onOpen={setViewer} /> : <section id="top" data-home-design="portrait" className="relative bg-portrait-paper text-foreground">
         <div className="relative grid min-h-dvh grid-cols-[30%_70%] md:grid-cols-[38%_62%]">
           <div className="relative overflow-hidden">
             {heroWork && <a href="#works" onClick={(e) => { e.preventDefault(); setViewer(heroIndex); }} aria-label={heroWork[lang]} className="absolute inset-x-0 bottom-0 top-20 block overflow-hidden">
