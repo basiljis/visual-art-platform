@@ -33,8 +33,11 @@ export async function createCvPdf(about: AboutContent, lang: "ru" | "en", works:
     { text: lang === "ru" ? "Профессиональная биография / CV" : "Professional biography / CV", fontSize: 13, margin: [0, 0, 0, 20] },
     { text: bio.note, margin: [0, 0, 0, 16] },
     ...profileSections(bio, lang).map(section => ({ stack: [
-      { text: section.title, fontSize: 13, bold: true, margin: [0, 14, 0, 7] },
-      ...section.items.map(text => ({ text, margin: [0, 0, 0, 6] })),
+      { unbreakable: true, stack: [
+        { text: section.title, fontSize: 13, bold: true, margin: [0, 14, 0, 7] },
+        { text: section.items[0] ?? "", margin: [0, 0, 0, 6] },
+      ] },
+      ...section.items.slice(1).map(text => ({ text, margin: [0, 0, 0, 6] })),
     ] } as Content)),
     { stack: [{ text: lang === "ru" ? "Контакты" : "Contacts", fontSize: 13, bold: true, margin: [0, 14, 0, 7] }, ...artistContacts.map(c => ({ text: c.label, link: c.url, margin: [0, 0, 0, 5] }))] } as Content,
     ...selected.map((work, i): Content => {
@@ -49,8 +52,8 @@ export async function createCvPdf(about: AboutContent, lang: "ru" | "en", works:
         { image: photo, fit: [510, 400], alignment: "center", margin: [0, 0, 0, 18] },
         { text: project.name ? `«${project.name}»` : "", bold: true, margin: [0, 0, 0, 7] },
         { text: project.description.length > 650 ? `${project.description.slice(0, 647).trim()}…` : project.description, margin: [0, 0, 0, 10] },
-        { text: lang === "ru" ? "Работа на dikunova.art →" : "View artwork on dikunova.art →", link: `https://dikunova.art${artworkPath(work)}`, margin: [0, 0, 0, 5] },
-        { text: lang === "ru" ? "Проект и полное описание →" : "Project and full description →", link: `https://dikunova.art/works/${encodeURIComponent(work.category_key)}` },
+        { text: lang === "ru" ? "Работа на dikunova.art" : "View artwork on dikunova.art", link: `https://dikunova.art${artworkPath(work)}`, margin: [0, 0, 0, 5] },
+        { text: lang === "ru" ? "Проект и полное описание" : "Project and full description", link: `https://dikunova.art/works/${encodeURIComponent(work.category_key)}` },
       ] };
     }),
   ];

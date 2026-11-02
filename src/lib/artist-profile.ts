@@ -23,7 +23,7 @@ export function profileSections(bio: AboutLang, lang: "ru" | "en") {
 }
 
 export function selectedPortfolioWorks(works: WorkRow[], categories: CategoryRow[]) {
-  const eligible = works.filter(w => !w.hidden && w.image);
+  const eligible = works.filter(w => !w.hidden && w.image && w.title_ru && w.technique && w.size && w.year);
   const ordered = [...eligible].sort((a, b) => Number(b.hero) - Number(a.hero) || Number(b.cover) - Number(a.cover) || latestYear(b.year) - latestYear(a.year) || a.sort - b.sort);
   const selected: WorkRow[] = [];
   for (const category of [...categories].filter(c => !c.parent_key).sort((a, b) => a.sort - b.sort)) {

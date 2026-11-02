@@ -12,7 +12,7 @@ describe("professional biography guidelines", () => {
   it("limits a single PDF to 20 pages", () => { expect(PROFILE_LIMITS.pages).toBe(20); });
   it("limits a single PDF to 20 MB", () => { expect(PROFILE_LIMITS.bytes).toBe(20 * 1024 * 1024); });
   it("selects at most eight visible works instead of the complete collection", () => {
-    const works = Array.from({ length: 15 }, (_, i) => ({ id: String(i), category_key: "myth", image: "image.jpg", year: "2026", sort: i, hidden: i === 0 } as WorkRow));
+    const works = Array.from({ length: 15 }, (_, i) => ({ id: String(i), title_ru: "Работа", technique: "Холст, масло", size: "165 × 97 см", category_key: "myth", image: "image.jpg", year: "2026", sort: i, hidden: i === 0 } as WorkRow));
     const selected = selectedPortfolioWorks(works, []);
     expect(selected).toHaveLength(8);
     expect(selected.some(w => w.id === "0")).toBe(false);
