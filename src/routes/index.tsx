@@ -1,5 +1,6 @@
 import { canEnquire, isSold } from "@/lib/artwork-availability";
 import { GalleryNavigation } from "@/components/GalleryNavigation";
+import { MuralVideos } from "@/components/MuralVideos";
 import { HomeCarousel } from "@/components/HomeCarousel";
 import { galleryLayoutQuery } from "@/lib/gallery-layout.functions";
 import { EnquiryModal } from "@/components/EnquiryModal";
@@ -9,7 +10,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { legalDocuments, type LegalKind } from "@/lib/legal";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { galleryQuery, postsQuery, type CategoryRow, type WorkRow } from "@/lib/content.functions";
+import { galleryQuery, postsQuery, postQuery, type CategoryRow, type WorkRow } from "@/lib/content.functions";
 import { mediaUrl } from "@/lib/media";
 import { ArrowDown, ArrowUp, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Settings, Sun, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -44,7 +45,7 @@ export const Route = createFileRoute("/")({
   }),
   validateSearch: (s: Record<string, unknown>): { category?: string | undefined } => ({ category: typeof s["category"] === "string" && s["category"] ? s["category"] : undefined }),
   loader: async ({ context }) => {
-    const [gallery] = await Promise.all([context.queryClient.ensureQueryData(galleryQuery), context.queryClient.ensureQueryData(postsQuery), context.queryClient.ensureQueryData(galleryLayoutQuery)]);
+    const [gallery] = await Promise.all([context.queryClient.ensureQueryData(galleryQuery), context.queryClient.ensureQueryData(postsQuery), context.queryClient.ensureQueryData(galleryLayoutQuery), context.queryClient.ensureQueryData(postQuery("blog-011"))]);
     const g = gallery as { works: WorkRow[] };
     // Превью для соцсетей: автопортрет тушью (первая картина карусели), иначе главная работа, иначе первая
     const best = g.works.find((w) => /АВТОПОРТРЕТ|SELF-PORTRAIT/i.test(w.title_ru)) ?? g.works.find((w) => w.hero) ?? g.works[0];
@@ -292,6 +293,7 @@ function Index() {
             <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div>{work.cover && project === "all" && work.project && <p className="mb-1 text-[11px] uppercase tracking-[.16em] text-muted-foreground"><span className="text-red-accent">/ </span>{parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}</p>}<h3 className="text-base font-medium">{isSold(work.status) && <ArtworkStatus status={work.status} lang={lang} />}<Link to="/works/$category/$slug" params={{ category: work.category, slug: artworkSlug({ id: work.id, title_ru: work.ru, year: work.year }) }} className="hover:text-red-accent">{work[lang]}</Link></h3>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}{!isSold(work.status) && work.status === "private" && <div className="mt-2"><ArtworkStatus status={work.status} lang={lang} /></div>}{work.cover && project === "all" && work.project && <button onClick={()=>work.project && openProject(work.category, work.project)} className="mt-4 inline-flex items-center gap-2 border border-foreground px-3 py-2 text-left text-[11px] font-medium uppercase tracking-[.14em] transition-colors hover:border-red-accent hover:bg-red-accent hover:text-background"><span className="text-red-accent">/</span>{t.more}<ArrowUpRight className="size-3.5 shrink-0"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
         </div>
+        {category === "мурал" && !q && <MuralVideos />}
         {relatedPosts.length > 0 && (
           <div className="mt-20 border-t border-red-accent pt-8">
             <div className="flex flex-wrap items-center justify-between gap-4"><h2 className="font-display text-3xl text-red-accent md:text-4xl">{lang === "ru" ? "Блог · Статьи по теме" : "Blog · Related articles"}</h2><Button asChild variant="outline" className="border-red-accent text-red-accent hover:bg-red-accent hover:text-background"><Link to="/blog">{lang === "ru" ? "Весь блог" : "All posts"}<ArrowUpRight className="size-4" /></Link></Button></div>
