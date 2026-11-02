@@ -11,7 +11,7 @@
 
 - Keep the artist portfolio as a single editorial gallery experience; language and theme preferences remain browser-persisted because no backend is required.
 
-- Gallery and blog use public content.functions reads and admin-only browser writes. gallery-categories keeps saved empty directions navigable except empty New, so admin additions stay visible.
+- Gallery/blog use public content.functions reads and admin-only writes. gallery-categories keeps empty directions except New. MuralVideos reuses blog-011 video blocks via postQuery/htmlForDisplay, preserving fallbacks without duplicate artwork records.
 - Blog-type news selects published blog posts in the admin editor and stores their relative path in the existing news link field; manual links remain supported to avoid a separate relationship or duplicate navigation source.
 - Media refs: bundled assets are stored as "site/…", "projects/…" or "asset:blog/…", uploads as "media:<path>" in the private media bucket served by /api/public/media/*; always resolve via src/lib/media.ts — workspace blocks public buckets.
 - Imported blog media uses CDN pointer files resolved by the shared media helper; MP4 videos have WebM playback fallbacks, and the original-source manifest verifies complete photo coverage.
