@@ -1,12 +1,12 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { domToReact, htmlToDOM, Element, type DOMNode } from "html-react-parser";
+import { domToReact, htmlToDOM, type Element, type DOMNode } from "html-react-parser";
 import { postQuery } from "@/lib/content.functions";
 import { htmlForDisplay } from "@/lib/media";
 import { useLanguage } from "@/lib/language";
 
 function videoNodes(nodes: DOMNode[]): Element[] {
   return nodes.flatMap(node => {
-    if (!(node instanceof Element)) return [];
+    if (!("name" in node && "children" in node && "attribs" in node)) return [];
     return node.name === "video" ? [node] : videoNodes(node.children as DOMNode[]);
   });
 }
