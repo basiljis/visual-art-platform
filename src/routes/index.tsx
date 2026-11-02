@@ -165,7 +165,7 @@ function Index() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) window.scrollTo({ top: target, behavior: "instant" });
     else slowScroll(target);
   });
-  const openProject = (parent: string, key: string) => { setCategory(parent); setProject(key); if (sideMenu) scrollToWorks(); else document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); };
+  const openProject = (parent: string, key: string) => { setCategory(parent); setProject(key); scrollToWorks(); };
   const relatedPosts = category !== "all" && !q ? posts.filter((p) => (p.topic_keys ?? []).includes(category)) : [];
 
   return (
@@ -212,7 +212,7 @@ function Index() {
       <section id="works" className="border-t border-border px-5 pb-10 pt-8 md:px-8 md:pb-28 md:pt-10">
         <div className="mb-4 flex items-end md:mb-6 justify-between gap-6"><h2 className="font-display text-5xl md:text-8xl">{t.works}</h2><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
         <div data-gallery-menu={galleryLayout.menuPlacement} className={sideMenu ? `grid items-start ${galleryMenuCollapsed ? "gap-x-4 md:grid-cols-[2.5rem_minmax(0,1fr)]" : "gap-x-8 md:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-10"}` : ""}>
-          <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} collapsed={galleryMenuCollapsed} onToggle={() => setGalleryMenuCollapsed(value => !value)} onCategory={(key) => { setCategory(key); setProject("all"); if (sideMenu) scrollToWorks(); }} onProject={openProject} onQuery={setQuery} />
+          <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} collapsed={galleryMenuCollapsed} onToggle={() => setGalleryMenuCollapsed(value => !value)} onCategory={(key) => { setCategory(key); setProject("all"); scrollToWorks(); }} onProject={openProject} onQuery={setQuery} />
           <div className="min-w-0">
         {(category !== "all" || q) && (() => {
           const crumb = "min-w-0 max-w-[9rem] truncate py-1 sm:max-w-none";
