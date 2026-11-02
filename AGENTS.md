@@ -23,7 +23,7 @@
 - Public SEO URLs and structured data use src/lib/seo.ts, not request origins; sitemap reads paginate with public access and fail explicitly to avoid proxy-host URLs and incomplete successful responses.
 - Crawlable series and artwork pages supplement, not replace, the editorial homepage; artwork slugs include the stable database ID to avoid collisions, and only leaf routes emit canonicals.
 - About and PDF share artist-profile normalization of current localized database biography and selected public works; browser-generated PDFs use compressed uncropped images, lazy fonts, page/size guards and a separate ready-download click to preserve mobile user activation without changing admin storage.
-- Homepage design is selected in gallery_layout: portrait preserves the static self-portrait composition, while HomeCarousel owns the signature/introduction and uncropped Embla artwork composition; both headers use the editable header typography block and both designs open original works in the viewer.
+- gallery_layout selects portrait or HomeCarousel; both use editable headers and open original works. Mobile gallery items stack vertically independently of desktop grids and automatic featured switching.
 - Mount SitePreloader once in the public root shell, without session flags, so full reloads replay it while internal navigation does not.
 - Use shared artwork-availability rules for gallery and viewer purchase controls and sold markers, so unavailable works cannot expose an enquiry action on one surface only.
 - Interior scenes define calibrated free-wall rectangles in the shared interior-layout module; fit artwork with original image proportions inside these rectangles and label reduced-scale previews so furniture is never overlapped.
@@ -35,7 +35,7 @@
 - The blog calendar filters loaded public posts client-side by local calendar day via blog-dates, combined with text search; no database date conversion is required.
 - Visit statistics use a session-only random browser ID and an idempotent database RPC per content path, without IP addresses or service keys; only aggregate blog counts are public, and admin reports enforce has_role in the database.
 - Gallery menu placement lives in site_content as gallery_layout, read through a public publishable-client function and saved in the settings admin panel under existing admin-only RLS; one navigation component serves both layouts, with the side layout stacking above artworks on narrow screens.
-- SettingsPanel composes the existing layout, typography and statistics panels in accessible inner tabs under one admin tab; preserve editor drafts across inner-tab switches and keep persistence and access controls unchanged so moving controls does not alter site data.
+- SettingsPanel keeps drafts across inner tabs. Authorization logs use admin_authorization_log with database has_role checks and a labelled last-login fallback; no service key or browser-written audit events, for safe self-hosting.
 - Scope admin typography through admin-typography and dedicated CSS tokens, with lower-specificity font rules than site previews; this isolates admin fonts while preserving editable visitor font samples.
 - Futura PT font files are self-hosted in public/fonts and preloaded from the root head, so they load on every host (Lovable and Timeweb) without the asset proxy.
 - Admin photo uploads are downscaled (max 2560 px side) and re-encoded to WebP in the browser before storage, keeping the original when not smaller — server runtime can't run native image tools.

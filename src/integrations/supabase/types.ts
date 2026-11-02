@@ -346,6 +346,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_authorization_log: {
+        Args: { _days?: number; _offset?: number }
+        Returns: Json
+      }
       admin_visit_statistics: { Args: { _days?: number }; Returns: Json }
       blog_view_counts: {
         Args: never
