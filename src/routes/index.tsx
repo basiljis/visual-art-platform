@@ -186,6 +186,7 @@ function Index() {
           <div className="relative overflow-hidden">
             {heroWork && <a href="#works" onClick={(e) => { e.preventDefault(); setViewer(heroIndex); }} aria-label={heroWork[lang]} className="absolute inset-x-0 bottom-0 top-20 block overflow-hidden">
               <img src={heroWork.image} alt={artworkAlt({ title_ru: heroWork.ru, title_en: heroWork.en, technique: heroWork.technique, size: heroWork.size, year: heroWork.year }, lang)} className="intro-portrait h-full w-full -translate-x-[35%] translate-y-[18%] origin-[65%_35%] scale-[1.35] object-cover object-[65%_center] md:scale-[1.65]" />
+              <span aria-hidden className="intro-portrait-tint pointer-events-none absolute inset-0 hidden bg-sanguine dark:block" />
             </a>}
           </div>
           <div className="relative flex min-w-0 flex-col justify-center px-5 pb-6 pt-14 md:-ml-16 md:px-6 md:pb-6 md:pt-24 lg:px-8">
