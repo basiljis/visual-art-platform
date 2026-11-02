@@ -22,7 +22,7 @@
 - Site typography is stored in site_content under typography, publicly loaded at the root and applied through scoped CSS tokens and block attributes; admin edits use existing admin-only RLS so choices persist for all visitors without changing admin fonts.
 - Public SEO URLs and structured data use src/lib/seo.ts, not request origins; sitemap reads paginate with public access and fail explicitly to avoid proxy-host URLs and incomplete successful responses.
 - Crawlable series and artwork pages supplement, not replace, the editorial homepage; artwork slugs include the stable database ID to avoid collisions, and only leaf routes emit canonicals.
-- CV downloads are generated on demand in the browser from the current localized database biography with lazily loaded PDF fonts, so admin biography changes appear in subsequent downloads.
+- About and PDF share artist-profile normalization of current localized database biography and selected public works; browser-generated PDFs use compressed uncropped images, lazy fonts, page/size guards and a separate ready-download click to preserve mobile user activation without changing admin storage.
 - Homepage design is selected in gallery_layout: portrait preserves the static self-portrait composition, while HomeCarousel owns the signature/introduction and uncropped Embla artwork composition; both headers use the editable header typography block and both designs open original works in the viewer.
 - Mount SitePreloader once in the public root shell, without session flags, so full reloads replay it while internal navigation does not.
 - Use shared artwork-availability rules for gallery and viewer purchase controls and sold markers, so unavailable works cannot expose an enquiry action on one surface only.
