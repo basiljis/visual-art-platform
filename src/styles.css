@@ -270,6 +270,8 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   mix-blend-mode: screen;
 }
 /* Dark theme: tint the white ink lines with the signature colour. */
+.dark .intro-portrait-stage { isolation: isolate; background: var(--portrait-blend-base); mix-blend-mode: screen; }
+.dark { --portrait-blend-base: oklch(0 0 0); }
 .intro-portrait-tint { mix-blend-mode: multiply; }
 
 @keyframes swipe-hint { 0%,100% { transform: translateX(10px) rotate(-8deg); opacity: .9 } 50% { transform: translateX(-22px) rotate(-8deg); opacity: 1 } }
