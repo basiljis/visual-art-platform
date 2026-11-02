@@ -21,6 +21,7 @@ import { absoluteImage, breadcrumbs, pageUrl, visualArtwork } from "@/lib/seo";
 import { useLanguage, localized, localizedSize } from "@/lib/language";
 import { artworkAlt, artworkSlug } from "@/lib/artwork-seo";
 import { CvDownload } from "@/components/CvDownload";
+import { visibleGalleryCategories } from "@/lib/gallery-categories";
 
 export const Route = createFileRoute("/")({
   head: ({ loaderData }: { loaderData?: { ogImage?: string | undefined; artwork?: { name: string; image?: string | undefined; technique?: string | undefined; year?: string | undefined } | undefined } | undefined }) => ({ meta: [
@@ -67,10 +68,9 @@ function ArtworkStatus({ status, lang }: { status: string; lang: Lang }) {
   return null;
 }
 function buildGallery(data: { categories: CategoryRow[]; works: WorkRow[] }, lang: Lang) {
-  const top = data.categories.filter((c) => !c.parent_key);
+  const top = visibleGalleryCategories(data.categories, data.works);
   const works: Work[] = data.works.map((w) => ({ id: w.id, image: mediaUrl(w.image), category: w.category_key, project: w.project_key ?? undefined, cover: w.cover, hero: w.hero, ru: w.title_ru, en: w.title_en || w.title_ru, year: w.year, size: localizedSize(w.size, lang), technique: localized(w.technique ?? "", w.technique_en, lang), status: w.status ?? "" }));
-  // Разделы без работ (например, пустое «Новое») не показываем посетителям
-  const cats: Cat[] = top.filter((c) => works.some((w) => w.category === c.key)).map((c) => ({ key: c.key, ru: c.name_ru, en: c.name_en, noteRu: c.description_hidden ? "" : c.description_ru, noteEn: c.description_hidden ? "" : c.description_en, children: data.categories.filter((s) => s.parent_key === c.key).map((s) => ({ key: s.key, ru: s.name_ru, en: s.name_en })) }));
+  const cats: Cat[] = top.map((c) => ({ key: c.key, ru: c.name_ru, en: c.name_en, noteRu: c.description_hidden ? "" : c.description_ru, noteEn: c.description_hidden ? "" : c.description_en, children: data.categories.filter((s) => s.parent_key === c.key).map((s) => ({ key: s.key, ru: s.name_ru, en: s.name_en })) }));
   return { cats, works };
 }
 const copy = {
@@ -277,6 +277,7 @@ function Index() {
             </div>
           );
         })()}
+        {category !== "all" && !q && visible.length === 0 && <p role="status" className="mb-10 text-sm text-muted-foreground">{lang === "ru" ? "В этом разделе пока нет работ." : "There are no artworks in this section yet."}</p>}
         <div ref={stripRef} className={`-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-4 [scrollbar-width:none] sm:mx-0 sm:grid sm:snap-none sm:gap-x-6 sm:gap-y-20 sm:overflow-visible sm:px-0 sm:pb-0 sm:grid-cols-2 ${sideMenu && !galleryMenuCollapsed ? "xl:grid-cols-3" : "lg:grid-cols-3"}`}>
           {visible.map((work,i)=><article key={`${work.image}-${i}`} className="w-[82vw] shrink-0 snap-center sm:w-auto">
             <div className="group relative aspect-[4/5] overflow-hidden bg-background"><button onClick={() => setViewer(works.indexOf(work))} className="block h-full w-full cursor-zoom-in" aria-label={work[lang]}><img src={work.image} alt={artworkAlt({ title_ru: work.ru, title_en: work.en, technique: work.technique, size: work.size, year: work.year }, lang)} loading="lazy" className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]"/></button>{isSold(work.status) && <span aria-hidden className="pointer-events-none absolute right-3 top-3 size-3.5 rounded-full bg-red-accent ring-2 ring-background" />}{canEnquire(work.status) && <TooltipProvider delayDuration={200}><Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon" onClick={() => setEnquiry(work[lang])} className="absolute bottom-3 right-3 grid size-11 place-items-center rounded-none bg-background/90 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-red-accent hover:text-background" aria-label={t.buy}><ArrowUpRight className="size-5"/></Button></TooltipTrigger><TooltipContent side="top" sideOffset={8}>{t.buy}</TooltipContent></Tooltip></TooltipProvider>}</div>
