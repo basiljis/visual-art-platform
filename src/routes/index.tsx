@@ -315,7 +315,7 @@ function Index() {
                 </div>
               ))}
             </div>
-            <Link to="/about" className="mt-10 flex w-fit items-center gap-2 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em] transition-colors hover:text-red-accent">{lang === "ru" ? "Полная биография" : "Full CV"}<ArrowUpRight className="size-4"/></Link><div className="mt-4"><CvDownload about={gallery.about} lang={lang} /></div>
+            <Link to="/about" className="mt-10 flex w-fit items-center gap-2 border-b border-foreground pb-1 text-xs uppercase tracking-[.18em] transition-colors hover:text-red-accent">{lang === "ru" ? "Полная биография" : "Full CV"}<ArrowUpRight className="size-4"/></Link><div className="mt-4"><CvDownload about={gallery.about} lang={lang} works={gallery.works} categories={gallery.categories} /></div>
           </div>
         </div>
       </section>
