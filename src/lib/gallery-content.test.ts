@@ -3,8 +3,8 @@ import { loadEnv } from "vite";
 
 const env = loadEnv("test", process.cwd(), "VITE_");
 async function publicRows<T>(table: string, query: string): Promise<T[]> {
-  const url = env.VITE_SUPABASE_URL;
-  const key = env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const url = env['VITE_SUPABASE_URL'];
+  const key = env['VITE_SUPABASE_PUBLISHABLE_KEY'];
   if (!url || !key) throw new Error("Public gallery configuration missing");
   const response = await fetch(`${url}/rest/v1/${table}?${query}`, { headers: { apikey: key } });
   if (!response.ok) throw new Error(`Gallery read failed: ${response.status}`);
