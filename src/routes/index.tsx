@@ -1,5 +1,6 @@
 import { canEnquire, isSold } from "@/lib/artwork-availability";
 import { GalleryNavigation } from "@/components/GalleryNavigation";
+import { MuralVideos } from "@/components/MuralVideos";
 import { HomeCarousel } from "@/components/HomeCarousel";
 import { galleryLayoutQuery } from "@/lib/gallery-layout.functions";
 import { EnquiryModal } from "@/components/EnquiryModal";
@@ -9,10 +10,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { legalDocuments, type LegalKind } from "@/lib/legal";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { galleryQuery, postsQuery, type CategoryRow, type WorkRow } from "@/lib/content.functions";
+import { galleryQuery, postsQuery, postQuery, type CategoryRow, type WorkRow } from "@/lib/content.functions";
 import { mediaUrl } from "@/lib/media";
 import { ArrowDown, ArrowUp, ArrowLeft, ArrowRight, ArrowUpRight, Menu, Moon, Settings, Sun, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import signatureAsset from "@/assets/signature-clean.png.asset.json";
 import type { AboutContent } from "@/lib/about";
 import portraitAsset from "@/assets/artist-about-photo.png.asset.json";
@@ -44,7 +45,7 @@ export const Route = createFileRoute("/")({
   }),
   validateSearch: (s: Record<string, unknown>): { category?: string | undefined } => ({ category: typeof s["category"] === "string" && s["category"] ? s["category"] : undefined }),
   loader: async ({ context }) => {
-    const [gallery] = await Promise.all([context.queryClient.ensureQueryData(galleryQuery), context.queryClient.ensureQueryData(postsQuery), context.queryClient.ensureQueryData(galleryLayoutQuery)]);
+    const [gallery] = await Promise.all([context.queryClient.ensureQueryData(galleryQuery), context.queryClient.ensureQueryData(postsQuery), context.queryClient.ensureQueryData(galleryLayoutQuery), context.queryClient.ensureQueryData(postQuery("blog-011"))]);
     const g = gallery as { works: WorkRow[] };
     // Превью для соцсетей: автопортрет тушью (первая картина карусели), иначе главная работа, иначе первая
     const best = g.works.find((w) => /АВТОПОРТРЕТ|SELF-PORTRAIT/i.test(w.title_ru)) ?? g.works.find((w) => w.hero) ?? g.works[0];
@@ -156,7 +157,15 @@ function Index() {
   const rowOf = (key: string) => gallery.categories.find((r) => r.key === key);
   const L = (r: CategoryRow | undefined, f: "curator" | "exhibited") => (r ? (lang === "ru" ? r[`${f}_ru`] : r[`${f}_en`]) ?? "" : "");
   const visible = q ? works.filter((w) => `${w.ru} ${w.en}`.toLowerCase().includes(q)) : category === "all" ? featured : filtered;
-  const openProject = (parent: string, key: string) => { setCategory(parent); setProject(key); document.getElementById("works")?.scrollIntoView({ behavior: "smooth" }); };
+  const scrollToWorks = () => requestAnimationFrame(() => {
+    const section = document.getElementById("works");
+    if (!section) return;
+    const headerHeight = document.querySelector("main > header")?.getBoundingClientRect().height ?? 80;
+    const target = Math.max(0, section.getBoundingClientRect().top + window.scrollY - headerHeight);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) window.scrollTo({ top: target, behavior: "instant" });
+    else slowScroll(target);
+  });
+  const openProject = (parent: string, key: string) => { setCategory(parent); setProject(key); scrollToWorks(); };
   const relatedPosts = category !== "all" && !q ? posts.filter((p) => (p.topic_keys ?? []).includes(category)) : [];
 
   return (
@@ -203,7 +212,7 @@ function Index() {
       <section id="works" className="border-t border-border px-5 pb-10 pt-8 md:px-8 md:pb-28 md:pt-10">
         <div className="mb-4 flex items-end md:mb-6 justify-between gap-6"><h2 className="font-display text-5xl md:text-8xl">{t.works}</h2><span className="text-sm tabular-nums">{String(visible.length).padStart(2,"0")}</span></div>
         <div data-gallery-menu={galleryLayout.menuPlacement} className={sideMenu ? `grid items-start ${galleryMenuCollapsed ? "gap-x-4 md:grid-cols-[2.5rem_minmax(0,1fr)]" : "gap-x-8 md:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-10"}` : ""}>
-          <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} collapsed={galleryMenuCollapsed} onToggle={() => setGalleryMenuCollapsed(value => !value)} onCategory={(key) => { setCategory(key); setProject("all"); }} onProject={openProject} onQuery={setQuery} />
+          <GalleryNavigation placement={galleryLayout.menuPlacement} lang={lang} categories={cats} category={category} project={project} query={query} collapsed={galleryMenuCollapsed} onToggle={() => setGalleryMenuCollapsed(value => !value)} onCategory={(key) => { setCategory(key); setProject("all"); scrollToWorks(); }} onProject={openProject} onQuery={setQuery} />
           <div className="min-w-0">
         {(category !== "all" || q) && (() => {
           const crumb = "min-w-0 max-w-[9rem] truncate py-1 sm:max-w-none";
@@ -284,6 +293,7 @@ function Index() {
             <div data-font-block="captions" className="mt-4 grid grid-cols-[1fr_auto] gap-3 border-t border-border pt-3"><div>{work.cover && project === "all" && work.project && <p className="mb-1 text-[11px] uppercase tracking-[.16em] text-muted-foreground"><span className="text-red-accent">/ </span>{parentOf(work.category)?.children.find((p)=>p.key===work.project)?.[lang]}</p>}<h3 className="text-base font-medium">{isSold(work.status) && <ArtworkStatus status={work.status} lang={lang} />}<Link to="/works/$category/$slug" params={{ category: work.category, slug: artworkSlug({ id: work.id, title_ru: work.ru, year: work.year }) }} className="hover:text-red-accent">{work[lang]}</Link></h3>{work.technique && <p className="mt-1 text-xs text-muted-foreground">{work.technique}</p>}{work.size && <p className="mt-1 text-xs text-muted-foreground">{work.size}</p>}{!isSold(work.status) && work.status === "private" && <div className="mt-2"><ArtworkStatus status={work.status} lang={lang} /></div>}{work.cover && project === "all" && work.project && <button onClick={()=>work.project && openProject(work.category, work.project)} className="mt-4 inline-flex items-center gap-2 border border-foreground px-3 py-2 text-left text-[11px] font-medium uppercase tracking-[.14em] transition-colors hover:border-red-accent hover:bg-red-accent hover:text-background"><span className="text-red-accent">/</span>{t.more}<ArrowUpRight className="size-3.5 shrink-0"/></button>}</div><span className="text-xs text-muted-foreground">{work.year}</span></div>
           </article>)}
         </div>
+        {category === "мурал" && !q && <Suspense fallback={null}><MuralVideos /></Suspense>}
         {relatedPosts.length > 0 && (
           <div className="mt-20 border-t border-red-accent pt-8">
             <div className="flex flex-wrap items-center justify-between gap-4"><h2 className="font-display text-3xl text-red-accent md:text-4xl">{lang === "ru" ? "Блог · Статьи по теме" : "Blog · Related articles"}</h2><Button asChild variant="outline" className="border-red-accent text-red-accent hover:bg-red-accent hover:text-background"><Link to="/blog">{lang === "ru" ? "Весь блог" : "All posts"}<ArrowUpRight className="size-4" /></Link></Button></div>
