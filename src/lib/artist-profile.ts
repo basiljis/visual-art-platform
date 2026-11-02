@@ -23,8 +23,9 @@ export function profileSections(bio: AboutLang, lang: "ru" | "en") {
 }
 
 export function selectedPortfolioWorks(works: WorkRow[], categories: CategoryRow[]) {
-  const eligible = works.filter(w => !w.hidden && w.image && w.title_ru && w.technique && w.size && w.year);
-  const ordered = [...eligible].sort((a, b) => Number(b.hero) - Number(a.hero) || Number(b.cover) - Number(a.cover) || latestYear(b.year) - latestYear(a.year) || a.sort - b.sort);
+  const eligible = works.filter(w => !w.hidden && w.image);
+  const complete = (work: WorkRow) => Number(Boolean(work.technique && work.size && work.year));
+  const ordered = [...eligible].sort((a, b) => complete(b) - complete(a) || Number(b.hero) - Number(a.hero) || Number(b.cover) - Number(a.cover) || latestYear(b.year) - latestYear(a.year) || a.sort - b.sort);
   const selected: WorkRow[] = [];
   for (const category of [...categories].filter(c => !c.parent_key).sort((a, b) => a.sort - b.sort)) {
     const work = ordered.find(w => w.category_key === category.key);
@@ -37,4 +38,8 @@ export function selectedPortfolioWorks(works: WorkRow[], categories: CategoryRow
 export function workProject(work: WorkRow, categories: CategoryRow[], lang: "ru" | "en") {
   const project = categories.find(c => c.key === work.project_key) ?? categories.find(c => c.key === work.category_key);
   return { name: project ? (lang === "ru" ? project.name_ru : project.name_en || project.name_ru) : "", description: project && !project.description_hidden ? (lang === "ru" ? project.description_ru : project.description_en) : "" };
+}
+
+export function quotedTitle(title: string) {
+  return title.startsWith("«") && title.endsWith("»") ? title : `«${title}»`;
 }

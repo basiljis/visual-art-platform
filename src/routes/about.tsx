@@ -7,7 +7,7 @@ import { mediaUrl } from "@/lib/media";
 import portrait from "@/assets/artist-about-photo.png.asset.json";
 import { BlogShell } from "@/components/BlogShell";
 import { CvDownload } from "@/components/CvDownload";
-import { artistContacts, profileSections, selectedPortfolioWorks, workProject } from "@/lib/artist-profile";
+import { artistContacts, profileSections, selectedPortfolioWorks, workProject, quotedTitle } from "@/lib/artist-profile";
 import { artworkAlt, artworkSlug } from "@/lib/artwork-seo";
 import { ArrowUpRight } from "lucide-react";
 export const Route = createFileRoute("/about")({

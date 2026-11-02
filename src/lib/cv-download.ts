@@ -1,7 +1,7 @@
 import type { AboutContent } from "./about";
 import type { CategoryRow, WorkRow } from "./content.functions";
 import type { Content, TDocumentDefinitions } from "pdfmake/interfaces";
-import { artistContacts, PROFILE_LIMITS, profileSections, selectedPortfolioWorks, workProject } from "./artist-profile";
+import { artistContacts, PROFILE_LIMITS, profileSections, selectedPortfolioWorks, workProject, quotedTitle } from "./artist-profile";
 import { artworkPath } from "./artwork-seo";
 import { mediaUrl } from "./media";
 
@@ -47,10 +47,10 @@ export async function createCvPdf(about: AboutContent, lang: "ru" | "en", works:
       return { pageBreak: "before", stack: [
         { text: lang === "ru" ? "Избранные работы" : "Selected works", fontSize: 10, margin: [0, 0, 0, 8] },
         { text: name, fontSize: 12, margin: [0, 0, 0, 12] },
-        { text: `«${lang === "ru" ? work.title_ru : work.title_en || work.title_ru}»`, fontSize: 20, margin: [0, 0, 0, 6] },
+        { text: quotedTitle(lang === "ru" ? work.title_ru : work.title_en || work.title_ru), fontSize: 20, margin: [0, 0, 0, 6] },
         { text: [lang === "ru" ? work.technique : work.technique_en || work.technique, lang === "ru" ? work.size : work.size.replace(/см/g, "cm"), work.year].filter(Boolean).join(" · "), margin: [0, 0, 0, 16] },
         { image: photo, fit: [510, 400], alignment: "center", margin: [0, 0, 0, 18] },
-        { text: project.name ? `«${project.name}»` : "", bold: true, margin: [0, 0, 0, 7] },
+        { text: project.name ? quotedTitle(project.name) : "", bold: true, margin: [0, 0, 0, 7] },
         { text: project.description.length > 650 ? `${project.description.slice(0, 647).trim()}…` : project.description, margin: [0, 0, 0, 10] },
         { text: lang === "ru" ? "Работа на dikunova.art" : "View artwork on dikunova.art", link: `https://dikunova.art${artworkPath(work)}`, margin: [0, 0, 0, 5] },
         { text: lang === "ru" ? "Проект и полное описание" : "Project and full description", link: `https://dikunova.art/works/${encodeURIComponent(work.category_key)}` },
