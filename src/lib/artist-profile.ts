@@ -17,7 +17,7 @@ export function latestYear(text: string) {
 export function profileSections(bio: AboutLang, lang: "ru" | "en") {
   const priority = [/образован|education/i, /персональ|solo/i, /группов|group/i, /резиден|лаборатор|residen|laborator/i, /грант|grant/i, /ярмарк|fair/i, /наград|award/i, /преподав|teaching/i];
   const sections = bio.sections.filter(s => s.items.some(i => i.trim())).map(s => ({ ...s, items: s.items.filter(i => i.trim()).sort((a, b) => latestYear(b) - latestYear(a)) }));
-  if (bio.academy.trim() && !sections.some(s => priority[0].test(s.title))) sections.push({ title: lang === "ru" ? "Образование" : "Education", items: [bio.academy] });
+  if (bio.academy.trim() && !sections.some(s => /образован|education/i.test(s.title))) sections.push({ title: lang === "ru" ? "Образование" : "Education", items: [bio.academy] });
   const rank = (title: string) => { const index = priority.findIndex(p => p.test(title)); return index < 0 ? priority.length : index; };
   return sections.sort((a, b) => rank(a.title) - rank(b.title));
 }
