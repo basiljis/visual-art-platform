@@ -15,7 +15,7 @@
 - Blog-type news selects published blog posts in the admin editor and stores their relative path in the existing news link field; manual links remain supported to avoid a separate relationship or duplicate navigation source.
 - Media refs: bundled assets are stored as "site/…", "projects/…" or "asset:blog/…", uploads as "media:<path>" in the private media bucket served by /api/public/media/*; always resolve via src/lib/media.ts — workspace blocks public buckets.
 - Imported blog media uses CDN pointer files resolved by the shared media helper; MP4 videos have WebM playback fallbacks, and the original-source manifest verifies complete photo coverage.
-- Admin role is granted only by claim_admin() to the confirmed owner email — no client-side role checks.
+- Admin roles remain database-authorized through claim_admin(); login offers no public registration. Owner account creation uses Cloud Users, while hosted signup restrictions must preserve other Auth settings.
 - Blog subscriptions are inserted by a server function with the admin client; blog_subscribers has RLS on and no public policies.
 - Purchase enquiries are saved by a server function (admin client) into purchase_enquiries (RLS on, no public policies); emailing them needs a mail connection.
 - Self-hosted build (Timeweb): Dockerfile builds with NITRO_PRESET=node-server; Compose publishes edge 8082→8080 and pins app to 0.0.0.0:8080, matching nginx upstream — keep one documented port chain; server code must not depend on the service role key, which isn't available off-platform.
