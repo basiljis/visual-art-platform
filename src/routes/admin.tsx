@@ -82,20 +82,14 @@ function AdminPage() {
 }
 
 function Login() {
-  const [mode, setMode] = useState<"in" | "up">("in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const submit = async (e: React.FormEvent) => {
     e.preventDefault(); setBusy(true); setMsg(null);
-    if (mode === "in") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setMsg(error.message === "Invalid login credentials" ? "Неверный email или пароль." : error.message);
-    } else {
-      const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/admin` } });
-      setMsg(error ? error.message : "Письмо с подтверждением отправлено. Перейдите по ссылке и войдите.");
-    }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) setMsg(error.message === "Invalid login credentials" ? "Неверный email или пароль." : error.message);
     setBusy(false);
   };
   const reset = async () => {
@@ -105,14 +99,13 @@ function Login() {
   };
   return (
     <form onSubmit={submit} className="mx-auto mt-10 max-w-sm space-y-6">
-      <h1 className="font-display text-4xl">{mode === "in" ? "Вход" : "Регистрация"}</h1>
+      <h1 className="font-display text-4xl">Вход</h1>
       <div><label className={label}>Email</label><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={field} autoComplete="email" /></div>
-      <div><label className={label}>Пароль</label><input type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} className={field} autoComplete={mode === "in" ? "current-password" : "new-password"} /></div>
+      <div><label className={label}>Пароль</label><input type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} className={field} autoComplete="current-password" /></div>
       {msg && <p className="text-sm text-red-accent">{msg}</p>}
-      <button disabled={busy} className={primaryBtn}>{mode === "in" ? "Войти" : "Создать аккаунт"}</button>
-      <div className="flex justify-between text-xs text-muted-foreground">
-        <button type="button" onClick={() => setMode(mode === "in" ? "up" : "in")} className="underline underline-offset-4 hover:text-foreground">{mode === "in" ? "Первый вход — регистрация" : "Уже есть аккаунт"}</button>
-        {mode === "in" && <button type="button" onClick={reset} className="underline underline-offset-4 hover:text-foreground">Забыли пароль?</button>}
+      <Button type="submit" disabled={busy} className={primaryBtn}>Войти</Button>
+      <div className="flex justify-end text-xs text-muted-foreground">
+        <Button variant="link" type="button" onClick={reset} className="h-auto p-0 text-xs text-muted-foreground hover:text-red-accent">Забыли пароль?</Button>
       </div>
     </form>
   );
