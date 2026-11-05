@@ -92,4 +92,4 @@ docker exec <edge> rm /etc/nginx/flags/maintenance.enabled      # выключи
 - `curl -I https://dikunova.art/` → 200
 - `curl -I https://www.dikunova.art/` → 301 на https://dikunova.art/
 - `curl https://api.dikunova.art/auth/v1/health -H "apikey: <VITE_SUPABASE_PUBLISHABLE_KEY>"` → JSON от бэкенда
-- В панели Timeweb переменная `VITE_SUPABASE_URL=https://api.dikunova.art` (браузер), `SUPABASE_URL=https://fzdhixryjteuofsofwnw.supabase.co` (сервер).
+- В панели Timeweb переменная `VITE_SUPABASE_URL=https://api.dikunova.art` (браузер), `SUPABASE_URL=https://wzwlerzjfnfyltrgynlk.supabase.co` (сервер).
