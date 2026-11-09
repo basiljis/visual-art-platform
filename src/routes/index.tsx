@@ -151,7 +151,7 @@ function Index() {
   }, [search.category]);
 
   const t = copy[lang];
-  const filtered = category === "all" ? works : works.filter((work) => work.category === category && (!hasSub(category) || (project === "all" ? (work.cover || !works.some((x) => x.category === category && x.cover)) : work.project === project)));
+  const filtered = category === "all" ? works : works.filter((work) => work.category === category && (!hasSub(category) || (project === "all" ? (work.cover || !works.some((x) => x.category === category && x.cover) || works.some((x) => x.category === category && !x.project)) : work.project === project)));
   const q = query.trim().toLowerCase();
   const featured = [...works.filter((w) => w.hero), ...works.filter((w) => !w.hero && (!hasSub(w.category) || w.cover))].slice(0, 12);
   const rowOf = (key: string) => gallery.categories.find((r) => r.key === key);
